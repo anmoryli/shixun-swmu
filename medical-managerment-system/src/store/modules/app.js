@@ -3,8 +3,9 @@ import { Message } from "element-ui";
 import router, { constantRoutes } from '../../router/index'
 import {getMenu} from '../../utils/routeParse'
 const state = {
-  token: "",
-  menuList: [] //路由列表
+  token: localStorage.getItem("token") || "",
+  menuList: constantRoutes.slice(),
+  routesLoaded: false,
 };
 const mutations = {
   SET_TOKEN(state, payload) {
@@ -13,42 +14,58 @@ const mutations = {
   //存储完整的路由
   SET_ROUTER_MENULIST(state, payload) {
     // 把固定路由和后端传来的路由合并为完整路由
-    const array = constantRoutes.concat(payload)
-    state.menuList = array
-    router.options.routes = array
-    router.addRoutes([...array])
+    const dynamicRoutes = Array.isArray(payload) ? payload : [];
+    const routes = constantRoutes.concat(dynamicRoutes);
+    state.menuList = routes;
+    state.routesLoaded = true;
+    router.options.routes = routes;
+    router.addRoutes(dynamicRoutes);
+  },
+  RESET_AUTH(state) {
+    state.token = "";
+    state.menuList = constantRoutes.slice();
+    state.routesLoaded = false;
   }
 };
 const actions = {
   // 登录接口
-  login({ commit }, loginInfo) {
+  async login({ commit }, loginInfo) {
+    // 清除同一浏览器会话中可能残留的上一账号菜单状态。
+    commit("RESET_AUTH");
     const username = loginInfo.username.trim();
-    return new Promise((resolve, reject) => {
-      login(username, loginInfo.password).then((res) => {
-        if (res.data.code == "20000") {
-          Message({
-            type: "success",
-            message: "登录成功",
-          });
-          localStorage.setItem('userInfo', JSON.stringify(res.data.data.userInfo))
-          localStorage.setItem("token", res.data.data.token);
-          commit("SET_TOKEN", res.data.data.token);
-          resolve();
-        } else {
-          reject();
-        }
-      });
+    const res = await login(username, loginInfo.password);
+    if (!res.data || Number(res.data.code) !== 20000) {
+      throw new Error((res.data && res.data.message) || "账号或密码错误");
+    }
+
+    const data = res.data.data || {};
+    if (!data.token || !data.userInfo) {
+      throw new Error("登录接口返回的数据不完整");
+    }
+
+    localStorage.setItem("userInfo", JSON.stringify(data.userInfo));
+    localStorage.setItem("token", data.token);
+    commit("SET_TOKEN", data.token);
+    Message({
+      type: "success",
+      message: "登录成功",
     });
+    return data;
   },
-    // 获取后端传来的路由列表
-    setMenuList({ commit }) {
-      return new Promise((resolve) => {
-        getMenu().then(res => {
-          commit('SET_ROUTER_MENULIST', res)
-          resolve(res)
-        })
-      })
-  }
+  // 获取后端传来的路由列表
+  async setMenuList({ commit, state }) {
+    if (state.routesLoaded) {
+      return state.menuList.slice(constantRoutes.length);
+    }
+    const routes = await getMenu();
+    commit("SET_ROUTER_MENULIST", routes);
+    return routes;
+  },
+  logout({ commit }) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+    commit("RESET_AUTH");
+  },
 };
 export default {
   namespaced: true,

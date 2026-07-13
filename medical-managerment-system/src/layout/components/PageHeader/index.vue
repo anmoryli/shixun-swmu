@@ -23,8 +23,7 @@ export default {
   name: "PageHeader",
   methods: {
     handleLogout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userInfo");
+      this.$store.dispatch("app/logout");
       this.$message.warning("已退出登录");
       this.$router.replace("/user/login");
       this.$router.go(0);
@@ -32,7 +31,12 @@ export default {
   },
   computed: {
     userName() {
-      return JSON.parse(localStorage.getItem("userInfo")).realname;
+      try {
+        const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+        return (userInfo && (userInfo.realname || userInfo.username)) || "用户";
+      } catch (error) {
+        return "用户";
+      }
     },
   },
 };

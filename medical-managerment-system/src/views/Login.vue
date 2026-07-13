@@ -28,7 +28,14 @@
                 </div>
               </el-form-item>
               <el-form-item>
-                  <button type="button" class="LoginBtn" @click="handleLogin('loginForm')"/>
+                  <button
+                    type="button"
+                    class="LoginBtn"
+                    :class="{ 'is-loading': loggingIn }"
+                    :disabled="loggingIn"
+                    :aria-label="loggingIn ? '正在登录' : '登录'"
+                    @click="handleLogin('loginForm')"
+                  />
               </el-form-item>
             </div>
           </el-form>
@@ -47,6 +54,7 @@ export default {
         password: "",
       },
       loginRules,
+      loggingIn: false,
     };
   },
   methods: {
@@ -54,14 +62,32 @@ export default {
     handleLogin(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          if (this.loggingIn) return;
+          this.loggingIn = true;
           this.$store
             .dispatch("app/login", this.loginForm)
+            .then(() => this.$store.dispatch("app/setMenuList"))
             .then(() => {
-               this.$store.dispatch("app/setMenuList");
               this.$router.replace("/");
             })
-            .catch(() => {
-              this.$message.error("账号或密码错误");
+            .catch((error) => {
+              const isNetworkError = Boolean(
+                error && (error.isAxiosError || error.request) && !error.response
+              );
+              if (
+                localStorage.getItem("token") &&
+                !this.$store.state.app.routesLoaded
+              ) {
+                this.$store.dispatch("app/logout");
+              }
+              this.$message.error(
+                isNetworkError
+                  ? "无法连接服务器，请检查网络或后端服务"
+                  : error.message || "账号或密码错误"
+              );
+            })
+            .finally(() => {
+              this.loggingIn = false;
             });
         } else {
           this.$notify.error({
@@ -133,6 +159,13 @@ export default {
       height: 65px;
       margin-left: 290px;
       margin-top: 10px;
+  }
+  .LoginBtn:disabled {
+      cursor: wait;
+      opacity: 0.65;
+  }
+  .LoginBtn.is-loading {
+      filter: grayscale(30%);
   }
   .NameNotNull{
       margin-left: 200px;

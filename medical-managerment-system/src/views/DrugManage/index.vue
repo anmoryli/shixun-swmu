@@ -299,6 +299,7 @@
 import Pagination from "../../components/Pagination";
 import { mapGetters } from "vuex";
 import rules from "../../utils/validator";
+import { resolveApiUrl } from "../../utils/request";
 
 export default {
   name: "CompanyManage",
@@ -329,7 +330,7 @@ export default {
       },
       rules, // 封装好的表单验证
       token: localStorage.getItem("token"), //用于给上传操作添加token请求头
-      actionUrl: "http://localhost:8080/api/base/upload", //图片上传接口
+      actionUrl: resolveApiUrl("/base/upload"), //图片上传接口
       uploading: false, // 是否显示上传进度条
       percentage: 0, // 进度条进度
       status: null, // 进度条状态

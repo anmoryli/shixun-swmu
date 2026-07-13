@@ -24,14 +24,11 @@ export function getAllSalePlaceInfo() {
     });
 }
 // 新增销售地点api
-export function addSalePlace(saleName, salePhone) {
+export function addSalePlace(saleInfo) {
     return request({
         url: "/sales",
         method: "POST",
-        data: {
-            saleName,
-            salePhone,
-        },
+        data: saleInfo,
     }).then((res) => judgeAddResult(res));
 }
 // 删除销售地点api
@@ -44,14 +41,11 @@ export function deleteSalePlace(saleId) {
     });
 }
 // 修改销售地点api
-export function modifySalePlaceInfo(saleId, saleName, salePhone) {
+export function modifySalePlaceInfo(saleId, saleInfo) {
     return request({
         url: `/sales/${saleId}`,
         method: "PUT",
-        data: {
-            saleName,
-            salePhone,
-        },
+        data: saleInfo,
     }).then((res) => {
         judgeModifyResult(res);
     });

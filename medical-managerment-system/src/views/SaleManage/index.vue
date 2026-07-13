@@ -38,6 +38,20 @@
         <el-table-column prop="saleId" label="药店编号" sortable />
         <el-table-column prop="saleName" label="药店名称" />
         <el-table-column prop="salePhone" label="药店电话" />
+        <el-table-column prop="address" label="详细地址" min-width="190">
+          <template slot-scope="scope">
+            <span>{{ scope.row.address || "暂无地址" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="地理坐标" min-width="190">
+          <template slot-scope="scope">
+            <div v-if="hasCoordinate(scope.row)" class="coordinate-badge">
+              <i class="el-icon-location-outline"></i>
+              {{ formatCoordinate(scope.row) }}
+            </div>
+            <span v-else class="coordinate-empty">暂未标注</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" v-if="hasRole">
           <!-- 通过slot-scope拿到对应行的数据 -->
           <template slot-scope="scope">
@@ -50,11 +64,7 @@
             <button
               class="table-btn-update"
               @click="
-                handleModifyFormVisible(
-                  scope.row.saleId,
-                  scope.row.saleName,
-                  scope.row.salePhone
-                )
+                handleModifyFormVisible(scope.row)
               "
             />
           </template>
@@ -100,6 +110,35 @@
             autocomplete="off"
             required
           ></el-input>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="address" :rules="saleRules.address">
+          <el-input
+            v-model.trim="addForm.address"
+            autocomplete="off"
+            placeholder="请输入药店所在的详细地址"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="经度" prop="longitude" :rules="saleRules.longitude">
+          <el-input-number
+            v-model="addForm.longitude"
+            :min="-180"
+            :max="180"
+            :precision="6"
+            :step="0.000001"
+            controls-position="right"
+          ></el-input-number>
+          <span class="coordinate-hint">范围 -180 ～ 180</span>
+        </el-form-item>
+        <el-form-item label="纬度" prop="latitude" :rules="saleRules.latitude">
+          <el-input-number
+            v-model="addForm.latitude"
+            :min="-90"
+            :max="90"
+            :precision="6"
+            :step="0.000001"
+            controls-position="right"
+          ></el-input-number>
+          <span class="coordinate-hint">范围 -90 ～ 90</span>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -147,6 +186,35 @@
             required
           ></el-input>
         </el-form-item>
+        <el-form-item label="详细地址" prop="address" :rules="saleRules.address">
+          <el-input
+            v-model.trim="modifyForm.address"
+            autocomplete="off"
+            placeholder="请输入药店所在的详细地址"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="经度" prop="longitude" :rules="saleRules.longitude">
+          <el-input-number
+            v-model="modifyForm.longitude"
+            :min="-180"
+            :max="180"
+            :precision="6"
+            :step="0.000001"
+            controls-position="right"
+          ></el-input-number>
+          <span class="coordinate-hint">范围 -180 ～ 180</span>
+        </el-form-item>
+        <el-form-item label="纬度" prop="latitude" :rules="saleRules.latitude">
+          <el-input-number
+            v-model="modifyForm.latitude"
+            :min="-90"
+            :max="90"
+            :precision="6"
+            :step="0.000001"
+            controls-position="right"
+          ></el-input-number>
+          <span class="coordinate-hint">范围 -90 ～ 90</span>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="modifyFormVisible = false">取 消</el-button>
@@ -162,6 +230,30 @@
 import Pagination from "../../components/Pagination";
 import { mapGetters } from "vuex";
 import rules from "../../utils/validator";
+
+function coordinateValidator(min, max, label) {
+  return (rule, value, callback) => {
+    if (value === "" || value === null || value === undefined) {
+      callback(new Error(`${label}不能为空`));
+      return;
+    }
+    const coordinate = Number(value);
+    if (!Number.isFinite(coordinate) || coordinate < min || coordinate > max) {
+      callback(new Error(`${label}范围应为 ${min} 到 ${max}`));
+      return;
+    }
+    callback();
+  };
+}
+
+const emptySaleForm = () => ({
+  saleName: "",
+  salePhone: "",
+  address: "",
+  longitude: null,
+  latitude: null,
+});
+
 export default {
   name: "SaleManage",
   components: {
@@ -173,17 +265,29 @@ export default {
       pageSize: 5, // 每页的数据条数
       keywordDefault: "",
       addFormVisible: false, // 控制新增销售地点页面的显示
-      addForm: {
-        saleName: "",
-        salePhone: "",
-      },
+      addForm: emptySaleForm(),
       modifyFormVisible: false, // 控制修改信息页面的显示
       modifyForm: {
         saleId: "",
         saleName: "",
         salePhone: "",
+        address: "",
+        longitude: null,
+        latitude: null,
       },
       rules, // 封装好的表单验证
+      saleRules: {
+        address: [
+          { required: true, message: "详细地址不能为空", trigger: "blur" },
+          { min: 4, max: 200, message: "详细地址长度应为 4 到 200 个字符", trigger: "blur" },
+        ],
+        longitude: [
+          { validator: coordinateValidator(-180, 180, "经度"), trigger: "change" },
+        ],
+        latitude: [
+          { validator: coordinateValidator(-90, 90, "纬度"), trigger: "change" },
+        ],
+      },
     };
   },
   methods: {
@@ -219,6 +323,9 @@ export default {
           this.$store.dispatch("saleInfoManage/addSalePlace", {
             saleName: this.addForm.saleName,
             salePhone: this.addForm.salePhone,
+            address: this.addForm.address,
+            longitude: this.addForm.longitude,
+            latitude: this.addForm.latitude,
             size: this.pageSize,
           });
         } else {
@@ -253,11 +360,14 @@ export default {
         });
     },
     // 控制修改销售地点信息的表单弹出
-    handleModifyFormVisible(saleId, saleName, salePhone) {
+    handleModifyFormVisible(saleInfo) {
       this.modifyForm = {
-        saleId,
-        saleName,
-        salePhone,
+        saleId: saleInfo.saleId,
+        saleName: saleInfo.saleName,
+        salePhone: saleInfo.salePhone,
+        address: saleInfo.address || "",
+        longitude: this.toCoordinate(saleInfo.longitude),
+        latitude: this.toCoordinate(saleInfo.latitude),
       };
       this.modifyFormVisible = true;
     },
@@ -270,6 +380,9 @@ export default {
             saleId: this.modifyForm.saleId,
             saleName: this.modifyForm.saleName,
             salePhone: this.modifyForm.salePhone,
+            address: this.modifyForm.address,
+            longitude: this.modifyForm.longitude,
+            latitude: this.modifyForm.latitude,
             pn: this.currentPage,
             size: this.pageSize,
             keyword: this.keyword,
@@ -285,12 +398,28 @@ export default {
     },
     // 每次关闭表单的时候清除验证器和输入框内容
     handleAddClose() {
-      this.addForm = {};
-      this.$refs.addForm.resetFields();
+      this.addForm = emptySaleForm();
+      this.$nextTick(() => this.$refs.addForm && this.$refs.addForm.clearValidate());
     },
     handleModifyClose() {
       // this.$refs.modifyForm.clearValidate();
       this.$refs.modifyForm.resetFields();
+    },
+    toCoordinate(value) {
+      if (value === "" || value === null || value === undefined) return null;
+      const coordinate = Number(value);
+      return Number.isFinite(coordinate) ? coordinate : null;
+    },
+    hasCoordinate(saleInfo) {
+      return (
+        this.toCoordinate(saleInfo.longitude) !== null &&
+        this.toCoordinate(saleInfo.latitude) !== null
+      );
+    },
+    formatCoordinate(saleInfo) {
+      const longitude = this.toCoordinate(saleInfo.longitude);
+      const latitude = this.toCoordinate(saleInfo.latitude);
+      return `${longitude.toFixed(6)}, ${latitude.toFixed(6)}`;
     },
   },
   mounted() {
@@ -316,4 +445,24 @@ export default {
 
 <style lang="less" scoped>
 @import "../../style/infoManage.less";
+.coordinate-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: #167f77;
+  background: #e9f8f5;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.coordinate-empty {
+  color: #a5afae;
+}
+.coordinate-hint {
+  margin-left: 10px;
+  color: #8c939d;
+  font-size: 12px;
+}
 </style>

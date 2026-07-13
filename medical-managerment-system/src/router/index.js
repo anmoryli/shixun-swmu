@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "../views/Login.vue";
+import { Message } from "element-ui";
 // import Layout from "../layout/index.vue";
 
 Vue.use(VueRouter);
@@ -29,15 +30,42 @@ export const constantRoutes = [
   });
   // 判断登录状态
 router.beforeEach((to, from, next) => {
-    document.title = to.meta.title;
+    document.title = (to.meta && to.meta.title) || "慧医数字医疗应用系统";
     const token = localStorage.getItem("token");
-    if (to.path == "/user/login" && token) {
-      next("/");
-    } else if (to.path !== "/user/login" && !token) {
+    if (!token && to.path !== "/user/login") {
       next("/user/login");
-    } else {
-      next();
+      return;
     }
+    if (!token) {
+      next();
+      return;
+    }
+
+    // store 在守卫执行时再加载，避免 router/store 相互引用导致初始化竞态。
+    const store = require("../store").default;
+    if (store.state.app.routesLoaded) {
+      if (to.path === "/user/login") {
+        next("/");
+      } else {
+        next();
+      }
+      return;
+    }
+
+    store
+      .dispatch("app/setMenuList")
+      .then(() => {
+        if (to.path === "/user/login") {
+          next("/");
+        } else {
+          next({ path: to.fullPath, replace: true });
+        }
+      })
+      .catch((error) => {
+        store.dispatch("app/logout");
+        Message.error(error.message || "登录状态已失效，请重新登录");
+        next("/user/login");
+      });
   });
   
   export default router;

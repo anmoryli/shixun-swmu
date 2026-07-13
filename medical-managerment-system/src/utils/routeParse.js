@@ -2,37 +2,60 @@ import { getMenuList } from "../api/Login";
 import Layout from "../layout/index.vue";
 
 function tree(data, arr) {
-  data.forEach((datas, index) => {
-    arr.push({
-      path: datas.path,
-      name: datas.name,
-      component:
-        datas.component == "Layout"
-          ? Layout
-          : () => import(`../views/${datas.component}/index.vue`),
-      meta: {
-        title: datas.meta.title,
-      },
-      // 子路由
-      children: [],
-    });
-    if (datas.children) {
-      const childArr = tree(datas.children, []);
-      arr[index].children = childArr;
+  if (!Array.isArray(data)) {
+    return arr;
+  }
+
+  data.forEach((item) => {
+    if (!item || !item.path || !item.component) {
+      return;
     }
+
+    const route = {
+      path: item.path,
+      name: item.name || item.path,
+      component:
+        item.component === "Layout"
+          ? Layout
+          : () => import(`../views/${item.component}/index.vue`),
+      meta: {
+        title: (item.meta && item.meta.title) || item.title || item.name || "慧医数字医疗",
+      },
+      children: [],
+    };
+
+    if (Array.isArray(item.children) && item.children.length) {
+      route.children = tree(item.children, []);
+    }
+    arr.push(route);
   });
   return arr;
 }
-export function getMenu() {
-    return new Promise((resolve, reject) => {
-      getMenuList(JSON.parse(localStorage.getItem('userInfo')).utype).then((res) => {
-        if (res.data.code == 20000) {
-          // 调用 tree 函数来解析后端返回来的树
-          resolve(tree(res.data.data.permissions, []))
-        } else {
-            alert('获取菜单列表失败！')
-            reject()
-        }
-      });
-    })
+
+function getStoredRole() {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
+    return userInfo && userInfo.utype;
+  } catch (error) {
+    return null;
   }
+}
+
+export async function getMenu() {
+  const roleName = getStoredRole();
+  if (roleName === null || roleName === undefined) {
+    throw new Error("登录信息无效，请重新登录");
+  }
+
+  const res = await getMenuList(roleName);
+  if (!res.data || Number(res.data.code) !== 20000) {
+    throw new Error((res.data && res.data.message) || "获取菜单列表失败");
+  }
+
+  const permissions = res.data.data && res.data.data.permissions;
+  const routes = tree(permissions, []);
+  if (!routes.length) {
+    throw new Error("当前账号没有可访问的菜单");
+  }
+  return routes;
+}

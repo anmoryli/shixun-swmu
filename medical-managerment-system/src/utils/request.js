@@ -2,24 +2,38 @@ import axios from "axios";
 import { Message } from "element-ui";
 import router from "../router/index";
 
-axios.default.withCredentials = true;
+// 默认使用同源 /api，生产部署时可通过环境变量切换到独立网关。
+export const API_BASE_URL = (
+  process.env.VUE_APP_API_BASE_URL ||
+  process.env.VUE_APP_URL ||
+  "/api"
+).replace(/\/$/, "");
+
+const withCredentials = process.env.VUE_APP_WITH_CREDENTIALS !== "false";
+axios.defaults.withCredentials = withCredentials;
+
+export function resolveApiUrl(path = "") {
+  return `${API_BASE_URL}/${String(path).replace(/^\//, "")}`;
+}
+
 // 创建 axios 实例
-let service = axios.create({
-  baseURL: "http://localhost:8080/api", //远程服务器地址
-  timeout: 5000, // 请求超时时间
+const service = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: Number(process.env.VUE_APP_API_TIMEOUT) || 10000,
+  withCredentials,
 });
 // request 拦截器
 service.interceptors.request.use(
     (config) => {
-        if (localStorage.getItem("token")) {
-            config.headers = {
-                Authorization: localStorage.getItem("token"), // 携带权限参数
-            };
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers = config.headers || {};
+            config.headers.Authorization = token;
         }
         return config;
     },
     (error) => {
-        Promise.reject(error);
+        return Promise.reject(error);
     }
 );
 //response 拦截器
@@ -34,8 +48,10 @@ service.interceptors.response.use(
             });
             setTimeout(() => {
                 localStorage.removeItem("token");
-                localStorage.removeItem('userInfo')
-                router.push("/user/login");
+                localStorage.removeItem("userInfo");
+                if (router.currentRoute.path !== "/user/login") {
+                    router.replace("/user/login");
+                }
             }, 500);
         }
         return response;

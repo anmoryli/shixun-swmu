@@ -24,8 +24,11 @@ const actions = {
         });
     },
     // 新增销售地点
-    addSalePlace({ dispatch }, { saleName, salePhone, size }) {
-        addSalePlace(saleName, salePhone).then((res) => {
+    addSalePlace(
+        { dispatch },
+        { saleName, salePhone, address, longitude, latitude, size }
+    ) {
+        addSalePlace({ saleName, salePhone, address, longitude, latitude }).then((res) => {
             //   新增之后跳转到最后一页
             dispatch("getSalePlaceInfo", { pn: res.data.data.pages, size });
         });
@@ -39,9 +42,15 @@ const actions = {
     // 修改销售地点信息
     modifySalePlaceInfo(
         { dispatch },
-        { saleId, saleName, salePhone, pn, size, keyword }
+        { saleId, saleName, salePhone, address, longitude, latitude, pn, size, keyword }
     ) {
-        modifySalePlaceInfo(saleId, saleName, salePhone).then(() => {
+        modifySalePlaceInfo(saleId, {
+            saleName,
+            salePhone,
+            address,
+            longitude,
+            latitude,
+        }).then(() => {
             dispatch("getSalePlaceInfo", { pn, size, keyword });
         });
     },
