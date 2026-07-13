@@ -95,6 +95,10 @@ sale_longitude_column=true
 - 清理 9 条同时引用不存在药品/药店的 `drug_sale` 关系后补充外键。
 - 补充核心唯一索引、查询索引和关系外键。
 
+接口回归发现“重置密码后删除医生”会被审计外键阻止，因此新增
+`sql/migrations/V3__password_audit_delete_policy.sql`，把密码重置审计设为账号生命周期级联。
+V3 已在远程 `medicine` 执行并验证 `DELETE_RULE=CASCADE`；修复后删除医生、账号和对应测试审计可在同一事务完成。
+
 迁移后验证：
 
 | 指标 | 结果 |
@@ -125,6 +129,7 @@ sale_longitude_column=true
 1. 重建时新建空 `medicine`。
 2. 执行 `sql/medical.sql`。
 3. 执行 `sql/migrations/V2__requirements_alignment.sql`。
-4. 按本文档中的表数、权限和质量记录进行校验。
+4. 执行 `sql/migrations/V3__password_audit_delete_policy.sql`。
+5. 按本文档中的表数、权限和质量记录进行校验。
 
 不要在已有业务数据的 schema 上重复执行原始 SQL；其中的 `DROP TABLE` 会删除现有表。
