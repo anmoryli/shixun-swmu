@@ -8,13 +8,24 @@
 - `medical-backend/`：Spring Boot 后端
 - `sql/`：原始 SQL 与增量迁移
 - `api-tests/`：Python 黑盒回归和 Postman Collection
-- `deploy/`：Nginx、systemd、环境模板和部署脚本
+- `deploy/`：Docker、systemd、环境模板和部署脚本
 - `process-docs/`：独立的全流程文档与证据
 
 ## 当前访问
 
-- 前端：<http://localhost:9092/>
-- 后端健康检查：<http://localhost:8082/actuator/health>
+- Docker 前端：<http://localhost:9092/>
+- Docker 同源健康检查：<http://localhost:9092/actuator/health>
+
+## Docker 一键运行
+
+首次运行先配置本机 Docker Secrets，然后启动：
+
+```powershell
+.\deploy\docker\init-secrets.ps1
+docker compose up -d --build
+```
+
+已经创建过私有密码文件时可直接执行第二条命令。完整说明见 `deploy/docker/README.md`。
 
 ## 构建
 
@@ -27,4 +38,4 @@ npm install
 npm run build
 ```
 
-远程数据库和 Redis 密码必须通过环境变量传入，不要写入仓库。完整启动、测试和部署方法见 `process-docs/` 与 `deploy/README.md`。
+远程数据库和 Redis 密码必须通过本机私有环境文件或 Docker Secrets 传入，不要写入仓库。完整启动、测试和部署方法见 `process-docs/` 与 `deploy/README.md`。

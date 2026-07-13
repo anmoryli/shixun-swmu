@@ -11,7 +11,7 @@
 - MySQL：远程 `medicine`，原始 SQL + V2/V3 迁移。
 - Redis：远程会话存储，连接与 TTL 流程验证。
 - 测试：8 项 Maven 测试，57 项黑盒 API 回归，Postman 59 请求。
-- 部署：JAR、前端 dist、Nginx、systemd、环境模板和验证脚本。
+- 部署：JAR、前端 dist、Docker Compose、双 Dockerfile、systemd、Secrets 配置和验证脚本。
 - 文档：需求、架构、数据库、接口测试、部署、验收及证据目录。
 
 ## 验收结果
@@ -30,6 +30,7 @@
 | API 回归 | 57/57 |
 | 前端生产构建 | 通过 |
 | JDK 17 启动 | 通过 |
+| Docker Compose | 2/2 healthy，API 57/57 |
 | MySQL/Redis 健康检查 | UP/UP |
 | 临时测试数据清理 | 0 条残留 |
 
@@ -40,3 +41,4 @@
 - 目标 Linux 主机未提供 OS 级部署凭据，未覆盖其现有 8080 服务；本地 JDK 17 部署和 Linux 配置包已完成。
 - CodeArts 使用手册已纳入工程输入，但未提供具体 CodeArts 项目/仓库地址和授权，因此本次完成的是本地 Git 分阶段管理，未伪造平台上传记录。
 - 演示管理员账号来自原始 SQL，正式环境上线前应修改默认密码并创建最小权限数据库账号。
+- 原始 SQL 的 6 条药品图片使用历史 `localhost:8080` 绝对地址，且原始图片文件未随仓库提供；Docker 中新上传图片及持久卷链路已验证正常。

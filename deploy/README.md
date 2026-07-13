@@ -2,6 +2,17 @@
 
 本目录提供 openEuler/Linux 目标环境的 Nginx、systemd 和环境变量模板。真实密码只写入服务器上的 `/etc/medicine/medicine-backend.env`，权限设置为 `0600`，不要提交到 Git。
 
+## 推荐：Docker Compose
+
+Docker 部署已经完成实际构建与回归验证。在仓库根目录执行：
+
+```powershell
+.\deploy\docker\init-secrets.ps1  # 首次配置密码时执行
+docker compose up -d --build
+```
+
+密码配置、验证、日志、停止和升级方式见 `docker/README.md`。
+
 ## 产物
 
 - 后端：`medical-backend/target/medical-backend-1.0.0.jar`

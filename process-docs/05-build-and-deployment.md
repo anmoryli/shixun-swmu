@@ -45,7 +45,7 @@ Actuator 最终状态：
 - JDK 17 下登录、权限、仪表盘和退出均返回 `20000`。
 - 前端开发服务 HTTP 200，生产 `dist/index.html` 存在。
 
-当前两个服务均保持运行，便于验收查看。
+当前已切换为 Docker Compose 运行，页面仍使用 `9092`，后端 `8082` 仅在 Docker 网络内暴露。
 
 ## 4. openEuler/Linux 部署包
 
@@ -58,7 +58,7 @@ Actuator 最终状态：
 - `scripts/verify-deployment.ps1`
 - `README.md`
 
-生产拓扑：Nginx 发布前端、同源代理 `/api`、单独映射 `/image`；后端以非 root 用户运行，密码来自权限为 0600 的 EnvironmentFile。
+Docker 拓扑：BusyBox 发布前端静态文件，浏览器直接访问后端 `8082` API 与 `/image`；后端以非 root 用户运行，密码来自 Docker Secrets。
 
 ## 5. 部署验证与回滚
 
@@ -68,7 +68,7 @@ Actuator 最终状态：
 2. `curl http://localhost:8082/actuator/health`。
 3. 管理员登录、菜单、仪表盘和八类 GET。
 4. 医生写接口越权检查。
-5. Nginx `/api` 和 `/image` 同源访问。
+5. 后端 `/api` 和 `/image` 通过发布端口直接访问，上传目录由命名卷持久化。
 
 回滚：
 
@@ -86,3 +86,22 @@ Actuator 最终状态：
 按验收要求，后端默认端口已由 `8080` 调整为 `8082`，前端开发代理、接口测试、Postman 环境、Nginx upstream、启动与验证脚本均已同步。上方 `Tomcat started on port(s): 8080` 是调整前的历史启动证据，保留不改写。
 
 本机 QQ 占用了 IPv4 `0.0.0.0:8082`，本次后端通过 `SERVER_ADDRESS=::1` 安全绑定到 IPv6 本地回环地址，未结束或干扰 QQ；浏览器与前端代理统一使用 `localhost:8082`。
+
+## 8. Docker Compose 部署记录（2026-07-13）
+
+![Docker Compose 健康拓扑](evidence/deployment/docker-compose-health.svg)
+
+根目录 `compose.yaml` 提供前后端一键构建和启动：
+
+```powershell
+docker compose up -d --build
+```
+
+- `medicine-backend:1.0.0`：Temurin JRE 17.0.19，非 root UID/GID 10001，内部端口 8082，只读根文件系统，默认 768 MB/1.5 CPU/PID 256 上限。
+- `medicine-web:1.0.0`：BusyBox 静态文件服务，对外发布 9092；API 基址通过 `MEDICINE_API_BASE_URL` 构建参数配置。
+- MySQL/Redis 密码通过 `.work/private/docker/*.txt` 以 Docker Secrets 只读挂载，不进入镜像、Compose 明文或容器环境。
+- 上传文件保存在命名卷 `medicine_uploads`；执行 `docker compose down` 后重建容器，测试图片仍返回 HTTP 200。
+- 两个容器均为 `healthy`；同源健康检查 HTTP 200；Docker 入口黑盒回归 57/57。
+- Web 默认仅绑定 `127.0.0.1:9092`；JSON 日志按 10 MB × 3 文件轮转，后端停止宽限期为 40 秒。
+
+完整命令和密码轮换方式见 `deploy/docker/README.md`，详细实测证据见 `evidence/deployment/docker-compose-20260713.md`。

@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: './',
+  publicPath: '/',
   lintOnSave: false, // 关闭ESLint检查
   devServer: {
     host: "0.0.0.0",

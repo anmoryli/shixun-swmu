@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="500" viewBox="0 0 1100 500">
+  <rect width="1100" height="500" rx="24" fill="#f4faf9"/>
+  <text x="55" y="60" font-family="Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#173f3b">Docker Compose 部署健康拓扑</text>
+  <text x="55" y="94" font-family="Microsoft YaHei, sans-serif" font-size="16" fill="#647d79">2026-07-13 · 两容器 healthy · 同源 API 回归 57/57</text>
+
+  <g font-family="Microsoft YaHei, sans-serif">
+    <rect x="55" y="155" width="205" height="165" rx="18" fill="#fff" stroke="#cce7e2" stroke-width="2"/>
+    <circle cx="157" cy="205" r="27" fill="#2ba596"/><path d="M144 205l9 9 18-23" fill="none" stroke="#fff" stroke-width="5"/>
+    <text x="157" y="260" text-anchor="middle" font-size="21" font-weight="700" fill="#244843">浏览器入口</text>
+    <text x="157" y="290" text-anchor="middle" font-size="15" fill="#6e8582">localhost:9092</text>
+
+    <rect x="325" y="155" width="205" height="165" rx="18" fill="#fff" stroke="#cce7e2" stroke-width="2"/>
+    <circle cx="427" cy="205" r="27" fill="#2ba596"/><path d="M414 205l9 9 18-23" fill="none" stroke="#fff" stroke-width="5"/>
+    <text x="427" y="260" text-anchor="middle" font-size="21" font-weight="700" fill="#244843">Nginx 前端</text>
+    <text x="427" y="290" text-anchor="middle" font-size="15" fill="#6e8582">medicine-web · healthy</text>
+
+    <rect x="595" y="155" width="205" height="165" rx="18" fill="#fff" stroke="#cce7e2" stroke-width="2"/>
+    <circle cx="697" cy="205" r="27" fill="#2ba596"/><path d="M684 205l9 9 18-23" fill="none" stroke="#fff" stroke-width="5"/>
+    <text x="697" y="260" text-anchor="middle" font-size="21" font-weight="700" fill="#244843">Spring 后端</text>
+    <text x="697" y="290" text-anchor="middle" font-size="15" fill="#6e8582">backend:8082 · healthy</text>
+
+    <rect x="865" y="135" width="180" height="90" rx="16" fill="#fff" stroke="#cce7e2" stroke-width="2"/>
+    <text x="955" y="175" text-anchor="middle" font-size="20" font-weight="700" fill="#244843">MySQL</text>
+    <text x="955" y="202" text-anchor="middle" font-size="14" fill="#6e8582">medicine · remote</text>
+    <rect x="865" y="250" width="180" height="90" rx="16" fill="#fff" stroke="#cce7e2" stroke-width="2"/>
+    <text x="955" y="290" text-anchor="middle" font-size="20" font-weight="700" fill="#244843">Redis</text>
+    <text x="955" y="317" text-anchor="middle" font-size="14" fill="#6e8582">session · remote</text>
+
+    <path d="M260 237h65M530 237h65M800 210h65M800 270h65" stroke="#2ba596" stroke-width="4" marker-end="url(#arrow)"/>
+    <rect x="575" y="380" width="245" height="70" rx="14" fill="#eaf7f4" stroke="#b9ded7"/>
+    <text x="697" y="410" text-anchor="middle" font-size="17" font-weight="700" fill="#355d58">medicine_uploads</text>
+    <text x="697" y="435" text-anchor="middle" font-size="14" fill="#6e8582">命名卷 · 重建后持久化</text>
+    <path d="M697 320v60" stroke="#2ba596" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="280" y="380" width="220" height="70" rx="14" fill="#fff8ed" stroke="#edd4ad"/>
+    <text x="390" y="410" text-anchor="middle" font-size="17" font-weight="700" fill="#6b552f">Docker Secrets</text>
+    <text x="390" y="435" text-anchor="middle" font-size="14" fill="#8b7651">密码不进镜像与 Git</text>
+    <path d="M500 415h75" stroke="#c49a58" stroke-width="3" marker-end="url(#arrowGold)"/>
+  </g>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#2ba596"/></marker>
+    <marker id="arrowGold" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#c49a58"/></marker>
+  </defs>
+</svg>

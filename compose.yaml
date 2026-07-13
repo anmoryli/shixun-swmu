@@ -1,0 +1,106 @@
+name: "${MEDICINE_PROJECT_NAME:-medicine}"
+
+services:
+  backend:
+    image: "medicine-backend:${MEDICINE_IMAGE_TAG:-1.0.0}"
+    build:
+      context: ./medical-backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    stop_grace_period: 40s
+    mem_limit: "${MEDICINE_BACKEND_MEMORY:-768m}"
+    cpus: "${MEDICINE_BACKEND_CPUS:-1.5}"
+    pids_limit: 256
+    environment:
+      SERVER_PORT: "8082"
+      SERVER_ADDRESS: "0.0.0.0"
+      DB_URL: "${MEDICINE_DB_URL:-jdbc:mysql://106.54.210.109:3306/medicine?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}"
+      DB_USERNAME: "${MEDICINE_DB_USERNAME:-root}"
+      DB_PASSWORD_FILE: /run/secrets/mysql_password
+      REDIS_HOST: "${MEDICINE_REDIS_HOST:-106.54.210.109}"
+      REDIS_PORT: "${MEDICINE_REDIS_PORT:-6379}"
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
+      REDIS_DATABASE: "${MEDICINE_REDIS_DATABASE:-0}"
+      TOKEN_TTL: "${MEDICINE_TOKEN_TTL:-8h}"
+      CORS_ALLOWED_ORIGINS: "${MEDICINE_CORS_ALLOWED_ORIGINS:-http://localhost:9092,http://127.0.0.1:9092}"
+      APP_UPLOAD_DIRECTORY: /app/uploads
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: never
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 2MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 3MB
+    secrets:
+      - mysql_password
+      - redis_password
+    volumes:
+      - medicine_uploads:/app/uploads
+    expose:
+      - "8082"
+    ports:
+      - "${MEDICINE_BACKEND_BIND:-127.0.0.1}:${MEDICINE_BACKEND_PORT:-18082}:8082"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:8082/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 6
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - medicine_net
+
+  web:
+    image: "medicine-web:${MEDICINE_IMAGE_TAG:-1.0.0}"
+    build:
+      context: ./medical-managerment-system
+      dockerfile: Dockerfile
+      args:
+        MEDICINE_API_BASE_URL: "${MEDICINE_API_BASE_URL:-http://localhost:18082/api}"
+    restart: unless-stopped
+    stop_grace_period: 15s
+    mem_limit: "${MEDICINE_WEB_MEMORY:-128m}"
+    cpus: "${MEDICINE_WEB_CPUS:-0.5}"
+    pids_limit: 128
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${MEDICINE_BIND_ADDRESS:-127.0.0.1}:${MEDICINE_WEB_PORT:-9092}:80"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/index.html"]
+      interval: 10s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - medicine_net
+
+volumes:
+  medicine_uploads:
+    name: "${MEDICINE_UPLOAD_VOLUME:-medicine_uploads}"
+
+networks:
+  medicine_net:
+    name: "${MEDICINE_NETWORK_NAME:-medicine_net}"
+
+secrets:
+  mysql_password:
+    file: ./.work/private/docker/mysql-password.txt
+  redis_password:
+    file: ./.work/private/docker/redis-password.txt

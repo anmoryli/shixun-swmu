@@ -18,6 +18,13 @@ $env:ADMIN_PASSWORD = '<管理员密码>'
 python .\api-tests\run_api_tests.py
 ```
 
+Docker Compose 部署时直接测试后端发布端口（前端为纯静态服务）：
+
+```powershell
+$env:BASE_URL = 'http://localhost:18082'
+python .\api-tests\run_api_tests.py
+```
+
 可选变量：
 
 | 变量 | 默认值 | 说明 |
