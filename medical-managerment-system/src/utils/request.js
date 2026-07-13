@@ -41,7 +41,7 @@ service.interceptors.response.use(
     (response) => {
         const res = response.data;
         // code为10006代表token失效，需要重新登录
-        if (res.code == 10006) {
+        if (res.code === 10006) {
             Message({
                 type: "error",
                 message: "登录已失效，请重新登录",

@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'//引入router
-import store from './store'//引入vuex
+import router from './router' // 引入router
+import store from './store' // 引入vuex
 
-import _ from 'lodash'//js库
-import "./style/reset.css";//引入样式
-import Fragment from "vue-fragment";//处理Dom插件
-import "animate.css";//引入样式
+import _ from 'lodash' // js库
+import "./style/reset.css"; // 引入样式
+import Fragment from "vue-fragment"; // 处理Dom插件
+import "animate.css"; // 引入样式
 import Element from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 
@@ -19,7 +19,7 @@ Vue.mixin({
       // 进行按钮权限控制
       hasRole() {
           if(localStorage.getItem('userInfo')) {
-              if(JSON.parse(localStorage.getItem('userInfo')).utype == 1) {
+              if(JSON.parse(localStorage.getItem('userInfo')).utype === 1) {
                   return true
               } else {
                   return false

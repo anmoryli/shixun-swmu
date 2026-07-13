@@ -5,7 +5,6 @@ import {
     judgeModifyResult,
 } from "../../utils/app";
 import request from "../../utils/request";
-// import Qs from 'qs'
 
 // 查询公司信息api
 export function getCompanyInfo(pn, size, keyword = "") {

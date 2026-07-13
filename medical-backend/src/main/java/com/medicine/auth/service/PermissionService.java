@@ -1,10 +1,11 @@
 package com.medicine.auth.service;
 
+import org.springframework.stereotype.Service;
+
 import com.medicine.auth.dto.PermissionMeta;
 import com.medicine.auth.dto.PermissionNode;
 import com.medicine.auth.mapper.PermissionMapper;
 import com.medicine.auth.model.PermissionRecord;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

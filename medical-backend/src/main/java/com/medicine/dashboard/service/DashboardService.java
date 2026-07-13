@@ -1,8 +1,9 @@
 package com.medicine.dashboard.service;
 
+import org.springframework.stereotype.Service;
+
 import com.medicine.dashboard.dto.DashboardView;
 import com.medicine.dashboard.mapper.DashboardMapper;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DashboardService {

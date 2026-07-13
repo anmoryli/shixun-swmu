@@ -1,8 +1,9 @@
 package com.medicine.business.service;
 
-import com.medicine.business.mapper.MaterialMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.medicine.business.mapper.MaterialMapper;
 
 import java.util.Map;
 
@@ -25,13 +26,15 @@ public class MaterialService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
-        mapper.insert(PageSupport.stringValue(request.get("title")), PageSupport.stringValue(request.get("message")));
+        mapper.insert(PageSupport.stringValue(request.get("title")),
+                PageSupport.stringValue(request.get("message")));
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
 
     @Transactional
     public void update(Long id, Map<String, Object> request) {
-        mapper.update(id, PageSupport.stringValue(request.get("title")), PageSupport.stringValue(request.get("message")));
+        mapper.update(id, PageSupport.stringValue(request.get("title")),
+                PageSupport.stringValue(request.get("message")));
     }
 
     @Transactional

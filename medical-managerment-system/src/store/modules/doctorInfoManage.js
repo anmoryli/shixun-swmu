@@ -40,7 +40,7 @@ const actions = {
     ) {
         return addDoctor(age, levelId, name, phoneNumber, pwd, sex, typeId).then(
             (res) => {
-                if (res.data.code == 10001) {
+                if (res.data.code === 10001) {
                     return false;
                 } else {
                     // 新增之后跳转到最后一页
@@ -85,8 +85,7 @@ const actions = {
           typeId,
           id
         ).then((res) => {
-          console.log(res);
-          if (res.data.code == 10001) {
+          if (res.data.code === 10001) {
             return false;
           } else {
             dispatch("getDoctorInfo", { pn, size, keyword });

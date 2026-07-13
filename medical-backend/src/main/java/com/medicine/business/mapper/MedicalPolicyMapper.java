@@ -40,7 +40,8 @@ public interface MedicalPolicyMapper {
                @Param("updateTime") String updateTime,
                @Param("message") String message);
 
-    @Update("UPDATE medical_policy SET city_id=#{cityId}, title=#{title}, message=#{message}, update_time=#{updateTime} "
+    @Update("UPDATE medical_policy SET city_id=#{cityId}, title=#{title}, "
+            + "message=#{message}, update_time=#{updateTime} "
             + "WHERE id=#{id}")
     int update(@Param("id") Long id,
                @Param("cityId") Long cityId,

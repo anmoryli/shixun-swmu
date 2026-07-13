@@ -4,8 +4,11 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
 SUCCESS_TEST = """
@@ -406,7 +409,10 @@ if (row) {
             formdata=[
                 {"key": "file", "type": "file", "src": "{{testImagePath}}", "contentType": "image/png"}
             ],
-            extra_tests="pm.test(\"Image URL is returned\", () => pm.expect(payload.data.url).to.be.a(\"string\").and.not.empty);",
+            extra_tests=(
+                "pm.test(\"Image URL is returned\", () => "
+                "pm.expect(payload.data.url).to.be.a(\"string\").and.not.empty);"
+            ),
         ),
         request(
             "拒绝非图片 MIME",
@@ -604,7 +610,7 @@ if (row) pm.collectionVariables.set("drugId", row.drugId);
     output = Path(__file__).parent / "postman" / "medicine-api.postman_collection.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(collection, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(output)
+    logging.info(output)
 
 
 if __name__ == "__main__":

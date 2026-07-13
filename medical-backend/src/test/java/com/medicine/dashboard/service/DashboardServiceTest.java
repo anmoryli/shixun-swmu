@@ -1,17 +1,18 @@
 package com.medicine.dashboard.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+
 import com.medicine.dashboard.dto.DashboardCounts;
 import com.medicine.dashboard.dto.DashboardNews;
 import com.medicine.dashboard.dto.DashboardView;
 import com.medicine.dashboard.dto.NameValue;
 import com.medicine.dashboard.mapper.DashboardMapper;
-import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class DashboardServiceTest {
 

@@ -5,7 +5,6 @@ import {
     judgeModifyResult,
 } from "../../utils/app";
 import request from "../../utils/request";
-// import Qs from 'qs'
 
 // 查询医保政策信息api
 export function getMedicalPolicyInfo(params) {

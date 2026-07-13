@@ -48,7 +48,8 @@ public interface DoctorMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertAccount(Map<String, Object> account);
 
-    @Insert("INSERT INTO doctor(name, age, sex, level_id, phone, type_id, hospital, updatetime, createtime, account_id) "
+    @Insert("INSERT INTO doctor(name, age, sex, level_id, phone, type_id, hospital, "
+            + "updatetime, createtime, account_id) "
             + "VALUES(#{name}, #{age}, #{sex}, #{levelId}, #{phoneNumber}, #{typeId}, "
             + "'青岛第一人民医院', NOW(), NOW(), #{accountId})")
     int insertDoctor(Map<String, Object> doctor);

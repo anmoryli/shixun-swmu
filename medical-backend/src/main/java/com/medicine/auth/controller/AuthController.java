@@ -1,13 +1,5 @@
 package com.medicine.auth.controller;
 
-import com.medicine.auth.dto.LoginRequest;
-import com.medicine.auth.dto.LoginResult;
-import com.medicine.auth.dto.PermissionNode;
-import com.medicine.auth.service.AuthService;
-import com.medicine.auth.service.PermissionService;
-import com.medicine.common.ApiResponse;
-import com.medicine.security.AuthSession;
-import com.medicine.security.TokenService;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -19,10 +11,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import com.medicine.auth.dto.LoginRequest;
+import com.medicine.auth.dto.LoginResult;
+import com.medicine.auth.dto.PermissionNode;
+import com.medicine.auth.service.AuthService;
+import com.medicine.auth.service.PermissionService;
+import com.medicine.common.ApiResponse;
+import com.medicine.common.BusinessException;
+import com.medicine.common.ErrorCode;
+import com.medicine.security.AuthSession;
+import com.medicine.security.TokenService;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 @Validated
 @RestController
@@ -53,7 +57,11 @@ public class AuthController {
     public ApiResponse<Map<String, List<PermissionNode>>> permissions(
             @RequestParam(value = "roleName", required = false) String ignoredRoleName,
             Authentication authentication) {
-        AuthSession session = (AuthSession) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof AuthSession)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "无效的登录会话");
+        }
+        AuthSession session = (AuthSession) principal;
         List<PermissionNode> permissions = permissionService.findPermissionTree(session.getRoleName());
         return ApiResponse.success(Collections.singletonMap("permissions", permissions));
     }

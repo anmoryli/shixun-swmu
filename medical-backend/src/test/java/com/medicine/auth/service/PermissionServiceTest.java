@@ -1,16 +1,17 @@
 package com.medicine.auth.service;
 
-import com.medicine.auth.dto.PermissionNode;
-import com.medicine.auth.mapper.PermissionMapper;
-import com.medicine.auth.model.PermissionRecord;
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+
+import com.medicine.auth.dto.PermissionNode;
+import com.medicine.auth.mapper.PermissionMapper;
+import com.medicine.auth.model.PermissionRecord;
+
+import java.util.Arrays;
+import java.util.List;
 
 class PermissionServiceTest {
 

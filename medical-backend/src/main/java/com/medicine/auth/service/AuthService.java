@@ -1,5 +1,8 @@
 package com.medicine.auth.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.medicine.auth.dto.LoginResult;
 import com.medicine.auth.dto.UserInfo;
 import com.medicine.auth.mapper.AccountMapper;
@@ -8,8 +11,6 @@ import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
 import com.medicine.security.AuthSession;
 import com.medicine.security.TokenService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {

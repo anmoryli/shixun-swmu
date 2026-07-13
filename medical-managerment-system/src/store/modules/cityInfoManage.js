@@ -26,7 +26,7 @@ const actions = {
     addCity({ dispatch }, { cityNumber, size }) {
         addCity(cityNumber).then((res) => {
             // 新增之后跳转到最后一页
-            if (res.data.code == 20000) {
+            if (res.data.code === 20000) {
                 dispatch("getCityInfo", { pn: res.data.data.pages, size });
             }
         });

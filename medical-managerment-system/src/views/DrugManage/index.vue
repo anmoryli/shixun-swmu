@@ -370,11 +370,9 @@ export default {
       this.uploading = false;
       this.percentage = 0;
       this.status = null;
-      console.log(err);
       let myError = err.toString(); //转字符串
       myError = myError.replace("Error: ", ""); // 去掉前面的" Error: "
       myError = JSON.parse(myError); //转对象
-      console.log(myError);
     },
     // 对上传的文件类型及大小进行限制
     beforeImgUpload(file) {

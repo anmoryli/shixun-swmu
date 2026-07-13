@@ -9,6 +9,7 @@ up in dependency order, and writes JSON, JUnit XML and Markdown evidence.
 from __future__ import annotations
 
 import json
+import logging
 import mimetypes
 import os
 import sys
@@ -23,6 +24,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
 SUCCESS = 20000
@@ -669,7 +672,7 @@ def main() -> int:
                     "cityId": policy_city_id,
                     "title": medical_policy_title,
                     "message": "API 自动化测试医保政策",
-                    "updateTime": datetime.now().strftime("%Y-%m-%d"),
+                    "updateTime": datetime.now(tz=timezone.utc).strftime("%Y-%m-%d"),
                 },
             )
             policy_page = suite.expect_api(
@@ -690,7 +693,7 @@ def main() -> int:
                         "cityId": policy_city_id,
                         "title": f"{medical_policy_title}-updated",
                         "message": "已修改",
-                        "updateTime": datetime.now().strftime("%Y-%m-%d"),
+                        "updateTime": datetime.now(tz=timezone.utc).strftime("%Y-%m-%d"),
                     },
                 )
         else:
@@ -860,17 +863,17 @@ def write_reports(
         detail = (case.detail or "-").replace("|", "\\|").replace("\n", " ")[:240]
         codes = f"{case.http_status or '-'} / {case.api_code if case.api_code is not None else '-'}"
         lines.append(
-            f"| {symbols[case.status]} | {case.name} | {case.method or '-'} | {codes} | "
+            f"| {symbols.get(case.status, '-')} | {case.name} | {case.method or '-'} | {codes} | "
             f"{case.elapsed_ms} ms | {detail} |"
         )
     markdown = "\n".join(lines) + "\n"
     markdown_path.write_text(markdown, encoding="utf-8")
     latest_path.write_text(markdown, encoding="utf-8")
 
-    print(json.dumps(report["summary"], ensure_ascii=False))
-    print(f"JSON: {json_path}")
-    print(f"JUnit: {junit_path}")
-    print(f"Markdown: {markdown_path}")
+    logging.info(json.dumps(report["summary"], ensure_ascii=False))
+    logging.info(f"JSON: {json_path}")
+    logging.info(f"JUnit: {junit_path}")
+    logging.info(f"Markdown: {markdown_path}")
     return 1 if failed else 0
 
 

@@ -402,11 +402,12 @@ export default {
       this.$nextTick(() => this.$refs.addForm && this.$refs.addForm.clearValidate());
     },
     handleModifyClose() {
-      // this.$refs.modifyForm.clearValidate();
       this.$refs.modifyForm.resetFields();
     },
     toCoordinate(value) {
-      if (value === "" || value === null || value === undefined) return null;
+      if (value === "" || value === null || value === undefined) {
+        return null;
+      }
       const coordinate = Number(value);
       return Number.isFinite(coordinate) ? coordinate : null;
     },

@@ -1,12 +1,13 @@
 package com.medicine.business.service;
 
-import com.medicine.business.mapper.DoctorMapper;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.medicine.business.mapper.DoctorMapper;
 
 class DoctorServiceTest {
 

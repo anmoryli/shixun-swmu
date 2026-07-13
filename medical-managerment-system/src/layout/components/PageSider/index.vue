@@ -63,7 +63,9 @@ export default {
   methods: {
     handleMenuListData(data, arr) {
       (Array.isArray(data) ? data : []).forEach((route) => {
-        if (!route || !route.path || route.path === "/user/login") return;
+        if (!route || !route.path || route.path === "/user/login") {
+          return;
+        }
         arr.push({
           path: route.path,
           title: (route.meta && route.meta.title) || route.name || "未命名菜单",

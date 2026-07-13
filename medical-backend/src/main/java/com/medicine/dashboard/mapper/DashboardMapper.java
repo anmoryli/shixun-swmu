@@ -1,9 +1,10 @@
 package com.medicine.dashboard.mapper;
 
+import org.apache.ibatis.annotations.Select;
+
 import com.medicine.dashboard.dto.DashboardCounts;
 import com.medicine.dashboard.dto.DashboardNews;
 import com.medicine.dashboard.dto.NameValue;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 

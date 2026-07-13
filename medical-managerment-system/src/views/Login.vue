@@ -62,7 +62,9 @@ export default {
     handleLogin(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.loggingIn) return;
+          if (this.loggingIn) {
+            return;
+          }
           this.loggingIn = true;
           this.$store
             .dispatch("app/login", this.loginForm)
