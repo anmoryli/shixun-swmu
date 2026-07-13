@@ -1,0 +1,139 @@
+@startuml 01-用例图
+' =========================================================================
+' 慧医数字医疗应用系统 —— 用例图（Use Case Diagram）
+' 阶段：需求分析
+' 角色：管理员(utype=1/ROLE_1)、医生(utype=2/ROLE_2)
+' 数据来源：需求规格说明书 + process-docs/01-requirements-baseline.md
+' =========================================================================
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam shadowing false
+skinparam handwritten false
+
+actor "管理员" as Admin
+actor "医生" as Doctor
+
+rectangle "慧医数字医疗应用系统" {
+
+  ' ---------- 认证与授权 ----------
+  usecase "用户登录" as UC_Login
+  usecase "退出登录" as UC_Logout
+  usecase "加载动态菜单\n/路由权限" as UC_Menu
+  usecase "重置医生密码" as UC_ResetPwd
+
+  ' ---------- 首页 ----------
+  usecase "查看数据面板" as UC_Dashboard
+
+  ' ---------- 医生管理 ----------
+  usecase "医生信息管理" as UC_Doctor
+
+  ' ---------- 基础数据维护 ----------
+  usecase "医药公司管理" as UC_Company
+  usecase "销售地点管理" as UC_Sale
+  usecase "城市信息管理" as UC_City
+  usecase "药品信息管理" as UC_Drug
+  usecase "医保政策管理" as UC_MedPolicy
+  usecase "医药公司政策管理" as UC_ComPolicy
+  usecase "必备材料管理" as UC_Material
+
+  ' ---------- 公共子用例 ----------
+  usecase "分页/条件查询" as UC_Query
+  usecase "新增记录" as UC_Add
+  usecase "修改记录" as UC_Edit
+  usecase "删除记录" as UC_Delete
+  usecase "上传药品图片" as UC_Upload
+  usecase "查看销售地点地图" as UC_Map
+  usecase "引用完整性校验" as UC_RefCheck
+}
+
+' ===== 管理员关系：拥有全部维护权限 =====
+Admin --> UC_Login
+Admin --> UC_Logout
+Admin --> UC_Menu
+Admin --> UC_Dashboard
+Admin --> UC_Doctor
+Admin --> UC_Company
+Admin --> UC_Sale
+Admin --> UC_City
+Admin --> UC_Drug
+Admin --> UC_MedPolicy
+Admin --> UC_ComPolicy
+Admin --> UC_Material
+Admin --> UC_ResetPwd
+
+' ===== 医生关系：只读业务信息，无维护入口 =====
+Doctor --> UC_Login
+Doctor --> UC_Logout
+Doctor --> UC_Menu
+Doctor --> UC_Dashboard
+Doctor --> UC_Company
+Doctor --> UC_Sale
+Doctor --> UC_City
+Doctor --> UC_Drug
+Doctor --> UC_MedPolicy
+Doctor --> UC_ComPolicy
+Doctor --> UC_Material
+
+' ===== include / extend 关系 =====
+UC_Login ..> UC_Menu : <<include>>
+UC_Doctor ..> UC_Query : <<include>>
+UC_Doctor ..> UC_Add : <<extend>>
+UC_Doctor ..> UC_Edit : <<extend>>
+UC_Doctor ..> UC_Delete : <<extend>>
+UC_Doctor ..> UC_ResetPwd : <<extend>>
+
+UC_Drug ..> UC_Query : <<include>>
+UC_Drug ..> UC_Add : <<extend>>
+UC_Drug ..> UC_Edit : <<extend>>
+UC_Drug ..> UC_Delete : <<extend>>
+UC_Drug ..> UC_Upload : <<extend>>
+
+UC_Company ..> UC_Query : <<include>>
+UC_Company ..> UC_Add : <<extend>>
+UC_Company ..> UC_Edit : <<extend>>
+UC_Company ..> UC_Delete : <<extend>>
+
+UC_Sale ..> UC_Query : <<include>>
+UC_Sale ..> UC_Add : <<extend>>
+UC_Sale ..> UC_Edit : <<extend>>
+UC_Sale ..> UC_Delete : <<extend>>
+UC_Sale ..> UC_Map : <<extend>>
+
+UC_City ..> UC_Query : <<include>>
+UC_City ..> UC_Add : <<extend>>
+UC_City ..> UC_Delete : <<extend>>
+
+UC_MedPolicy ..> UC_Query : <<include>>
+UC_MedPolicy ..> UC_Add : <<extend>>
+UC_MedPolicy ..> UC_Edit : <<extend>>
+UC_MedPolicy ..> UC_Delete : <<extend>>
+
+UC_ComPolicy ..> UC_Query : <<include>>
+UC_ComPolicy ..> UC_Add : <<extend>>
+UC_ComPolicy ..> UC_Edit : <<extend>>
+UC_ComPolicy ..> UC_Delete : <<extend>>
+
+UC_Material ..> UC_Query : <<include>>
+UC_Material ..> UC_Add : <<extend>>
+UC_Material ..> UC_Edit : <<extend>>
+UC_Material ..> UC_Delete : <<extend>>
+
+' 删除被政策引用的公司/城市时触发引用校验（扩展点）
+UC_Delete ..> UC_RefCheck : <<extend>>
+
+' 越权约束：医生不能进入写操作（用注释说明）
+note bottom of Doctor
+  <b>权限约束：</b>
+  医生(ROLE_2)仅可调用业务 GET 接口，
+  无新增/修改/删除/重置密码入口；
+  服务端方法级鉴权拒绝越权写请求。
+end note
+
+note right of UC_ResetPwd
+  <b>扩展点：</b>
+  后端生成随机临时密码，
+  仅本次响应返回并写审计记录。
+end note
+
+@enduml

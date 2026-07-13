@@ -1,0 +1,234 @@
+@startuml 04-实体关系图ER
+' =========================================================================
+' 慧医数字医疗应用系统 -- 实体关系图（ER Diagram / 数据库模型）
+' 阶段：静态建模（数据库设计）
+' 数据来源：sql/medical.sql(17表) + migrations(3表) = 20张表
+' 关系标注：PK=主键, FK=外键, UK=唯一键
+' =========================================================================
+hide circle
+skinparam linetype ortho
+skinparam defaultTextAlignment left
+skinparam shadowing false
+
+' ===================== 认证与权限 =====================
+entity "account 账号" as account {
+  * id : bigint <<PK, AUTO>>
+  --
+  realname : varchar
+  uname : varchar <<UK>>
+  pwd : varchar <<BCrypt>>
+  phonenumber : varchar <<UK>>
+  utype : varchar {ROLE_1,ROLE_2}
+  status : tinyint {1启用,0禁用}
+  last_login_time : datetime
+  createtime / updatetime
+}
+
+entity "permission 权限菜单" as permission {
+  * id : int <<PK>>
+  --
+  pid : int <<FK(自引用)>>
+  name : varchar
+  path : varchar
+  component : varchar
+  level : int
+  title : varchar
+}
+
+entity "role_permission 角色权限" as role_permission {
+  * id : int <<PK>>
+  --
+  roleName : varchar {ROLE_1,ROLE_2}
+  per_id : int <<FK>>
+  <<UK (roleName,per_id)>>
+}
+
+entity "password_reset_audit 密码重置审计" as pwd_audit {
+  * id : bigint <<PK>>
+  --
+  account_id : bigint <<FK>>
+  operator_account_id : bigint <<FK>>
+  reset_at : datetime
+}
+
+' ===================== 医生域 =====================
+entity "doctor 医生" as doctor {
+  * id : bigint <<PK, AUTO>>
+  --
+  name : varchar
+  age : int
+  sex : int {1男,2女}
+  level_id : bigint <<FK>>
+  phone : varchar
+  type_id : bigint <<FK>>
+  hospital : varchar
+  account_id : bigint <<FK, UK>>
+  updatetime / createtime
+}
+
+entity "doctor_level 医师级别" as doctor_level {
+  * id : bigint <<PK>>
+  --
+  name : varchar
+}
+
+entity "treat_type 诊治类型" as treat_type {
+  * id : bigint <<PK>>
+  --
+  name : varchar
+}
+
+' ===================== 药品与销售域 =====================
+entity "drug 药品" as drug {
+  * drug_id : bigint <<PK, AUTO>>
+  --
+  drug_name : varchar
+  drug_info : text
+  drug_effect : text
+  drug_img : varchar
+  publisher : varchar
+  createtime / updatetime
+}
+
+entity "drugcompany 医药公司" as drugcompany {
+  * company_id : bigint <<PK, AUTO>>
+  --
+  company_name : varchar
+  company_phone : varchar
+  updatetime / createtime
+}
+
+entity "sale 销售地点" as sale {
+  * sale_id : bigint <<PK, AUTO>>
+  --
+  sale_name : varchar
+  sale_phone : varchar
+  address : varchar
+  longitude : decimal(10,6)
+  latitude : decimal(9,6)
+  createtime / updatetime
+}
+
+entity "drug_sale 药品销售关系" as drug_sale {
+  * id : bigint <<PK>>
+  --
+  drug_id : bigint <<FK>>
+  sale_id : bigint <<FK>>
+  <<UK (drug_id,sale_id)>>
+}
+
+' ===================== 城市与政策域 =====================
+entity "city 城市" as city {
+  * city_id : bigint <<PK, AUTO>>
+  --
+  city_number : int <<UK>>
+  createtime / updatetime
+}
+
+entity "medical_policy 医保政策" as medical_policy {
+  * id : bigint <<PK, AUTO>>
+  --
+  title : varchar
+  message : text
+  city_id : bigint <<FK>>
+  create_time / update_time
+}
+
+entity "company_policy 公司政策" as company_policy {
+  * id : bigint <<PK, AUTO>>
+  --
+  title : varchar
+  message : text
+  company_id : bigint <<FK>>
+  create_time / update_time
+}
+
+' ===================== 内容与扩展域 =====================
+entity "material 必备材料" as material {
+  * id : int <<PK, AUTO>>
+  --
+  title : varchar
+  message : text
+  create_time / update_time
+}
+
+entity "news 资讯" as news {
+  * id : bigint <<PK, AUTO>>
+  --
+  title : varchar
+  summary : varchar(1000)
+  published_at : datetime
+  status : tinyint {1发布,0下线}
+}
+
+entity "data_quality_issue 数据质量审计" as dqi {
+  * id : bigint <<PK, AUTO>>
+  --
+  issue_type : varchar
+  source_table : varchar
+  source_id : bigint
+  details : json
+  detected_at : datetime
+  resolved : tinyint
+}
+
+' ===================== 关系 =====================
+' 认证域
+account ||--o| doctor : "account_id 1:1"
+account ||--o{ pwd_audit : "account_id 被重置"
+account ||--o{ pwd_audit : "operator 操作者"
+permission ||--o{ role_permission : "per_id"
+permission ||--o{ permission : "pid 自引用(菜单树)"
+
+' 医生域
+doctor_level ||--o{ doctor : "level_id"
+treat_type ||--o{ doctor : "type_id"
+
+' 药品销售域
+drug ||--o{ drug_sale : "drug_id"
+sale ||--o{ drug_sale : "sale_id"
+drug }o--o{ sale : "(drug_sale 多对多)"
+
+' 城市政策域
+city ||--o{ medical_policy : "city_id"
+drugcompany ||--o{ company_policy : "company_id"
+
+' ===================== 外键删除策略说明 =====================
+note bottom of doctor
+  <b>外键策略</b>
+  fk_doctor_account : ON DELETE RESTRICT
+  fk_doctor_level  : ON DELETE RESTRICT
+  fk_doctor_type   : ON DELETE RESTRICT
+end note
+
+note bottom of drug_sale
+  <b>外键策略</b>
+  fk_drug_sale_drug : ON DELETE CASCADE
+  fk_drug_sale_sale : ON DELETE RESTRICT
+end note
+
+note bottom of account
+  <b>删除策略</b>
+  password_reset_audit -> account
+  V3 改为 ON DELETE CASCADE
+  保证删医生/账号时审计原子清理
+end note
+
+note bottom of dqi
+  <b>迁移产物</b>
+  归档清理前的脏关系
+  (ORPHAN_DRUG_SALE,
+   INVALID_CITY_REGION 等)
+end note
+
+' 图例
+legend right
+  ||--||  一对一
+  ||--o|  一对零或一
+  ||--o{  一对多
+  }o--o{  多对多
+  <<PK>> 主键  <<FK>> 外键
+  <<UK>> 唯一键  <<AUTO>> 自增
+endlegend
+
+@enduml

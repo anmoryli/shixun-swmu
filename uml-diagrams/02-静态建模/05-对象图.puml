@@ -1,0 +1,85 @@
+@startuml 05-对象图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 对象图（Object Diagram）
+' 阶段：静态建模（实例快照）
+' 说明：展示某一时刻系统中的具体对象实例及其链接，验证类图的可行性
+' 场景：管理员(admin)重置医生"韩峰"密码后的对象快照
+' =========================================================================
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+object "admin : Account" as a1
+a1 : id = 1
+a1 : realname = "系统管理员"
+a1 : uname = "admin"
+a1 : utype = "ROLE_1"
+a1 : status = 1
+
+object "doctorAccount : Account" as a2
+a2 : id = 44
+a2 : realname = "韩峰"
+a2 : uname = "hanfeng_13132509283"
+a2 : utype = "ROLE_2"
+a2 : status = 1
+a2 : last_login_time = null
+
+object "doctor : Doctor" as d1
+d1 : id = 2
+d1 : name = "韩峰"
+d1 : age = 31
+d1 : sex = 1
+d1 : hospital = "青岛第一人民医院"
+d1 : account_id = 44
+
+object "level : DoctorLevel" as lv1
+lv1 : id = 2
+lv1 : name = "普通医师"
+
+object "type : TreatType" as t1
+t1 : id = 2
+t1 : name = "内科"
+
+object "audit : PasswordResetAudit" as au1
+au1 : id = 1001
+au1 : account_id = 44
+au1 : operator_account_id = 1
+au1 : reset_at = 2026-07-13 10:30:00
+
+object "token : AuthSession(Redis)" as tk1
+tk1 : accountId = 1
+tk1 : uname = "admin"
+tk1 : userType = 1
+tk1 : key = "login:token:<sha256>"
+tk1 : ttl = 30m
+
+object "drug : Drug" as dr1
+dr1 : drug_id = 12650466
+dr1 : drug_name = "复方感冒灵颗粒(双蚁)"
+dr1 : publisher = "管理员"
+
+object "sale : Sale" as s1
+s1 : sale_id = 12635265
+s1 : sale_name = "上海大药房"
+s1 : address = "上海市黄浦区南京东路"
+s1 : longitude = 121.490317
+s1 : latitude = 31.222771
+
+' 链接关系（实例间的链接 = 类图中关联的实例化）
+a1 --> tk1 : 持有会话
+a1 --> au1 : 操作者(operator)
+a2 --> au1 : 被重置(account)
+a2 --> d1 : owns(1:1)
+d1 --> lv1 : level_id
+d1 --> t1 : type_id
+dr1 --> s1 : 经 drug_sale 关联销售
+
+note bottom of au1
+  <b>快照说明</b>
+  管理员(id=1)于 2026-07-13 10:30
+  重置医生"韩峰"(account=44)密码，
+  系统生成临时密码并写审计，
+  旧 Token 失效，last_login_time 清空。
+end note
+
+@enduml

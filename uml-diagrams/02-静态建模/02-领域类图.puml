@@ -1,0 +1,167 @@
+@startuml 02-领域类图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 领域模型类图（Domain Class Diagram）
+' 阶段：静态建模（概念模型）
+' 数据来源：sql/medical.sql + migrations + 后端 model 实体
+' 说明：领域实体聚焦业务概念与关联，隐藏数据库细节（时间戳等部分省略）
+' =========================================================================
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+' ============ 认证与权限域 ============
+class 账号 as "账号 Account" {
+  - id : Long
+  - realname : String
+  - uname : String  <<唯一>>
+  - pwd : String  <<BCrypt>>
+  - phonenumber : String  <<唯一>>
+  - utype : String  {ROLE_1管理员, ROLE_2医生}
+  - status : int  {1启用, 0禁用}
+  - lastLoginTime : DateTime
+}
+
+class 权限 as "权限 Permission" {
+  - id : int
+  - pid : int
+  - name : String
+  - path : String
+  - component : String
+  - level : int
+  - title : String
+}
+
+class 角色权限 as "角色权限 RolePermission" {
+  - roleName : String  {ROLE_1, ROLE_2}
+  - perId : int
+}
+
+class 密码重置审计 as "密码重置审计 PasswordResetAudit" {
+  - id : Long
+  - accountId : Long
+  - operatorAccountId : Long
+  - resetAt : DateTime
+}
+
+' ============ 医生域 ============
+class 医生 as "医生 Doctor" {
+  - id : Long
+  - name : String
+  - age : int
+  - sex : int  {1男, 2女}
+  - phone : String
+  - hospital : String
+}
+
+class 医师级别 as "医师级别 DoctorLevel" {
+  - id : Long
+  - name : String  {主任医师, 普通医师, 实习医师}
+}
+
+class 诊治类型 as "诊治类型 TreatType" {
+  - id : Long
+  - name : String
+}
+
+' ============ 药品与销售域 ============
+class 药品 as "药品 Drug" {
+  - drugId : Long
+  - drugName : String
+  - drugInfo : String
+  - drugEffect : String
+  - drugImg : String
+  - publisher : String
+}
+
+class 医药公司 as "医药公司 DrugCompany" {
+  - companyId : Long
+  - companyName : String
+  - companyPhone : String
+}
+
+class 销售地点 as "销售地点 Sale" {
+  - saleId : Long
+  - saleName : String
+  - salePhone : String
+  - address : String
+  - longitude : decimal(10,6)
+  - latitude : decimal(9,6)
+}
+
+class 药品销售关系 as "药品销售关系 DrugSale" {
+  - id : Long
+  - drugId : Long
+  - saleId : Long
+}
+
+' ============ 城市与政策域 ============
+class 城市 as "城市 City" {
+  - cityId : Long
+  - cityNumber : int  <<唯一>>
+}
+
+class 医保政策 as "医保政策 MedicalPolicy" {
+  - id : Long
+  - title : String
+  - message : String
+}
+
+class 公司政策 as "公司政策 CompanyPolicy" {
+  - id : Long
+  - title : String
+  - message : String
+}
+
+' ============ 内容与扩展域 ============
+class 必备材料 as "必备材料 Material" {
+  - id : int
+  - title : String
+  - message : String
+}
+
+class 资讯 as "资讯 News" {
+  - id : Long
+  - title : String
+  - summary : String
+  - publishedAt : DateTime
+  - status : int  {1发布, 0下线}
+}
+
+' ============ 关联关系 ============
+' 认证域
+账号 "1" o-- "0..1" 医生 : owns >
+角色权限 "*" --> "1" 权限 : perId >
+角色权限 "*" --> 账号 : roleName~utype >
+账号 "1" -- "0..*" 密码重置审计 : 被重置 >
+账号 "1" -- "0..*" 密码重置审计 : 操作者 >
+
+' 医生域
+医师级别 "1" -- "0..*" 医生 : classifies >
+诊治类型 "1" -- "0..*" 医生 : treats >
+账号 "1" o-- "0..1" 医生 : account_id >
+
+' 药品销售域
+医药公司 "1" -- "0..*" 公司政策 : publishes >
+药品 "1" -- "0..*" 药品销售关系 : sold_at >
+销售地点 "1" -- "0..*" 药品销售关系 : sells >
+药品 "0..*" -- "*" 销售地点 : (DrugSale关联)
+
+' 城市政策域
+城市 "1" -- "0..*" 医保政策 : applies_to >
+医药公司 "1" -- "0..*" 公司政策 : company_id >
+
+' 权限树自引用
+权限 "0..1" -- "0..*" 权限 : pid(父菜单) >
+
+note bottom of 药品销售关系
+  <b>多对多关联类</b>
+  表达「药品-销售地点」多对多关系，
+  drug_id+sale_id 唯一约束。
+end note
+
+note bottom of 账号
+  <b>核心实体</b>
+  utype 决定角色：ROLE_1管理员/ROLE_2医生
+  pwd 仅存 BCrypt 摘要，不存明文
+end note
+
+@enduml

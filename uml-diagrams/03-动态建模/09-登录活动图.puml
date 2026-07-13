@@ -1,0 +1,72 @@
+@startuml 09-登录活动图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 登录活动图（Activity Diagram）
+' 阶段：动态建模
+' 场景：用户登录、密码校验、Token 签发、动态菜单加载、越权拦截
+' =========================================================================
+skinparam shadowing false
+skinparam activityBorderColor #1565C0
+
+start
+:用户打开系统 (/);
+:路由守卫检查 localStorage.token;
+if (存在 token ?) then (否)
+  :跳转 /user/login;
+  :输入 用户名 + 密码;
+  :POST /api/login\n(application/x-www-form-urlencoded);
+else (是)
+  :检查 routesLoaded;
+  if (路由已加载 ?) then (是)
+    :直接进入业务页;
+    stop
+  else (否)
+    :dispatch app/setMenuList;
+  endif
+endif
+
+partition "后端 AuthController.login" {
+  :按 uname 查询 account;
+  if (账号存在 ?) then (否)
+    :抛 BusinessException(LOGIN_FAILED);
+  else (是)
+    if (status == 1 启用 ?) then (否)
+      :抛异常 账号已禁用;
+    else (是)
+      :BCrypt.matches(明文, 摘要);
+      if (密码正确 ?) then (否)
+        :抛 BusinessException(LOGIN_FAILED);
+      else (是)
+        :构造 AuthSession\n(accountId/uname/utype/userType);
+        :TokenService.create();
+        :Redis 写入\nkey=prefix+sha256(token)\nvalue=JSON(session)\nTTL=30m;
+        :更新 last_login_time;
+        :返回 LoginResult{token,userInfo};
+      endif
+    endif
+  endif
+}
+
+if (登录成功 ?) then (否)
+  :前端 Message.error;
+  :停留在登录页;
+  stop
+else (是)
+  :localStorage 存 token;
+  :GET /api/permissions\nAuthorization: token;
+  partition "PermissionService" {
+    :从 Redis 读取真实 utype;
+    :按 utype 查 role_permission;
+    :联查 permission 构建菜单树;
+    :返回 PermissionNode 树;
+  }
+  :Vuex 存 menuList + addRoutes;
+  if (utype == ROLE_2 医生 ?) then (是)
+    :仅注册只读菜单\n(无写操作入口);
+  else (是 管理员)
+    :注册全部管理菜单;
+  endif
+  :跳转 /home 首页;
+  stop
+endif
+
+@enduml

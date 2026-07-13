@@ -1,0 +1,56 @@
+@startuml 12-账号状态图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 账号状态图（State Machine Diagram）
+' 阶段：动态建模
+' 对象：Account 账号生命周期（含登录会话与启停状态）
+' =========================================================================
+skinparam shadowing false
+
+[*] --> 已创建
+
+state "已创建\n(status=1)" as 已创建 #C8E6C9
+
+state "在线\n(Redis会话有效)" as 在线 #B3E5FC {
+  [*] --> 活跃
+  state "活跃" as 活跃
+  state "空闲(未操作)" as 空闲
+  活跃 --> 空闲 : 无操作
+  空闲 --> 活跃 : 发起请求\n(刷新TTL)
+}
+
+state "已禁用\n(status=0)" as 已禁用 #FFCDD2
+
+已创建 --> 在线 : 登录成功\nBCrypt校验通过\n签发Token写Redis
+在线 --> 已创建 : Token过期(TTL)\n或 logout 主动退出\nRedis删除
+
+已创建 --> 已禁用 : 管理员禁用账号
+在线 --> 已禁用 : 管理员禁用账号\n(下次请求被拒)
+已禁用 --> 已创建 : 管理员启用账号
+
+在线 --> 在线 : 重置密码\n(更新BCrypt+\n失效旧Token+\n写审计)
+
+' 终态：账号被删除（医生删除时级联）
+已创建 --> [*] : 删除医生/账号\n(RESTRICT/CASCADE)
+已禁用 --> [*] : 删除账号
+
+note right of 在线
+  <b>会话存储</b>
+  Redis key = prefix + SHA-256(token)
+  TTL 默认 30 分钟
+  每次请求 TokenAuthenticationFilter 校验
+end note
+
+note right of 已禁用
+  <b>禁用效果</b>
+  status=0 时登录被拒
+  已有 Token 仍可能有效直到过期
+  (服务端可主动 delete Token)
+end note
+
+note left of 已创建
+  <b>创建入口</b>
+  1. 新增医生时隐式建账号
+  2. utype=ROLE_1 管理员 / ROLE_2 医生
+end note
+
+@enduml

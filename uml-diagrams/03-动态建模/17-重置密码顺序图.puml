@@ -1,0 +1,57 @@
+@startuml 17-重置密码顺序图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 重置医生密码顺序图（Sequence Diagram）
+' 阶段：动态建模
+' 场景：管理员重置某医生密码：更新BCrypt+失效旧Token+写审计，同事务
+' =========================================================================
+skinparam shadowing false
+autonumber
+
+actor 管理员 as A
+participant "DoctorManage\n视图" as V
+participant "DoctorController" as DC
+participant "DoctorService" as DS
+participant "DoctorMapper" as DM
+participant "AccountMapper" as AM
+participant "PasswordEncoder" as PE
+participant "TokenService" as TS
+database "Redis" as R
+database "MySQL" as DB
+
+A -> V : 点击某医生"重置密码"
+V -> DC : PUT /api/doctors/reset/{accountId}
+DC -> DS : resetPassword(accountId, operatorAccountId)
+note right of DC : operatorAccountId 取自\nAuthSession(当前登录管理员)
+
+group @Transactional
+  DS -> DS : 生成随机临时密码
+  DS -> PE : encode(tempPassword)
+  PE --> DS : BCrypt 摘要
+  DS -> AM : updatePassword(accountId, hash)
+  AM -> DB : UPDATE account SET pwd=?
+  DS -> DM : findByAccountId(accountId)
+  DM --> DS : Doctor (用于定位/日志)
+  DS -> TS : delete(旧 token) 失效会话
+  TS -> R : DEL prefix+sha256(token) (如仍在)
+  DS -> AM : insert password_reset_audit
+  AM -> DB : INSERT 审计{account_id, operator_account_id, reset_at}
+end
+
+DS --> DC : 临时密码 (明文，仅本次)
+DC --> V : {code:20000, data:tempPassword}
+V --> A : 弹窗展示临时密码 (一次性，告知医生)
+
+note over A, V
+  <b>一次性返回</b>
+  临时密码仅在本次响应返回，不存储明文；
+  医生首次登录后建议修改。
+end note
+
+note over DS, DB
+  <b>事务边界</b>
+  更新密码 + 失效旧 Token + 写审计 在同一事务，
+  保证审计与密码变更原子一致；
+  account 删除时审计通过 V3 ON DELETE CASCADE 级联清理。
+end note
+
+@enduml

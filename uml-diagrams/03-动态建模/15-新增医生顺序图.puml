@@ -1,0 +1,57 @@
+@startuml 15-新增医生顺序图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 新增医生顺序图（Sequence Diagram）
+' 阶段：动态建模
+' 场景：管理员新增医生（含隐式建账号），同一事务保证一致性
+' =========================================================================
+skinparam shadowing false
+autonumber
+
+actor 管理员 as A
+participant "DoctorManage\n视图" as V
+participant "DoctorController" as DC
+participant "DoctorService" as DS
+participant "AccountMapper" as AM
+participant "DoctorMapper" as DM
+participant "PasswordEncoder" as PE
+database "MySQL" as DB
+
+A -> V : 填写医生信息并提交
+V -> DC : POST /api/doctors {name,age,sex,levelId,phone,typeId}
+DC -> DS : add(request, pageSize)
+
+group @Transactional (同一事务)
+  DS -> DS : uniqueUsername(name, phone) 生成 uname
+  DS -> AM : 查手机号是否已存在 (uk_account_phone)
+  AM --> DS : 已存在?
+  alt 手机号重复
+    DS --> DC : BusinessException(PHONE_DUPLICATED=10001)
+    DC --> V : {code:10001, message:手机号已存在}
+    V --> A : 提示手机号重复
+  else 不重复
+    DS -> PE : encode(随机/默认密码)
+    PE --> DS : BCrypt 摘要
+    DS -> AM : insert(Account{uname, pwd, utype=ROLE_2})
+    AM -> DB : INSERT account
+    AM --> DS : accountId
+    DS -> DM : insert(Doctor{..., account_id=accountId})
+    DM -> DB : INSERT doctor (fk_doctor_account)
+    DM --> DS : doctorId
+    DS --> DC : 新页码/总数
+  end
+end
+
+DC --> V : {code:20000, data:PageView}
+V -> DC : GET /api/doctors?page=newPage
+DC -> DS : page(...)
+DS -> DM : 联查 doctor+level+type
+DM --> V : 列表含新医生
+V --> A : 刷新展示新医生
+
+note over DS, DB
+  <b>事务一致性</b>
+  账号唯一性检查 + 账号插入 + 医生插入在同一事务，
+  任一失败整体回滚，避免产生无医生的账号或无账号的医生。
+end note
+
+@enduml

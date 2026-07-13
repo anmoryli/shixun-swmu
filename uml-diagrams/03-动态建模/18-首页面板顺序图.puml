@@ -1,0 +1,64 @@
+@startuml 18-首页面板顺序图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 首页数据面板加载顺序图（Sequence Diagram）
+' 阶段：动态建模
+' 场景：登录后首页加载 dashboard（数量统计+医生职称/诊治类型分布+资讯）
+' =========================================================================
+skinparam shadowing false
+autonumber
+
+actor "管理员/医生" as U
+participant "Home 视图" as V
+participant "api/dashboard.js" as API
+participant "DashboardController" as DC
+participant "DashboardService" as DS
+participant "DashboardMapper" as DM
+database "MySQL" as DB
+
+U -> V : 跳转 /home
+V -> API : getDashboard()
+API -> DC : GET /api/dashboard (Authorization: token)
+DC -> DS : load()
+
+group 组装 DashboardView (只读)
+  DS -> DM : countDoctors()
+  DM -> DB : SELECT COUNT(*) FROM doctor
+  DB --> DM : 医生数
+  DM --> DS : counts.doctorCount
+
+  DS -> DM : countCompanies() / countDrugs() / countSales()
+  DM -> DB : 多次 COUNT 查询
+  DB --> DS : 各业务实体数量
+
+  DS -> DM : doctorLevelDistribution()
+  DM -> DB : GROUP BY level 联查 doctor_level
+  DB --> DS : [{主任医师,n},{普通医师,n},{实习医师,n}]
+
+  DS -> DM : treatTypeDistribution()
+  DM -> DB : GROUP BY type 联查 treat_type
+  DB --> DS : [{内科,n},{外科,n},...]
+
+  DS -> DM : latestNews()
+  DM -> DB : SELECT * FROM news WHERE status=1 ORDER BY published_at
+  DB --> DS : 资讯列表
+end
+
+DS --> DC : DashboardView{counts, doctorLevels, treatTypes, news}
+DC --> API : {code:20000, data:DashboardView}
+API --> V : DashboardView
+V -> V : 渲染 数量卡片 + 饼图(职称/类型) + 资讯列表
+V --> U : 展示首页面板
+
+note over DC, DM
+  <b>权限</b>
+  管理员与医生均可访问首页面板；
+  数据均为只读统计，不含写操作。
+end note
+
+note over V
+  <b>图表展示</b>
+  doctorLevels/treatTypes 为 NameValue 列表，
+  前端用 Element/图表组件渲染饼图。
+end note
+
+@enduml

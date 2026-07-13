@@ -1,0 +1,98 @@
+@startuml 10-医生管理活动图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 医生管理活动图（Activity Diagram）
+' 阶段：动态建模
+' 场景：医生分页查询 / 新增(带账号) / 修改 / 删除(引用校验) / 重置密码
+' 事务边界：add/delete/resetPassword 均为单事务
+' =========================================================================
+skinparam shadowing false
+
+|管理员|
+start
+:进入 医生信息管理;
+:GET /api/doctors (pn,size,keyword);
+
+|DoctorService|
+:page() 事务只读;
+:联查 doctor + doctor_level + treat_type;
+:组装 PageView{list,total};
+
+|管理员|
+:展示列表 + 分页;
+
+fork
+  :==== 新增医生 ====;
+  :填写 姓名/年龄/性别/级别/类型/电话;
+  :POST /api/doctors;
+
+  |DoctorService|
+  partition "add() @Transactional" {
+    :uniqueUsername(name,phone) 生成账号名;
+    :校验手机号唯一 (uk_account_phone);
+    if (手机号重复 ?) then (是)
+      :抛 PHONE_DUPLICATED(10001);
+    else (否)
+      :passwordEncoder.encode(默认/随机密码);
+      :accountMapper.insert(账号);
+      :doctorMapper.insert(医生, account_id);
+    endif
+  }
+
+  |管理员|
+  if (成功 ?) then (是)
+    :刷新列表 显示新页;
+  else (否)
+    :提示 手机号已存在;
+  endif
+
+fork again
+  :==== 删除医生 ====;
+  :点击删除某医生;
+
+  |DoctorService|
+  partition "delete() @Transactional" {
+    :校验引用 (该医生是否被业务引用);
+    if (可删除 ?) then (否)
+      :抛 CONFLICT;
+    else (是)
+      :doctorMapper.deleteById(id);
+      :accountMapper.deleteById(account_id);
+      :password_reset_audit 级联清理(V3);
+    endif
+  }
+
+  |管理员|
+  :刷新列表;
+
+fork again
+  :==== 重置密码 ====;
+  :点击某医生"重置密码";
+
+  |DoctorService|
+  partition "resetPassword() @Transactional" {
+    :生成随机临时密码;
+    :passwordEncoder.encode -> 更新 account.pwd;
+    :TokenService.delete(旧 token) 失效会话;
+    :password_reset_audit.insert 审计;
+    :返回临时密码 (仅本次);
+  }
+
+  |管理员|
+  :展示临时密码 (一次性);
+fork again
+  :==== 修改医生 ====;
+  :编辑医生资料;
+  :PUT /api/doctors/{id};
+  |DoctorService|
+  partition "update() @Transactional" {
+    :doctorMapper.update;
+  }
+  |管理员|
+  :刷新列表;
+end fork
+
+|管理员|
+:操作完成;
+stop
+
+@enduml

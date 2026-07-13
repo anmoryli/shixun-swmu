@@ -1,0 +1,68 @@
+@startuml 08-部署图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 部署图（Deployment Diagram）
+' 阶段：静态建模（物理部署）
+' 数据来源：compose.yaml + deploy/ + PROJECT_README.md
+' 说明：Docker Compose 一键部署的节点与通信
+' =========================================================================
+skinparam shadowing false
+skinparam nodeStyle rectangle
+
+' ============ 节点 ============
+node "用户终端\n(浏览器)" as Client {
+  artifact "Vue 2 SPA\n(hash路由)" as SPA
+}
+
+node "应用服务器\n(Docker Host)" as Host {
+  artifact "nginx 容器\n:9092" as NginxNode
+  artifact "medical-backend 容器\n(JDK17 Spring Boot JAR)" as BackendNode
+  artifact "mysql 容器\n:3306" as MySQLNode
+  artifact "redis 容器\n:6379" as RedisNode
+  artifact "uploads 卷\n(图片存储)" as UploadVol
+}
+
+node "运维/构建机" as CI {
+  artifact "mvn clean test package" as BuildB
+  artifact "npm run build" as BuildF
+  artifact "Docker Secrets\n(/run/secrets)" as Secrets
+}
+
+' ============ 通信路径 ============
+Client -down-> NginxNode : HTTP :9092\n(同源访问)
+
+NginxNode -down-> BackendNode : 反向代理 /api\n(actuator/health 同源)
+NginxNode ..> SPA : 提供静态资源\n(dist)
+
+BackendNode -down-> MySQLNode : JDBC :3306\n(medicine schema)
+BackendNode -down-> RedisNode : TCP :6379\n(Token会话 SHA-256 key)
+BackendNode -down-> UploadVol : 文件读写\nUPLOAD_DIR=/opt/medicine/uploads
+
+CI -down-> Host : docker compose up -d --build
+Secrets -down-> BackendNode : 注入 DB/Redis 密码
+
+' ============ 端口与制品说明 ============
+note right of NginxNode
+  <b>Nginx 职责</b>
+  - 发布前端 dist
+  - 代理 /api -> backend
+  - 健康检查 /actuator/health
+  - 消除跨域与 localhost 硬编码
+end note
+
+note right of BackendNode
+  <b>后端容器</b>
+  Spring Boot 2.5.3 + JDK17
+  环境变量注入:
+  DB_HOST/DB_PASSWORD
+  REDIS_HOST/REDIS_PASSWORD
+  UPLOAD_DIR / PUBLIC_BASE_URL
+end note
+
+note bottom of Host
+  <b>访问入口</b>
+  前端: http://localhost:9092/
+  健康检查: http://localhost:9092/actuator/health
+  密码通过 Docker Secrets 或 0600 env 文件注入，不入仓库
+end note
+
+@enduml

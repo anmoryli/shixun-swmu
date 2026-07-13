@@ -1,0 +1,80 @@
+@startuml 11-药品图片上传活动图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 药品管理与图片上传活动图
+' 阶段：动态建模
+' 场景：新增/修改药品时上传图片(安全校验)+保存药店多选关系
+' 设计依据：02-architecture-and-design.md §6 上传设计
+' =========================================================================
+skinparam shadowing false
+
+|管理员|
+start
+:进入 药品信息管理;
+:GET /api/drugs/{pn}/{size};
+
+|DrugService|
+:page() 事务只读;
+:联查 drug + drug_sale + sale;
+:返回分页 (含药店列表);
+
+|管理员|
+:点击 新增/编辑药品;
+:填写 药名/成分/功能;
+:选择销售药店 (多选);
+
+if (需要上传图片 ?) then (是)
+  :选择本地图片文件;
+  :POST /api/base/upload\n(multipart/form-data);
+
+  |UploadController / FileStorageService|
+  partition "图片安全校验" {
+    if (size <= 2MB ?) then (否)
+      :拒绝 文件过大;
+    else (是)
+      if (扩展名 jpg/png 且\nContent-Type image/* ?) then (否)
+        :拒绝 类型非法;
+      else (是)
+        :图片解码校验真实内容;
+        if (是真实图片 ?) then (否)
+          :拒绝 伪造图片;
+        else (是)
+          :生成 UUID 文件名;
+          :写入 UPLOAD_DIR\n(拒绝用户路径);
+          :返回 PUBLIC_BASE_URL + 文件名;
+        endif
+      endif
+    endif
+  }
+
+  |管理员|
+  if (上传成功 ?) then (否)
+    :提示错误并停留;
+    stop
+  else (是)
+    :预览图片 url;
+  endif
+else (否)
+endif
+
+:提交药品表单\n(含 drugImg url + saleIds[]);
+:POST /api/drugs  或  PUT /api/drugs/{id};
+
+|DrugService|
+partition "add()/update() @Transactional" {
+  :校验字段;
+  :drugMapper.insert/update;
+  :replaceSales(drugId, saleIds);
+  :先删旧 drug_sale 关系;
+  :批量插入新 drug_sale 关系;
+  :uk_drug_sale 去重保证;
+}
+
+|管理员|
+if (保存成功 ?) then (是)
+  :刷新列表 显示新药品+图片;
+else (否)
+  :提示错误 (如药店不存在);
+endif
+stop
+
+@enduml

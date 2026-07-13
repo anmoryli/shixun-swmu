@@ -1,0 +1,70 @@
+@startuml 14-登录授权顺序图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 登录与授权顺序图（Sequence Diagram）
+' 阶段：动态建模
+' 参与者：Vue客户端 / AuthController / AuthService / AccountMapper / TokenService / Redis / PermissionService / PermissionMapper
+' =========================================================================
+skinparam shadowing false
+autonumber
+
+actor "管理员/医生" as U
+participant "Vue 客户端\n(request.js)" as V
+participant "AuthController" as AC
+participant "AuthService" as AS
+participant "AccountMapper" as AM
+participant "TokenService" as TS
+database "Redis" as R
+participant "PermissionService" as PS
+participant "PermissionMapper" as PM
+
+== 登录 ==
+U -> V : 输入用户名/密码
+V -> AC : POST /api/login (form-urlencoded)
+AC -> AS : login(username, password)
+AS -> AM : findByUsername(uname)
+AM --> AS : Account{pwd, utype, status}
+AS -> AS : BCrypt.matches + status==1 校验
+alt 账号或密码错误/禁用
+  AS --> AC : BusinessException(LOGIN_FAILED)
+  AC --> V : {code:错误, message}
+  V --> U : 提示错误
+else 校验通过
+  AS -> TS : create(AuthSession)
+  TS -> R : SET prefix+sha256(token) = JSON(session) TTL 30m
+  TS --> AS : token
+  AS --> AC : LoginResult{token, userInfo{utype}}
+  AC --> V : {code:20000, data:LoginResult}
+  V -> V : localStorage.setItem("token")
+end
+
+== 加载动态菜单/路由 ==
+V -> PS : GET /api/permissions (Authorization: token)
+note right of V : store.dispatch("app/setMenuList")
+PS -> TS : find(normalizeAuthorization(token))
+TS -> R : GET prefix+sha256(token)
+R --> TS : JSON(session)
+TS --> PS : AuthSession{utype}
+PS -> PM : 查 role_permission + permission (按 utype)
+PM --> PS : 权限列表
+PS -> PS : 构建菜单树 PermissionNode
+PS --> V : 权限树 (管理员全量 / 医生只读子集)
+V -> V : Vuex 存 menuList + router.addRoutes
+V --> U : 跳转 /home，渲染侧边菜单
+
+== 退出登录 ==
+U -> V : 点击退出
+V -> AC : POST /api/logout (Authorization: token)
+AC -> TS : delete(token)
+TS -> R : DEL prefix+sha256(token)
+AC --> V : {code:20000}
+V -> V : localStorage.removeItem("token")
+V --> U : 跳转 /user/login
+
+note over V, R
+  <b>安全要点</b>
+  - 不信任客户端 roleName，角色取自 Redis 会话
+  - Redis key 用 SHA-256(token)，不存原始 Token
+  - Token 失效返回 code=10006，前端自动跳登录
+end note
+
+@enduml

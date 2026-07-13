@@ -1,0 +1,75 @@
+@startuml 16-药品保存上传顺序图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 药品图片上传与保存顺序图（Sequence Diagram）
+' 阶段：动态建模
+' 场景：管理员新增药品 -> 先上传图片(安全校验) -> 保存药品+药店多选关系
+' =========================================================================
+skinparam shadowing false
+autonumber
+
+actor 管理员 as A
+participant "DrugManage\n视图" as V
+participant "UploadController" as UC
+participant "FileStorageService" as FS
+participant "DrugController" as DC
+participant "DrugService" as DS
+participant "DrugMapper" as DM
+database "MySQL" as DB
+participant "文件系统\nUPLOAD_DIR" as FSYS
+
+== 1. 上传药品图片 ==
+A -> V : 选择本地图片
+V -> UC : POST /api/base/upload (multipart)
+UC -> FS : store(MultipartFile)
+FS -> FS : 校验 size<=2MB / 扩展名 jpg,png / Content-Type
+FS -> FS : 图片解码校验真实内容
+alt 校验失败
+  FS --> UC : BusinessException(非法图片)
+  UC --> V : {code:错误}
+  V --> A : 提示上传失败
+else 校验通过
+  FS -> FS : 生成 UUID 文件名 (拒绝用户路径)
+  FS -> FSYS : 写入 UPLOAD_DIR/<uuid>.jpg
+  FS --> UC : PUBLIC_BASE_URL + 文件名
+  UC --> V : {code:20000, data:imgUrl}
+  V -> V : 预览图片
+end
+
+== 2. 保存药品 + 药店关系 ==
+A -> V : 提交药品表单(含imgUrl + saleIds[])
+V -> DC : POST /api/drugs {drugName, drugImg, saleIds}
+DC -> DS : add(request, pageSize)
+
+group @Transactional
+  DS -> DM : insert(Drug)
+  DM -> DB : INSERT drug
+  DM --> DS : drugId
+  DS -> DS : replaceSales(drugId, saleIds)
+  DS -> DM : DELETE drug_sale WHERE drug_id=?
+  DM -> DB : DELETE 旧关系
+  loop 每个 saleId
+    DS -> DM : INSERT drug_sale(drug_id, sale_id)
+    DM -> DB : INSERT (uk_drug_sale 去重)
+  end
+end
+
+DS --> DC : 新页码
+DC --> V : {code:20000, data:PageView}
+V -> DC : GET /api/drugs/{pn}/{size}
+DC --> V : 列表含新药品(图片+药店)
+V --> A : 刷新展示
+
+note over FS, FSYS
+  <b>上传安全设计</b>
+  1. 最大 2MB  2. 仅 JPEG/PNG
+  3. 解码校验真实图片  4. UUID 文件名
+  5. UPLOAD_DIR 可配置  6. URL 走 PUBLIC_BASE_URL
+end note
+
+note over DS, DB
+  <b>关系事务</b>
+  药品记录与 drug_sale 关系在同一事务，
+  replaceSales 先删后插，保证多选药店一致性。
+end note
+
+@enduml

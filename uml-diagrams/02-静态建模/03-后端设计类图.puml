@@ -1,0 +1,255 @@
+@startuml 03-后端设计类图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 后端设计类图（Backend Design Class Diagram）
+' 阶段：静态建模（详细设计）
+' 分层：Controller -> Service -> Mapper -> MySQL，横切 common/security/config
+' 数据来源：medical-backend/src/main/java/com/medicine/**
+' =========================================================================
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+' ============ Controller 层 ============
+package "controller 层（HTTP契约）" #E8F5E9 {
+  class AuthController {
+    + login(LoginRequest) : LoginResult
+    + permissions() : List<PermissionNode>
+    + logout() : void
+  }
+  class DoctorController {
+    + list(pn,size,keyword) : PageView
+    + info() : levelAndType
+    + add(req) : PageView
+    + update(id,req) : void
+    + delete(id) : void
+    + resetPassword(accountId) : String
+  }
+  class DrugController {
+    + page(pn,size) : PageView
+    + add(req) : PageView
+    + update(drugId,req) : void
+    + delete(drugId) : void
+  }
+  class CompanyController {
+    + page(pn,size) : PageView
+    + list() : List
+    + add(req) : void
+    + update(id,req) : void
+    + delete(id) : void
+  }
+  class CityController
+  class SaleController
+  class MedicalPolicyController
+  class CompanyPolicyController
+  class MaterialController
+  class UploadController {
+    + upload(file) : String
+  }
+  class DashboardController {
+    + view() : DashboardView
+  }
+}
+
+' ============ Service 层 ============
+package "service 层（业务规则+事务）" #E3F2FD {
+  class AuthService {
+    - accountMapper : AccountMapper
+    - passwordEncoder : PasswordEncoder
+    - tokenService : TokenService
+    + login(username,password) : LoginResult
+    - toNumericUserType(role) : int
+  }
+  class PermissionService {
+    + permissionTree(utype) : List<PermissionNode>
+  }
+  class DoctorService {
+    - mapper : DoctorMapper
+    - passwordEncoder : PasswordEncoder
+    + page(pn,size,keyword) : Map
+    + levelAndType() : Map
+    + add(req,pageSize) : int
+    + update(id,req) : boolean
+    + delete(id) : void
+    + resetPassword(accountId,opId) : void
+    - uniqueUsername(name,phone) : String
+  }
+  class DrugService {
+    - mapper : DrugMapper
+    + page(pn,size,name) : Map
+    + add(req,pageSize) : int
+    + update(id,req) : void
+    + delete(id) : void
+    - replaceSales(drugId,saleIds) : void
+  }
+  class CompanyService
+  class CityService
+  class SaleService
+  class MedicalPolicyService
+  class CompanyPolicyService
+  class MaterialService
+  class FileStorageService {
+    + store(file) : String
+    - validateImage(content) : void
+  }
+  class DashboardService {
+    + load() : DashboardView
+  }
+  class PageSupport {
+    + {static} of(list,total,pn,size) : PageView
+  }
+}
+
+' ============ Mapper 层（MyBatis） ============
+package "mapper 层（数据访问）" #FFF8E1 {
+  interface AccountMapper {
+    + findByUsername(uname) : Account
+    + insert(account) : int
+    + updatePassword(id,hash) : int
+  }
+  interface DoctorMapper {
+    + page(...) : List
+    + insert(doctor) : int
+    + update(doctor) : int
+    + deleteById(id) : int
+    + findByAccountId(id) : Doctor
+  }
+  interface DrugMapper
+  interface CompanyMapper
+  interface CityMapper
+  interface SaleMapper
+  interface MedicalPolicyMapper
+  interface CompanyPolicyMapper
+  interface MaterialMapper
+  interface PermissionMapper
+  interface DashboardMapper
+}
+
+' ============ Model / DTO ============
+package "model & dto" #F3E5F5 {
+  class Account <<model>> {
+    - id, realname, uname
+    - pwd, phonenumber, utype
+  }
+  class PermissionRecord <<model>>
+  class LoginRequest <<dto>> {
+    + username : String
+    + password : String
+  }
+  class LoginResult <<dto>> {
+    + token : String
+    + userInfo : UserInfo
+  }
+  class UserInfo <<dto>> {
+    + id, realname, uname
+    + phonenumber, userType
+  }
+  class PermissionNode <<dto>> {
+    + id, pid, name, path
+    + component, title, children
+  }
+  class AuthSession <<dto>> {
+    + accountId, uname, realname
+    + utype, userType
+  }
+  class DashboardView <<dto>> {
+    + counts : DashboardCounts
+    + doctorLevels : List<NameValue>
+    + treatTypes : List<NameValue>
+    + news : List<DashboardNews>
+  }
+}
+
+' ============ 横切：common / security ============
+package "common（统一响应/异常）" #FFEBEE {
+  class ApiResponse<T> {
+    - code : int
+    - message : String
+    - data : T
+    + {static} success(data) : ApiResponse
+    + {static} error(code,msg) : ApiResponse
+  }
+  class PageView<T> {
+    - total, list, pageNum, pageSize
+  }
+  class BusinessException {
+    - code : int
+    - message : String
+  }
+  class ErrorCode <<enum>> {
+    SUCCESS = 20000
+    LOGIN_FAILED
+    PHONE_DUPLICATED = 10001
+    TOKEN_INVALID = 10006
+    FORBIDDEN
+    CONFLICT
+    INTERNAL_ERROR
+  }
+  class GlobalExceptionHandler {
+    + handleBusiness(e) : ApiResponse
+    + handleAccessDenied(e) : ApiResponse
+  }
+}
+
+package "security（鉴权）" #ECEFF1 {
+  class TokenService {
+    - redisTemplate : StringRedisTemplate
+    - tokenPrefix : String
+    - tokenTtl : Duration
+    + create(session) : String
+    + find(token) : Optional<AuthSession>
+    + delete(token) : void
+    + {static} normalizeAuthorization(auth) : String
+  }
+  class TokenAuthenticationFilter {
+    + doFilter(req,resp,chain) : void
+  }
+  class SecurityConfig
+  class RestAuthenticationEntryPoint
+  class RestAccessDeniedHandler
+}
+
+' ============ 依赖关系 ============
+AuthController ..> AuthService
+AuthController ..> PermissionService
+AuthController ..> ApiResponse
+DoctorController ..> DoctorService
+DoctorController ..> ApiResponse
+DrugController ..> DrugService
+UploadController ..> FileStorageService
+DashboardController ..> DashboardService
+
+AuthService --> AccountMapper
+AuthService --> TokenService
+AuthService ..> LoginResult
+AuthService ..> AuthSession
+PermissionService --> PermissionMapper
+PermissionService ..> PermissionNode
+DoctorService --> DoctorMapper
+DoctorService ..> PageView
+DrugService --> DrugMapper
+DashboardService --> DashboardMapper
+DashboardService ..> DashboardView
+
+AuthService ..> BusinessException
+DoctorService ..> BusinessException
+GlobalExceptionHandler ..> ApiResponse
+TokenAuthenticationFilter --> TokenService
+TokenAuthenticationFilter ..> AuthSession
+
+AccountMapper ..> Account
+AccountMapper <.. AuthService
+
+note bottom of DoctorService
+  <b>事务边界</b>
+  add(): 账号唯一性校验+账号插入+医生插入 同一事务
+  delete(): 引用校验+删医生+删账号，失败整体回滚
+  resetPassword(): 更新BCrypt+失效旧Token+写审计 同一事务
+end note
+
+note right of TokenService
+  <b>安全设计</b>
+  Redis key = tokenPrefix + SHA-256(token)
+  不存原始 Token；TTL 过期自动失效
+end note
+
+@enduml

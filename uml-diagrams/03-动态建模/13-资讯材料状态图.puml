@@ -1,0 +1,51 @@
+@startuml 13-资讯状态图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 资讯/材料状态图（State Machine Diagram）
+' 阶段：动态建模
+' 对象：News 资讯发布状态 + 必备材料内容状态（简化复合视图）
+' =========================================================================
+skinparam shadowing false
+
+' ---------- News 资讯状态 ----------
+[*] --> 草稿
+
+state "草稿\n(status=0)" as 草稿 #FFF9C4
+state "已发布\n(status=1)" as 已发布 #C8E6C9
+state "已下线\n(status=0)" as 已下线 #FFCDD2
+
+草稿 --> 已发布 : 发布\npublished_at = now
+已发布 --> 已下线 : 管理员下线
+已下线 --> 已发布 : 重新上线
+已发布 --> 已发布 : 编辑更新\n(update_time 刷新)
+草稿 --> 草稿 : 编辑
+
+' 面板仅展示已发布
+state "面板展示\n(Dashboard读取)" as Panel #E1BEE7
+已发布 --> Panel : 首页面板读取\n(按 published_at 排序)
+
+' ---------- 必备材料内容状态（简化） ----------
+state "材料：草稿" as M草稿 #FFF9C4
+state "材料：生效中" as M生效 #C8E6C9
+state "材料：已删除" as M删除 #EEEEEE
+
+[*] --> M草稿
+M草稿 --> M生效 : 保存/新增
+M生效 --> M生效 : 修改(管理员)
+M生效 --> M删除 : 删除(管理员)
+M删除 --> [*]
+
+note right of 已发布
+  <b>News 表</b>
+  status: 1发布 / 0下线/草稿
+  DashboardService.load()
+  仅取 status=1 的最新资讯
+  医生可读
+end note
+
+note bottom of M生效
+  <b>必备材料 Material</b>
+  管理员写、医生只读
+  无独立状态字段，以"存在即生效"建模
+end note
+
+@enduml

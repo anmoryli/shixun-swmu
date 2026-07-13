@@ -1,0 +1,93 @@
+@startuml 06-组件图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 组件图（Component Diagram）
+' 阶段：静态建模（系统组成）
+' 说明：前后端分离架构的组件构成与依赖，含前端、后端、存储、第三方
+' =========================================================================
+skinparam shadowing false
+skinparam componentStyle rectangle
+
+' ============ 前端组件 ============
+package "前端 (medical-managerment-system / Vue2)" #E8F5E9 {
+  component "Login 视图" as VLogin
+  component "Layout 框架\n(PageHeader/PageSider)" as VLayout
+  component "业务视图(8模块)" as VViews
+  component "Home 数据面板" as VHome
+  component "Vuex Store\n(app + 8 modules)" as VStore
+  component "Vue Router\n(动态路由)" as VRouter
+  component "axios request 封装" as VRequest
+  component "api/admin/*\n(8模块API)" as VApi
+  component "Element UI" as VUI
+}
+
+' ============ 后端组件 ============
+package "后端 (medical-backend / Spring Boot)" #E3F2FD {
+  component "AuthController" as CAuth
+  component "业务Controller(8个)" as CBiz
+  component "DashboardController" as CDash
+  component "UploadController" as CUpload
+  component "Service 层\n(auth/business/dashboard)" as Svc
+  component "Spring Security\n(TokenFilter/SecurityConfig)" as Sec
+  component "TokenService\n(Redis会话)" as Token
+  component "GlobalExceptionHandler" as ExHandler
+  component "MyBatis Mapper(11个)" as Mapper
+  component "common\n(ApiResponse/PageView/ErrorCode)" as Common
+  component "FileStorageService\n(图片安全存储)" as FileSvc
+}
+
+' ============ 外部系统 / 存储 ============
+package "基础设施" #FFF8E1 {
+  component "Nginx\n(同源发布+/api代理)" as Nginx
+  database "MySQL 8\nmedicine schema" as MySQL
+  database "Redis 7\n(登录会话)" as Redis
+  component "本地文件系统\nUPLOAD_DIR" as FS
+  component "浏览器" as Browser
+}
+
+' ============ 依赖关系 ============
+Browser --> Nginx
+Nginx --> VLayout : 静态资源
+Nginx ..> CAuth : /api 代理
+
+VLogin --> VRequest
+VLayout --> VRouter
+VViews --> VApi
+VHome --> VApi
+VApi --> VRequest
+VRouter --> VStore : 守卫读取菜单
+VStore --> VApi : dispatch setMenuList
+VRequest ..> CAuth : HTTP /api
+VRequest ..> CBiz : HTTP /api
+VUI <.. VViews
+
+CAuth --> Svc
+CBiz --> Svc
+CDash --> Svc
+CUpload --> FileSvc
+Svc --> Mapper
+Svc --> Common
+Svc ..> Sec : @PreAuthorize
+Sec --> Token
+Token --> Redis
+Mapper --> MySQL
+FileSvc --> FS
+ExHandler ..> Common
+
+' 接口球窝表示
+CAuth -[hidden]-> CBiz
+
+note bottom of Nginx
+  <b>同源发布</b>
+  生产由 Nginx 发布前端并代理 /api，
+  避免浏览器跨域和 localhost 硬编码。
+end note
+
+note bottom of VRequest
+  <b>请求约定</b>
+  统一响应 {code,message,data}
+  成功 20000；手机号重复 10001；
+  Token 失效 10006。
+  Authorization 头携带 Token。
+end note
+
+@enduml

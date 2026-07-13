@@ -1,0 +1,115 @@
+@startuml 07-包图
+' =========================================================================
+' 慧医数字医疗应用系统 -- 包图（Package Diagram）
+' 阶段：静态建模（代码组织结构）
+' 说明：后端 Java 包结构与前端源码组织
+' 数据来源：medical-backend/src/main/java/com/medicine + 前端 src/
+' =========================================================================
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+' ============ 后端 Java 包 ============
+package "com.medicine (后端 Spring Boot)" as root #E3F2FD {
+
+  package "auth 认证授权" as auth {
+    class "AuthController" as AuthC
+    class "AuthService" as AuthS
+    class "AccountMapper" as AuthM
+    class "PermissionService" as AuthPS
+    class "Account / PermissionRecord\n(model)" as AuthModel
+    class "dto: LoginRequest/Result,\nUserInfo,PermissionNode,AuthSession" as AuthDto
+  }
+
+  package "business 业务模块" as business {
+    class "8个业务 Controller" as BizC
+    class "8个 Service + PageSupport\n+ FileStorageService" as BizS
+    class "9个 Mapper" as BizM
+    class "UploadWebConfig (config)" as BizCfg
+  }
+
+  package "dashboard 首页面板" as dashboard {
+    class "DashboardController" as DashC
+    class "DashboardService" as DashS
+    class "DashboardMapper" as DashM
+    class "dto: Counts/News/View" as DashDto
+  }
+
+  package "security 安全" as security {
+    class "TokenService" as SecT
+    class "TokenAuthenticationFilter" as SecF
+    class "SecurityConfig" as SecCfg
+    class "RestAuthenticationEntryPoint /\nRestAccessDeniedHandler" as SecH
+  }
+
+  package "common 公共" as common {
+    class "ApiResponse / PageView" as ComR
+    class "BusinessException / ErrorCode" as ComE
+    class "GlobalExceptionHandler" as ComX
+  }
+
+  class "MedicalBackendApplication\n(启动类)" as Boot
+}
+
+' ============ 前端源码包 ============
+package "medical-managerment-system/src (前端 Vue2)" as front #E8F5E9 {
+
+  package "views 视图" as fviews {
+    class "Login / Home" as fLoginHome
+    class "8个业务 Manage 视图" as fBizViews
+  }
+  package "layout 布局" as flayout {
+    class "PageHeader / PageSider" as fLayout
+  }
+  package "store 状态管理" as fstore {
+    class "app (菜单/路由)" as fApp
+    class "8个业务 module" as fMod
+  }
+  package "api 接口" as fapi {
+    class "Login.js / dashboard.js" as fLoginApi
+    class "admin/* (8模块)" as fAdminApi
+  }
+  package "router 路由" as frouter {
+    class "index.js (动态路由+守卫)" as fRouter
+  }
+  package "utils 工具" as futils {
+    class "request(axios) / app /\nrouteParse / validator" as fUtil
+  }
+}
+
+' ============ 依赖关系 ============
+auth --> common
+business --> common
+business --> security
+dashboard --> common
+auth --> security
+Boot --> auth
+Boot --> business
+Boot --> dashboard
+Boot --> security
+Boot --> common
+
+fRouter --> fApp : 守卫读取菜单
+fApp --> fAdminApi : dispatch setMenuList
+fAdminApi --> fUtil
+fLoginApi --> fUtil
+fBizViews --> fstore
+fBizViews --> fapi
+fLoginHome --> fapi
+fLayout --> fRouter
+
+front ..> root : HTTP /api 调用
+
+note bottom of root
+  <b>后端分层依赖方向</b>
+  controller -> service -> mapper -> MySQL
+  横切: common / security / config
+  启动: MedicalBackendApplication
+end note
+
+note bottom of front
+  <b>前端组织</b>
+  router 守卫 -> store.app -> api.admin -> utils.request
+  views 依赖 store 与 api；layout 提供框架
+end note
+
+@enduml
