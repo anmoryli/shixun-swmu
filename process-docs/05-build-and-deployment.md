@@ -4,10 +4,10 @@
 
 | 产物 | 命令 | 结果 |
 |---|---|---|
-| 前端 | `npm run build` | 成功，最终构建哈希 `7e83e2ecd52bfd75` |
+| 前端 | `npm run build` | 成功，最终构建哈希 `5791661e6b59f2ac` |
 | 后端测试 | `mvn clean test` | 8/8 通过 |
 | 后端打包 | `mvn package` | 成功 |
-| 后端 JAR | `medical-backend-1.0.0.jar` | 38,131,662 bytes |
+| 后端 JAR | `medical-backend-1.0.0.jar` | 38,131,660 bytes |
 
 Spring Boot 固定为 2.5.3，Spring Framework 实际解析为 5.3.10，编译目标为 Java 17。
 
@@ -40,7 +40,7 @@ Actuator 最终状态：
 ## 3. 前后端联通
 
 - 前端开发服务：[http://localhost:9092/](http://localhost:9092/)
-- 后端健康检查：[http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+- 后端健康检查：[http://localhost:8082/actuator/health](http://localhost:8082/actuator/health)
 - 前端 `/api` 代理登录返回 `code=20000`。
 - JDK 17 下登录、权限、仪表盘和退出均返回 `20000`。
 - 前端开发服务 HTTP 200，生产 `dist/index.html` 存在。
@@ -65,7 +65,7 @@ Actuator 最终状态：
 部署后验证：
 
 1. `systemctl status medicine-backend`。
-2. `curl http://127.0.0.1:8080/actuator/health`。
+2. `curl http://localhost:8082/actuator/health`。
 3. 管理员登录、菜单、仪表盘和八类 GET。
 4. 医生写接口越权检查。
 5. Nginx `/api` 和 `/image` 同源访问。
@@ -80,3 +80,9 @@ Actuator 最终状态：
 ## 6. 当前部署边界
 
 本次已完成当前 Windows 环境的 JDK 17 部署运行，并连接远程 MySQL/Redis。目标 IP 的 8080 已存在另一个受 Spring Security 保护的服务，且用户未提供操作系统 SSH 账号，因此没有覆盖远程主机现有服务；已交付可直接用于 openEuler 的 Nginx/systemd 配置。
+
+## 7. 本地端口调整记录（2026-07-13）
+
+按验收要求，后端默认端口已由 `8080` 调整为 `8082`，前端开发代理、接口测试、Postman 环境、Nginx upstream、启动与验证脚本均已同步。上方 `Tomcat started on port(s): 8080` 是调整前的历史启动证据，保留不改写。
+
+本机 QQ 占用了 IPv4 `0.0.0.0:8082`，本次后端通过 `SERVER_ADDRESS=::1` 安全绑定到 IPv6 本地回环地址，未结束或干扰 QQ；浏览器与前端代理统一使用 `localhost:8082`。

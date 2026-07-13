@@ -279,7 +279,7 @@ def tiny_png() -> bytes:
 
 
 def main() -> int:
-    base_url = os.getenv("BASE_URL", "http://127.0.0.1:8080").rstrip("/")
+    base_url = os.getenv("BASE_URL", "http://localhost:8082").rstrip("/")
     admin_username = os.getenv("ADMIN_USERNAME", "").strip()
     admin_password = os.getenv("ADMIN_PASSWORD", "")
     timeout = float(os.getenv("API_TIMEOUT_SECONDS", "15"))

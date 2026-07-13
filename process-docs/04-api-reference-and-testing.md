@@ -37,9 +37,9 @@
 
 ## 4. 自动回归结果
 
-![接口回归三轮结果](evidence/api/api-regression-summary.png)
+![接口回归缺陷闭环历史三轮结果](evidence/api/api-regression-summary.png)
 
-最终报告：`evidence/api/api-test-20260713T035159Z.md`。
+端口调整后的最终报告：`evidence/api/api-test-20260713T042628Z.md`，目标为 `http://localhost:8082`。
 
 | 指标 | 最终结果 |
 |---|---:|
@@ -47,9 +47,9 @@
 | 通过 | 57 |
 | 失败 | 0 |
 | 跳过 | 0 |
-| 平均响应时间 | 294.4 ms |
-| P95 | 496 ms |
-| 最大响应时间 | 592 ms |
+| 平均响应时间 | 283.4 ms |
+| P95 | 509 ms |
+| 最大响应时间 | 574 ms |
 
 全部请求低于需求的 1 秒目标，也低于 3 秒硬上限。
 
@@ -72,10 +72,10 @@
 - 根因：`password_reset_audit.account_id` 使用 `ON DELETE RESTRICT`，账号删除被数据库拒绝。
 - 代码/数据库修复：新增 V3 迁移，将审计关系改为账号生命周期级联；补 `DoctorServiceTest`。
 - 修复后 Maven 测试从 7 项增加到 8 项并全部通过。
-- 两轮完整 API 回归均达到 57/57。
+- 修复后的两轮完整 API 回归均达到 57/57；端口调整为 8082 后再次回归 57/57。
 - 最终确认远程数据库无临时账号、医生或测试审计残留。
 
-失败证据保留为 `evidence/api/api-test-20260713T034308Z.*`，最终通过证据保留为 `evidence/api/api-test-20260713T035159Z.*`，便于复核完整问题闭环。
+失败证据保留为 `evidence/api/api-test-20260713T034308Z.*`，V3 修复证据保留为 `evidence/api/api-test-20260713T035159Z.*`，端口调整后的最终通过证据为 `evidence/api/api-test-20260713T042628Z.*`，便于复核完整问题闭环。
 
 ## 6. 凭据与报告安全
 

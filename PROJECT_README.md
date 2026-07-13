@@ -14,7 +14,7 @@
 ## 当前访问
 
 - 前端：<http://localhost:9092/>
-- 后端健康检查：<http://localhost:8080/actuator/health>
+- 后端健康检查：<http://localhost:8082/actuator/health>
 
 ## 构建
 

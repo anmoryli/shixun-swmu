@@ -1,6 +1,6 @@
 # medical-backend
 
-慧医数字医疗应用系统的 Spring Boot 后端。默认监听 `8080`，API 前缀为 `/api`。
+慧医数字医疗应用系统的 Spring Boot 后端。默认监听 `8082`，API 前缀为 `/api`。
 
 ## 运行环境
 

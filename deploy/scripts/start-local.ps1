@@ -1,5 +1,6 @@
 param(
-    [int]$Port = 8080
+    [int]$Port = 8082,
+    [string]$Address = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -17,10 +18,12 @@ foreach ($name in $required) {
 }
 
 $env:SERVER_PORT = $Port
+if ($Address) {
+    $env:SERVER_ADDRESS = $Address
+}
 $env:DB_URL = if ($env:DB_URL) { $env:DB_URL } else { 'jdbc:mysql://106.54.210.109:3306/medicine?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true' }
 $env:DB_USERNAME = if ($env:DB_USERNAME) { $env:DB_USERNAME } else { 'root' }
 $env:REDIS_HOST = if ($env:REDIS_HOST) { $env:REDIS_HOST } else { '106.54.210.109' }
 $env:REDIS_PORT = if ($env:REDIS_PORT) { $env:REDIS_PORT } else { '6379' }
 
 & java -jar $jar
-

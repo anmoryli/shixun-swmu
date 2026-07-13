@@ -12,7 +12,7 @@
 PowerShell：
 
 ```powershell
-$env:BASE_URL = 'http://127.0.0.1:8080'
+$env:BASE_URL = 'http://localhost:8082'
 $env:ADMIN_USERNAME = '<管理员账号>'
 $env:ADMIN_PASSWORD = '<管理员密码>'
 python .\api-tests\run_api_tests.py
