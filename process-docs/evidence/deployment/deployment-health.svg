@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430">
+  <rect width="1000" height="430" rx="24" fill="#f4faf9"/>
+  <text x="55" y="62" font-family="Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#173f3b">本地部署健康门禁</text>
+  <text x="55" y="96" font-family="Microsoft YaHei, sans-serif" font-size="16" fill="#647d79">2026-07-13 · Spring Boot 2.5.3 · 可执行 JAR</text>
+  <g font-family="Microsoft YaHei, sans-serif">
+    <rect x="55" y="140" width="205" height="175" rx="18" fill="#ffffff" stroke="#cce7e2"/>
+    <circle cx="157" cy="194" r="30" fill="#2ba596"/><path d="M143 194l10 10 20-25" fill="none" stroke="#fff" stroke-width="6"/>
+    <text x="157" y="252" text-anchor="middle" font-size="22" font-weight="700" fill="#244843">Java 17</text>
+    <text x="157" y="280" text-anchor="middle" font-size="15" fill="#6e8582">Temurin 17.0.19</text>
+    <rect x="285" y="140" width="205" height="175" rx="18" fill="#ffffff" stroke="#cce7e2"/>
+    <circle cx="387" cy="194" r="30" fill="#2ba596"/><path d="M373 194l10 10 20-25" fill="none" stroke="#fff" stroke-width="6"/>
+    <text x="387" y="252" text-anchor="middle" font-size="22" font-weight="700" fill="#244843">应用 UP</text>
+    <text x="387" y="280" text-anchor="middle" font-size="15" fill="#6e8582">127.0.0.1:8080</text>
+    <rect x="515" y="140" width="205" height="175" rx="18" fill="#ffffff" stroke="#cce7e2"/>
+    <circle cx="617" cy="194" r="30" fill="#2ba596"/><path d="M603 194l10 10 20-25" fill="none" stroke="#fff" stroke-width="6"/>
+    <text x="617" y="252" text-anchor="middle" font-size="22" font-weight="700" fill="#244843">MySQL UP</text>
+    <text x="617" y="280" text-anchor="middle" font-size="15" fill="#6e8582">medicine · Remote</text>
+    <rect x="745" y="140" width="205" height="175" rx="18" fill="#ffffff" stroke="#cce7e2"/>
+    <circle cx="847" cy="194" r="30" fill="#2ba596"/><path d="M833 194l10 10 20-25" fill="none" stroke="#fff" stroke-width="6"/>
+    <text x="847" y="252" text-anchor="middle" font-size="22" font-weight="700" fill="#244843">Redis UP</text>
+    <text x="847" y="280" text-anchor="middle" font-size="15" fill="#6e8582">7.0.15 · Remote</text>
+    <text x="500" y="370" text-anchor="middle" font-size="18" fill="#355d58">前端 9092 → /api 代理 → 后端 8080：登录 code=20000</text>
+  </g>
+</svg>

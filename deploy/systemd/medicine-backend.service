@@ -1,0 +1,26 @@
+[Unit]
+Description=Medicine Medical Management Backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=medicine
+Group=medicine
+WorkingDirectory=/opt/medicine
+EnvironmentFile=/etc/medicine/medicine-backend.env
+ExecStart=/usr/bin/java -XX:MaxRAMPercentage=70 -jar /opt/medicine/app/medical-backend-1.0.0.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/medicine/uploads /opt/medicine/logs
+StandardOutput=append:/opt/medicine/logs/backend.out.log
+StandardError=append:/opt/medicine/logs/backend.err.log
+
+[Install]
+WantedBy=multi-user.target
+
