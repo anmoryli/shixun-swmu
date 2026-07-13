@@ -32,8 +32,13 @@
           <small>健康服务与用药管理</small>
         </div>
         <el-carousel :interval="4000" height="300px" trigger="click" arrow="hover">
-          <el-carousel-item v-for="(url, index) in picList" :key="index">
-            <el-image :src="url.image" fit="cover" class="carousel-image"></el-image>
+          <el-carousel-item v-for="(item, index) in picList" :key="index">
+            <el-image
+              :src="item.image"
+              :alt="item.alt"
+              fit="cover"
+              class="carousel-image"
+            ></el-image>
           </el-carousel-item>
         </el-carousel>
       </el-card>
@@ -45,7 +50,12 @@
         </div>
         <div class="quick-list">
           <div v-for="card in cardList" :key="card.content" class="quick-item">
-            <el-image :src="card.pic" fit="cover" class="quick-image" />
+            <el-image
+              :src="card.pic"
+              :alt="card.content"
+              fit="cover"
+              class="quick-image"
+            />
             <span>{{ card.content }}</span>
           </div>
         </div>
@@ -100,19 +110,52 @@ export default {
       dashboardDegraded: false,
       dashboardData: {},
       picList: [
-        { image: require("../../assets/hUlLAP.png") },
-        { image: require("../../assets/hUlH0I.png") },
-        { image: require("../../assets/hUlOtf.jpg") },
-        { image: require("../../assets/hUlb7t.jpg") },
-        { image: require("../../assets/hUl7nA.jpg") },
+        {
+          image: require("../../assets/medical-samples/healthcare-team.jpg"),
+          alt: "医疗团队协作示例图",
+        },
+        {
+          image: require("../../assets/medical-samples/medical-lab.jpg"),
+          alt: "医学检验实验室示例图",
+        },
+        {
+          image: require("../../assets/medical-samples/stethoscope.jpg"),
+          alt: "听诊器与医疗器械示例图",
+        },
+        {
+          image: require("../../assets/medical-samples/medicine-blister.jpg"),
+          alt: "药品板装示例图",
+        },
+        {
+          image: require("../../assets/medical-samples/medicine-capsule.jpg"),
+          alt: "胶囊药品示例图",
+        },
       ],
       cardList: [
-        { pic: require("../../assets/hUDHDP.jpg"), content: "基础信息管理" },
-        { pic: require("../../assets/hU0KDf.jpg"), content: "药品信息管理" },
-        { pic: require("../../assets/hUBref.jpg"), content: "医保政策管理" },
-        { pic: require("../../assets/hU0yG9.jpg"), content: "企业政策管理" },
-        { pic: require("../../assets/hUB2Wj.jpg"), content: "医生信息管理" },
-        { pic: require("../../assets/hUDYn0.jpg"), content: "必备材料管理" },
+        {
+          pic: require("../../assets/medical-samples/stethoscope.jpg"),
+          content: "基础信息管理",
+        },
+        {
+          pic: require("../../assets/medical-samples/medicine-blister.jpg"),
+          content: "药品信息管理",
+        },
+        {
+          pic: require("../../assets/medical-samples/healthcare-team.jpg"),
+          content: "医保政策管理",
+        },
+        {
+          pic: require("../../assets/medical-samples/medical-lab.jpg"),
+          content: "企业政策管理",
+        },
+        {
+          pic: require("../../assets/medical-samples/medicine-hand.jpg"),
+          content: "医生信息管理",
+        },
+        {
+          pic: require("../../assets/medical-samples/medicine-assorted.jpg"),
+          content: "必备材料管理",
+        },
       ],
     };
   },

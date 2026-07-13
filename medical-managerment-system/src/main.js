@@ -9,6 +9,7 @@ import Fragment from "vue-fragment"; // 处理Dom插件
 import "animate.css"; // 引入样式
 import Element from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+import "./style/ios26-theme.css";
 
 Vue.config.productionTip = false;
 Vue.use(Fragment.Plugin);

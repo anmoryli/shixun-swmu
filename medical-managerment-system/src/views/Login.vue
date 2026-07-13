@@ -1,6 +1,10 @@
 <template>
     <div class="LoginBackground">
       <div class="LoginForm" >
+        <div class="ios-login-brand">
+          <img src="../assets/HomeLogo.png" alt="慧医数字医疗应用系统" />
+          <p>安全、清晰地管理医疗基础数据</p>
+        </div>
         <div class="big-contain" >
           <el-form :model="loginForm" ref="loginForm" status-icon>
             <div class="bform">
@@ -12,6 +16,7 @@
                             v-model="loginForm.username"
                             autocomplete="off"
                             placeholder="用户名"
+                            aria-label="用户名"
                     />
                 </div>
               </el-form-item>
@@ -23,6 +28,7 @@
                             v-model="loginForm.password"
                             autocomplete="off"
                             placeholder="密码"
+                            aria-label="密码"
                             @keydown.enter="handleLogin('loginForm')"
                     />
                 </div>
@@ -35,7 +41,9 @@
                     :disabled="loggingIn"
                     :aria-label="loggingIn ? '正在登录' : '登录'"
                     @click="handleLogin('loginForm')"
-                  />
+                  >
+                    <span class="ios-only">{{ loggingIn ? "正在登录" : "登录系统" }}</span>
+                  </button>
               </el-form-item>
             </div>
           </el-form>
@@ -105,6 +113,10 @@ export default {
 };
 </script>
 <style scoped>
+  .ios-login-brand,
+  .ios-only {
+    display: none;
+  }
   .LoginBackground{
     background: url("../assets/LoginBackground.jpg") no-repeat;
     background-size: cover;
