@@ -1,4 +1,4 @@
-milestone_id,milestone,状态,负责人,计划日期,验收标准
+﻿milestone_id,milestone,状态,负责人,计划日期,验收标准
 MS-01,需求与任务基线,待开始,anmory666,2026-07-13,Epic、Feature、Story、Task层级确认
 MS-02,核心后端功能完成,待开始,anmory666,2026-07-15,认证、仪表盘、基础资料接口可用
 MS-03,业务模块完成,待开始,khyxone,2026-07-16,医生、药品、材料、政策和上传可用
