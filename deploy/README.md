@@ -30,3 +30,10 @@
 
 完整命令、验证证据和回滚方法见 `process-docs/05-build-and-deployment.md`。
 
+## Windows 本地私有环境变量
+
+本机私有配置默认放在 `.work/private/medicine-backend.env.ps1`。`.work/` 已被 Git 忽略，真实密码不会进入版本库。`deploy/scripts/start-local.ps1` 会自动加载该文件；也可以通过 `-EnvFile` 指定其他私有文件。
+
+```powershell
+.\deploy\scripts\start-local.ps1
+```

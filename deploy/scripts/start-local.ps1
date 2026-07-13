@@ -1,10 +1,17 @@
 param(
     [int]$Port = 8082,
-    [string]$Address = ''
+    [string]$Address = '',
+    [string]$EnvFile = ''
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '..\..')
+$defaultEnvFile = Join-Path $root '.work\private\medicine-backend.env.ps1'
+$selectedEnvFile = if ($EnvFile) { $EnvFile } else { $defaultEnvFile }
+if (Test-Path -LiteralPath $selectedEnvFile) {
+    . (Resolve-Path -LiteralPath $selectedEnvFile)
+}
+
 $jar = Join-Path $root 'medical-backend\target\medical-backend-1.0.0.jar'
 if (-not (Test-Path -LiteralPath $jar)) {
     throw "Backend JAR not found: $jar. Run mvn clean package first."
