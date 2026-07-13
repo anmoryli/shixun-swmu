@@ -1,0 +1,49 @@
+package com.medicine.business.controller;
+
+import com.medicine.business.service.CityService;
+import com.medicine.common.ApiResponse;
+import com.medicine.common.ErrorCode;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/citys")
+public class CityController {
+    private final CityService service;
+
+    public CityController(CityService service) {
+        this.service = service;
+    }
+
+    @GetMapping("/{pn}/{size}")
+    @PreAuthorize("hasAnyRole('1','2')")
+    public ApiResponse<Map<String, Object>> page(@PathVariable Integer pn,
+                                                 @PathVariable Integer size,
+                                                 @RequestParam(required = false) String name) {
+        return BusinessResponses.wrapped("cityPageInfo", service.page(pn, size, name));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('1','2')")
+    public ApiResponse<Map<String, Object>> all() {
+        return BusinessResponses.wrapped("cityPageInfo", service.all());
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('1')")
+    public ApiResponse<Map<String, Object>> add(@RequestParam Integer cityNumber) {
+        if (service.exists(cityNumber)) {
+            return ApiResponse.error(ErrorCode.DUPLICATE_DATA, "该城市已存在");
+        }
+        return BusinessResponses.pages(service.add(cityNumber, 5));
+    }
+
+    @DeleteMapping("/{cityId}")
+    @PreAuthorize("hasRole('1')")
+    public ApiResponse<Void> delete(@PathVariable Long cityId) {
+        service.delete(cityId);
+        return ApiResponse.success();
+    }
+}

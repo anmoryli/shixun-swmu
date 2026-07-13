@@ -1,0 +1,68 @@
+package com.medicine.business.controller;
+
+import com.medicine.business.service.DoctorService;
+import com.medicine.common.ApiResponse;
+import com.medicine.common.ErrorCode;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import com.medicine.security.AuthSession;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/doctors")
+public class DoctorController {
+    private final DoctorService service;
+
+    public DoctorController(DoctorService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('1','2')")
+    public ApiResponse<Map<String, Object>> page(@RequestParam(defaultValue = "1") Integer pn,
+                                                 @RequestParam(defaultValue = "5") Integer size,
+                                                 @RequestParam(required = false) String keyword) {
+        return BusinessResponses.wrapped("doctorInfo", service.page(pn, size, keyword));
+    }
+
+    @GetMapping("/info")
+    @PreAuthorize("hasAnyRole('1','2')")
+    public ApiResponse<Map<String, Object>> levelAndType() {
+        return ApiResponse.success(service.levelAndType());
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('1')")
+    public ApiResponse<Map<String, Object>> add(@RequestBody Map<String, Object> request) {
+        int pages = service.add(request, 5);
+        return pages < 0
+                ? ApiResponse.error(ErrorCode.DUPLICATE_DATA, "该手机号已被注册")
+                : BusinessResponses.pages(pages);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('1')")
+    public ApiResponse<Void> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        if (!service.update(id, request)) {
+            return ApiResponse.error(ErrorCode.DUPLICATE_DATA, "该手机号已被注册");
+        }
+        return ApiResponse.success();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('1')")
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ApiResponse.success();
+    }
+
+    @PutMapping("/reset/{accountId}")
+    @PreAuthorize("hasRole('1')")
+    public ApiResponse<Void> reset(@PathVariable Long accountId,
+                                   @AuthenticationPrincipal AuthSession operator) {
+        service.resetPassword(accountId, operator.getUserId());
+        return ApiResponse.success();
+    }
+}
