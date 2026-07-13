@@ -1,0 +1,2749 @@
+{
+  "info": {
+    "_postman_id": "b4e3e34c-302d-45ec-8573-57bf14f9c99d",
+    "name": "慧医数字医疗应用系统 API 全流程回归",
+    "description": "由后端控制器和 Vue API 契约生成。覆盖认证、权限、仪表盘、8 个业务模块、上传、错误与越权场景。使用唯一 runId 创建临时数据并在末尾按依赖顺序删除。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 认证、权限与错误场景",
+      "description": "",
+      "item": [
+        {
+          "name": "初始化运行并检查健康",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const now = Date.now().toString();",
+                  "const runId = `postman-${now}`;",
+                  "const phone = `19${now.slice(-9)}`;",
+                  "const doctorName = `Postman测试医生${now.slice(-6)}`;",
+                  "pm.collectionVariables.set(\"runId\", runId);",
+                  "pm.collectionVariables.set(\"phone\", phone);",
+                  "pm.collectionVariables.set(\"doctorName\", doctorName);",
+                  "pm.collectionVariables.set(\"doctorPassword\", \"Postman@Test123456\");",
+                  "pm.collectionVariables.set(\"doctorUsername\", `${doctorName}${phone.slice(-4)}`);",
+                  "[\"adminToken\", \"doctorToken\", \"doctorResetToken\", \"cityId\", \"companyId\", \"saleId\",",
+                  " \"doctorId\", \"doctorAccountId\", \"drugId\", \"materialId\", \"medicalPolicyId\", \"companyPolicyId\"]",
+                  "  .forEach(key => pm.collectionVariables.unset(key));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Health status is UP\", () => pm.expect(payload.status).to.eql(\"UP\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /actuator/health"
+          },
+          "response": []
+        },
+        {
+          "name": "未登录访问仪表盘",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10006\", () => pm.expect(payload.code).to.eql(10006));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/dashboard"
+          },
+          "response": []
+        },
+        {
+          "name": "伪造 Token 访问权限",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10006\", () => pm.expect(payload.code).to.eql(10006));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{invalidToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/permissions"
+          },
+          "response": []
+        },
+        {
+          "name": "登录缺少密码",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10000\", () => pm.expect(payload.code).to.eql(10000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/login",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{adminUsername}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "错误密码登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10002\", () => pm.expect(payload.code).to.eql(10002));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/login",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{adminUsername}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "definitely-wrong-password",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "管理员表单登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.test(\"Token and administrator user are returned\", () => {",
+                  "  pm.expect(payload.data.token).to.be.a(\"string\").and.not.empty;",
+                  "  pm.expect(payload.data.userInfo.utype).to.eql(1);",
+                  "});",
+                  "pm.collectionVariables.set(\"adminToken\", payload.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/login",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{adminUsername}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "管理员 JSON 登录兼容",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.collectionVariables.set(\"jsonLoginToken\", payload.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "JSON 登录会话退出",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{jsonLoginToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/logout"
+          },
+          "response": []
+        },
+        {
+          "name": "客户端 roleName 篡改不改变权限来源",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.test(\"Permission tree is an array\", () => {",
+                  "  pm.expect(payload.data.permissions).to.be.an(\"array\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions?roleName=ROLE_2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/permissions?roleName=ROLE_2"
+          },
+          "response": []
+        },
+        {
+          "name": "仪表盘聚合数据",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.test(\"Dashboard data is an object\", () => pm.expect(payload.data).to.be.an(\"object\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/dashboard"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 城市管理",
+      "description": "城市模型无更新接口，因此覆盖新增、分页/全量查询、重复校验和删除。",
+      "item": [
+        {
+          "name": "城市全量列表",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.cityPageInfo.list;",
+                  "pm.test(\"City list is an array\", () => pm.expect(rows).to.be.an(\"array\"));",
+                  "if (rows.length) pm.collectionVariables.set(\"existingCityId\", rows[0].cityId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/citys",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/citys"
+          },
+          "response": []
+        },
+        {
+          "name": "城市分页列表",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/citys/1/200",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/citys/1/200"
+          },
+          "response": []
+        },
+        {
+          "name": "新增城市",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/citys?cityNumber={{testCityNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/citys?cityNumber={{testCityNumber}}"
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存新增城市 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.cityPageInfo.list;",
+                  "const row = rows.find(item => String(item.cityNumber) === String(pm.environment.get(\"testCityNumber\")));",
+                  "pm.test(\"Created city can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) pm.collectionVariables.set(\"cityId\", row.cityId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/citys",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/citys"
+          },
+          "response": []
+        },
+        {
+          "name": "重复城市错误",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10001\", () => pm.expect(payload.code).to.eql(10001));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/citys?cityNumber={{testCityNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/citys?cityNumber={{testCityNumber}}"
+          },
+          "response": []
+        },
+        {
+          "name": "删除城市",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/citys/{{cityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/citys/{{cityId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 医药公司管理",
+      "description": "",
+      "item": [
+        {
+          "name": "新增医药公司",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companys",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/companys",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"{{runId}}-company\",\n  \"companyPhone\": \"{{phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存公司 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.pageInfo.list;",
+                  "const row = rows.find(item => item.companyName === `${pm.collectionVariables.get(\"runId\")}-company`);",
+                  "pm.test(\"Created company can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) pm.collectionVariables.set(\"companyId\", row.companyId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companys/1/200?name={{runId}}-company",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/companys/1/200?name={{runId}}-company"
+          },
+          "response": []
+        },
+        {
+          "name": "修改医药公司",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companys/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/companys/{{companyId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"{{runId}}-company-updated\",\n  \"companyPhone\": \"{{phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "医药公司全量列表",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companys",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/companys"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 销售地点管理",
+      "description": "",
+      "item": [
+        {
+          "name": "新增销售地点",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/sales",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saleName\": \"{{runId}}-sale\",\n  \"salePhone\": \"{{phone}}\",\n  \"address\": \"Postman 自动化测试地址\",\n  \"longitude\": \"120.3826\",\n  \"latitude\": \"36.0671\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存销售地点 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.salePageInfo.list;",
+                  "const row = rows.find(item => item.saleName === `${pm.collectionVariables.get(\"runId\")}-sale`);",
+                  "pm.test(\"Created sale can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) pm.collectionVariables.set(\"saleId\", row.saleId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sales/1/200?name={{runId}}-sale",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/sales/1/200?name={{runId}}-sale"
+          },
+          "response": []
+        },
+        {
+          "name": "修改销售地点",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sales/{{saleId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/sales/{{saleId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saleName\": \"{{runId}}-sale-updated\",\n  \"salePhone\": \"{{phone}}\",\n  \"address\": \"Postman 自动化测试地址-修改\",\n  \"longitude\": \"120.3827\",\n  \"latitude\": \"36.0672\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "销售地点全量列表",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/sales"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 医生管理与越权",
+      "description": "",
+      "item": [
+        {
+          "name": "医生级别与诊疗类型",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.test(\"Doctor dictionaries are not empty\", () => {",
+                  "  pm.expect(payload.data.allLevel).to.be.an(\"array\").and.not.empty;",
+                  "  pm.expect(payload.data.allTreatType).to.be.an(\"array\").and.not.empty;",
+                  "});",
+                  "pm.collectionVariables.set(\"levelId\", payload.data.allLevel[0].id);",
+                  "pm.collectionVariables.set(\"typeId\", payload.data.allTreatType[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/doctors/info"
+          },
+          "response": []
+        },
+        {
+          "name": "新增医生",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/doctors",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{doctorName}}\",\n  \"age\": 30,\n  \"sex\": 1,\n  \"levelId\": \"{{levelId}}\",\n  \"typeId\": \"{{typeId}}\",\n  \"phoneNumber\": \"{{phone}}\",\n  \"pwd\": \"{{doctorPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存医生 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.doctorInfo.list;",
+                  "const row = rows.find(item => item.name === pm.collectionVariables.get(\"doctorName\"));",
+                  "pm.test(\"Created doctor can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) {",
+                  "  pm.collectionVariables.set(\"doctorId\", row.id);",
+                  "  pm.collectionVariables.set(\"doctorAccountId\", row.accountId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors?pn=1&size=200&keyword={{doctorName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/doctors?pn=1&size=200&keyword={{doctorName}}"
+          },
+          "response": []
+        },
+        {
+          "name": "修改医生",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/{{doctorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/doctors/{{doctorId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{doctorAccountId}}\",\n  \"name\": \"{{doctorName}}\",\n  \"age\": 31,\n  \"sex\": 1,\n  \"levelId\": \"{{levelId}}\",\n  \"typeId\": \"{{typeId}}\",\n  \"phoneNumber\": \"{{phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "重复医生手机号错误",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10001\", () => pm.expect(payload.code).to.eql(10001));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/doctors",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{doctorName}}重复\",\n  \"age\": 30,\n  \"sex\": 1,\n  \"levelId\": \"{{levelId}}\",\n  \"typeId\": \"{{typeId}}\",\n  \"phoneNumber\": \"{{phone}}\",\n  \"pwd\": \"{{doctorPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "医生账号登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.collectionVariables.set(\"doctorToken\", payload.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/login",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{doctorUsername}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{doctorPassword}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "医生越权新增材料",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10003\", () => pm.expect(payload.code).to.eql(10003));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{doctorToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/materials",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/materials",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{runId}}-forbidden\",\n  \"message\": \"不应写入\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "医生只读访问仪表盘",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{doctorToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/dashboard"
+          },
+          "response": []
+        },
+        {
+          "name": "管理员重置医生密码",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/reset/{{doctorAccountId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/doctors/reset/{{doctorAccountId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "旧密码在重置后失效",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10002\", () => pm.expect(payload.code).to.eql(10002));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/login",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{doctorUsername}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{doctorPassword}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "默认重置密码登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.collectionVariables.set(\"doctorResetToken\", payload.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/login",
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{doctorUsername}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "医生退出登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{doctorResetToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/logout"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 图片上传",
+      "description": "",
+      "item": [
+        {
+          "name": "上传 JPG/PNG 图片",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "pm.test(\"Image URL is returned\", () => pm.expect(payload.data.url).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/base/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/base/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "{{testImagePath}}",
+                  "contentType": "image/png"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "拒绝非图片 MIME",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10000\", () => pm.expect(payload.code).to.eql(10000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/base/upload",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/base/upload",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "{{testImagePath}}",
+                  "contentType": "text/plain"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 必备材料管理",
+      "description": "",
+      "item": [
+        {
+          "name": "新增必备材料",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/materials",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/materials",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{runId}}-material\",\n  \"message\": \"Postman 自动化测试材料\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存材料 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.materialInfo.list;",
+                  "const row = rows.find(item => item.title === `${pm.collectionVariables.get(\"runId\")}-material`);",
+                  "pm.test(\"Created material can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) pm.collectionVariables.set(\"materialId\", row.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/materials?pn=1&size=200&keyword={{runId}}-material",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/materials?pn=1&size=200&keyword={{runId}}-material"
+          },
+          "response": []
+        },
+        {
+          "name": "修改必备材料",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/materials/{{materialId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/materials/{{materialId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{runId}}-material-updated\",\n  \"message\": \"已修改\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除必备材料",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/materials/{{materialId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/materials/{{materialId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 医药公司政策管理",
+      "description": "",
+      "item": [
+        {
+          "name": "新增医药公司政策",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/company_policys",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/company_policys",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"title\": \"{{runId}}-company-policy\",\n  \"message\": \"Postman 自动化测试公司政策\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存公司政策 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.policyInfo.list;",
+                  "const row = rows.find(item => item.title === `${pm.collectionVariables.get(\"runId\")}-company-policy`);",
+                  "pm.test(\"Created company policy can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) pm.collectionVariables.set(\"companyPolicyId\", row.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/company_policys?pn=1&size=200&keyword={{runId}}-company-policy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/company_policys?pn=1&size=200&keyword={{runId}}-company-policy"
+          },
+          "response": []
+        },
+        {
+          "name": "修改医药公司政策",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/company_policys/{{companyPolicyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/company_policys/{{companyPolicyId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyId\": \"{{companyId}}\",\n  \"title\": \"{{runId}}-company-policy-updated\",\n  \"message\": \"已修改\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除医药公司政策",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/company_policys/{{companyPolicyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/company_policys/{{companyPolicyId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 医保政策管理",
+      "description": "",
+      "item": [
+        {
+          "name": "新增医保政策",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/medical_policys",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/medical_policys",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cityId\": \"{{existingCityId}}\",\n  \"title\": \"{{runId}}-medical-policy\",\n  \"message\": \"Postman 自动化测试医保政策\",\n  \"updateTime\": \"2026-07-13\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存医保政策 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.policyInfo.list;",
+                  "const row = rows.find(item => item.title === `${pm.collectionVariables.get(\"runId\")}-medical-policy`);",
+                  "pm.test(\"Created medical policy can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) pm.collectionVariables.set(\"medicalPolicyId\", row.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/medical_policys?pn=1&size=200&title={{runId}}-medical-policy",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/medical_policys?pn=1&size=200&title={{runId}}-medical-policy"
+          },
+          "response": []
+        },
+        {
+          "name": "修改医保政策",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/medical_policys/{{medicalPolicyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/medical_policys/{{medicalPolicyId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cityId\": \"{{existingCityId}}\",\n  \"title\": \"{{runId}}-medical-policy-updated\",\n  \"message\": \"已修改\",\n  \"updateTime\": \"2026-07-13\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除医保政策",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/medical_policys/{{medicalPolicyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/medical_policys/{{medicalPolicyId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "09 药品管理",
+      "description": "",
+      "item": [
+        {
+          "name": "新增药品",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/drugs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/drugs",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"drugName\": \"{{runId}}-drug\",\n  \"drugInfo\": \"Postman 自动化测试药品\",\n  \"drugEffect\": \"仅用于接口验证\",\n  \"drugImg\": \"/image/postman-test.png\",\n  \"drugPublisher\": \"Postman Test\",\n  \"saleIds\": [\n    \"{{saleId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询并保存药品 ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));",
+                  "const rows = payload.data.drugPageInfo.list;",
+                  "const row = rows.find(item => item.drugName === `${pm.collectionVariables.get(\"runId\")}-drug`);",
+                  "pm.test(\"Created drug can be found\", () => pm.expect(row).to.be.an(\"object\"));",
+                  "if (row) pm.collectionVariables.set(\"drugId\", row.drugId);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/drugs/1/200?name={{runId}}-drug",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/drugs/1/200?name={{runId}}-drug"
+          },
+          "response": []
+        },
+        {
+          "name": "修改药品",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/drugs/{{drugId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: PUT /api/drugs/{{drugId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"drugName\": \"{{runId}}-drug-updated\",\n  \"drugInfo\": \"已修改\",\n  \"drugEffect\": \"已修改\",\n  \"drugImg\": \"/image/postman-test.png\",\n  \"drugPublisher\": \"Postman Test\",\n  \"saleIds\": [\n    \"{{saleId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除药品",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/drugs/{{drugId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/drugs/{{drugId}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10 清理与退出",
+      "description": "请完整运行集合；若中途停止，按 runId 查询并手工清理临时记录。",
+      "item": [
+        {
+          "name": "删除医生",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/doctors/{{doctorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/doctors/{{doctorId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "删除销售地点",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sales/{{saleId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/sales/{{saleId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "删除医药公司",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companys/{{companyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: DELETE /api/companys/{{companyId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "管理员退出登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 20000\", () => pm.expect(payload.code).to.eql(20000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: POST /api/logout"
+          },
+          "response": []
+        },
+        {
+          "name": "退出后 Token 失效",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const payload = pm.response.json();",
+                  "pm.test(\"HTTP status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"API code is 10006\", () => pm.expect(payload.code).to.eql(10006));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/permissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Contract source: GET /api/permissions"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "secret"
+    },
+    {
+      "key": "invalidToken",
+      "value": "invalid-api-test-token",
+      "type": "string"
+    }
+  ]
+}

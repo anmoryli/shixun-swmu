@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="medicine-api" tests="57" failures="0" skipped="0" timestamp="2026-07-13T03:52:16.086065+00:00"><testcase name="健康检查" classname="medicine.api" time="0.146"><system-out>GET http://127.0.0.1:8080/actuator/health
+expected=custom schema assertion
+api_code=None</system-out></testcase><testcase name="未登录访问仪表盘" classname="medicine.api" time="0.026"><system-out>GET http://127.0.0.1:8080/api/dashboard
+expected=HTTP 200 and API code 10006
+api_code=10006</system-out></testcase><testcase name="伪造 Token 访问权限" classname="medicine.api" time="0.192"><system-out>GET http://127.0.0.1:8080/api/permissions
+expected=HTTP 200 and API code 10006
+api_code=10006</system-out></testcase><testcase name="登录缺少密码" classname="medicine.api" time="0.187"><system-out>POST http://127.0.0.1:8080/api/login
+expected=HTTP 200 and API code 10000
+api_code=10000</system-out></testcase><testcase name="错误密码登录" classname="medicine.api" time="0.351"><system-out>POST http://127.0.0.1:8080/api/login
+expected=HTTP 200 and API code 10002
+api_code=10002</system-out></testcase><testcase name="管理员 JSON 登录兼容" classname="medicine.api" time="0.264"><system-out>POST http://127.0.0.1:8080/api/login
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="JSON 登录会话退出" classname="medicine.api" time="0.117"><system-out>POST http://127.0.0.1:8080/api/logout
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="管理员表单登录" classname="medicine.api" time="0.183"><system-out>POST http://127.0.0.1:8080/api/login
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="管理员权限树" classname="medicine.api" time="0.119"><system-out>GET http://127.0.0.1:8080/api/permissions?roleName=ROLE_2
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="仪表盘聚合数据" classname="medicine.api" time="0.255"><system-out>GET http://127.0.0.1:8080/api/dashboard
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="城市全量列表" classname="medicine.api" time="0.385"><system-out>GET http://127.0.0.1:8080/api/citys
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="城市分页列表" classname="medicine.api" time="0.496"><system-out>GET http://127.0.0.1:8080/api/citys/1/200
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="新增城市" classname="medicine.api" time="0.584"><system-out>POST http://127.0.0.1:8080/api/citys?cityNumber=713435
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增城市" classname="medicine.api" time="0.307"><system-out>GET http://127.0.0.1:8080/api/citys
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="重复城市错误" classname="medicine.api" time="0.304"><system-out>POST http://127.0.0.1:8080/api/citys?cityNumber=713435
+expected=HTTP 200 and API code 10001
+api_code=10001</system-out></testcase><testcase name="新增医药公司" classname="medicine.api" time="0.337"><system-out>POST http://127.0.0.1:8080/api/companys
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增医药公司" classname="medicine.api" time="0.380"><system-out>GET http://127.0.0.1:8080/api/companys/1/200?name=api-20260713T035159Z-60b170-company
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="修改医药公司" classname="medicine.api" time="0.284"><system-out>PUT http://127.0.0.1:8080/api/companys/11265484
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="新增销售地点" classname="medicine.api" time="0.345"><system-out>POST http://127.0.0.1:8080/api/sales
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增销售地点" classname="medicine.api" time="0.369"><system-out>GET http://127.0.0.1:8080/api/sales/1/200?name=api-20260713T035159Z-60b170-sale
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="修改销售地点" classname="medicine.api" time="0.296"><system-out>PUT http://127.0.0.1:8080/api/sales/12635295
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="销售地点全量列表" classname="medicine.api" time="0.321"><system-out>GET http://127.0.0.1:8080/api/sales
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="医生级别与科室字典" classname="medicine.api" time="0.405"><system-out>GET http://127.0.0.1:8080/api/doctors/info
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="新增医生" classname="medicine.api" time="0.592"><system-out>POST http://127.0.0.1:8080/api/doctors
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增医生" classname="medicine.api" time="0.354"><system-out>GET http://127.0.0.1:8080/api/doctors?pn=1&amp;size=200&amp;keyword=API%E6%B5%8B%E8%AF%95%E5%8C%BB%E7%94%9F60b170
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="修改医生" classname="medicine.api" time="0.444"><system-out>PUT http://127.0.0.1:8080/api/doctors/53
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="重复医生手机号错误" classname="medicine.api" time="0.223"><system-out>POST http://127.0.0.1:8080/api/doctors
+expected=HTTP 200 and API code 10001
+api_code=10001</system-out></testcase><testcase name="医生账号登录" classname="medicine.api" time="0.181"><system-out>POST http://127.0.0.1:8080/api/login
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="医生越权新增材料" classname="medicine.api" time="0.113"><system-out>POST http://127.0.0.1:8080/api/materials
+expected=HTTP 200 and API code 10003
+api_code=10003</system-out></testcase><testcase name="医生只读访问仪表盘" classname="medicine.api" time="0.248"><system-out>GET http://127.0.0.1:8080/api/dashboard
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="管理员重置医生密码" classname="medicine.api" time="0.435"><system-out>PUT http://127.0.0.1:8080/api/doctors/reset/77
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="旧密码在重置后失效" classname="medicine.api" time="0.129"><system-out>POST http://127.0.0.1:8080/api/login
+expected=HTTP 200 and API code 10002
+api_code=10002</system-out></testcase><testcase name="默认重置密码登录" classname="medicine.api" time="0.167"><system-out>POST http://127.0.0.1:8080/api/login
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="上传 PNG 图片" classname="medicine.api" time="0.234"><system-out>POST http://127.0.0.1:8080/api/base/upload
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="拒绝非图片上传" classname="medicine.api" time="0.056"><system-out>POST http://127.0.0.1:8080/api/base/upload
+expected=HTTP 200 and API code 10000
+api_code=10000</system-out></testcase><testcase name="新增必备材料" classname="medicine.api" time="0.332"><system-out>POST http://127.0.0.1:8080/api/materials
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增必备材料" classname="medicine.api" time="0.361"><system-out>GET http://127.0.0.1:8080/api/materials?pn=1&amp;size=200&amp;keyword=api-20260713T035159Z-60b170-material
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="修改必备材料" classname="medicine.api" time="0.271"><system-out>PUT http://127.0.0.1:8080/api/materials/17
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="新增医药公司政策" classname="medicine.api" time="0.319"><system-out>POST http://127.0.0.1:8080/api/company_policys
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增医药公司政策" classname="medicine.api" time="0.363"><system-out>GET http://127.0.0.1:8080/api/company_policys?pn=1&amp;size=200&amp;keyword=api-20260713T035159Z-60b170-company-policy
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="修改医药公司政策" classname="medicine.api" time="0.269"><system-out>PUT http://127.0.0.1:8080/api/company_policys/124605
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="新增医保政策" classname="medicine.api" time="0.342"><system-out>POST http://127.0.0.1:8080/api/medical_policys
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增医保政策" classname="medicine.api" time="0.391"><system-out>GET http://127.0.0.1:8080/api/medical_policys?pn=1&amp;size=200&amp;title=api-20260713T035159Z-60b170-medical-policy
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="修改医保政策" classname="medicine.api" time="0.267"><system-out>PUT http://127.0.0.1:8080/api/medical_policys/1047
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="新增药品" classname="medicine.api" time="0.506"><system-out>POST http://127.0.0.1:8080/api/drugs
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="查询新增药品" classname="medicine.api" time="0.399"><system-out>GET http://127.0.0.1:8080/api/drugs/1/200?name=api-20260713T035159Z-60b170-drug
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="修改药品" classname="medicine.api" time="0.445"><system-out>PUT http://127.0.0.1:8080/api/drugs/12650477
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除药品" classname="medicine.api" time="0.374"><system-out>DELETE http://127.0.0.1:8080/api/drugs/12650477
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除医药公司政策" classname="medicine.api" time="0.268"><system-out>DELETE http://127.0.0.1:8080/api/company_policys/124605
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除医保政策" classname="medicine.api" time="0.292"><system-out>DELETE http://127.0.0.1:8080/api/medical_policys/1047
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除必备材料" classname="medicine.api" time="0.269"><system-out>DELETE http://127.0.0.1:8080/api/materials/17
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除医生" classname="medicine.api" time="0.409"><system-out>DELETE http://127.0.0.1:8080/api/doctors/53
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除销售地点" classname="medicine.api" time="0.351"><system-out>DELETE http://127.0.0.1:8080/api/sales/12635295
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除医药公司" classname="medicine.api" time="0.271"><system-out>DELETE http://127.0.0.1:8080/api/companys/11265484
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="删除城市" classname="medicine.api" time="0.291"><system-out>DELETE http://127.0.0.1:8080/api/citys/12630295
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="管理员退出登录" classname="medicine.api" time="0.113"><system-out>POST http://127.0.0.1:8080/api/logout
+expected=HTTP 200 and API code 20000
+api_code=20000</system-out></testcase><testcase name="退出后 Token 失效" classname="medicine.api" time="0.048"><system-out>GET http://127.0.0.1:8080/api/permissions
+expected=HTTP 200 and API code 10006
+api_code=10006</system-out></testcase></testsuite>
