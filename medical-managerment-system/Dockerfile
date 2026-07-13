@@ -8,7 +8,7 @@ RUN --mount=type=cache,target=/root/.npm \
     npm ci --no-audit --no-fund
 
 COPY . .
-ARG MEDICINE_API_BASE_URL=http://localhost:18082/api
+ARG MEDICINE_API_BASE_URL=http://localhost:8082/api
 ENV VUE_APP_API_BASE_URL=${MEDICINE_API_BASE_URL}
 RUN npm run build
 

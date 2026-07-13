@@ -40,7 +40,7 @@ chmod 600 .work/private/docker/*-password.txt
 # 或：.\deploy\docker\init-secrets.ps1 -Target Redis -Force
 docker compose up -d --force-recreate backend web
 docker compose ps
-curl.exe -f http://localhost:18082/actuator/health
+curl.exe -f http://localhost:8082/actuator/health
 ```
 
 只有后端恢复 `healthy` 且登录验证成功，密码轮换才算完成；失败时需同时回滚远程服务端密码和本地 Secret。轮换前应备份现有 Secret 到仓库外的安全位置。
@@ -75,9 +75,9 @@ powershell -ExecutionPolicy Bypass -File .\deploy\docker\init-secrets.ps1
 访问地址：
 
 - 系统页面：<http://localhost:9092/>
-- 后端健康检查：<http://localhost:18082/actuator/health>
+- 后端健康检查：<http://localhost:8082/actuator/health>
 
-后端容器监听 `8082`，默认发布到宿主机 `18082`；前端使用 BusyBox 静态服务发布页面，不包含 Nginx 配置。Windows 本机默认端口避开 QQ 占用的 `8082`；Linux 服务器可设置 `MEDICINE_BACKEND_PORT=8082`。
+后端容器和宿主机默认都使用 `8082`；前端使用 BusyBox 静态服务发布页面，不包含 Nginx 配置。浏览器直接通过 `localhost:8082` 调用 API。
 
 默认只绑定 `127.0.0.1:9092`，局域网设备无法访问。确需局域网演示时应先修改默认管理员密码，再显式执行：
 
@@ -93,9 +93,9 @@ docker compose up -d
 ```powershell
 docker compose ps
 curl.exe http://localhost:9092/
-curl.exe http://localhost:18082/actuator/health
+curl.exe http://localhost:8082/actuator/health
 
-$env:BASE_URL = 'http://localhost:18082'
+$env:BASE_URL = 'http://localhost:8082'
 $env:ADMIN_USERNAME = '<管理员账号>'
 $env:ADMIN_PASSWORD = '<管理员密码>'
 python .\api-tests\run_api_tests.py
