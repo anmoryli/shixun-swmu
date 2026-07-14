@@ -11,11 +11,15 @@ import {
 } from '../../api/admin/saleInfoManage';
 
 const initialState = {
-    salePlaceInfo: {}, // 销售地点信息
+    salePlaceInfo: {}, // 销售地点分页信息（列表视图）
+    saleAllPlaceInfo: {}, // 全部销售地点信息（地图视图，与分页数据分离，避免互相覆盖）
 };
 const mutations = {
     GET_SALE_PLACE_INFO(state, payload) {
         state.salePlaceInfo = payload;
+    },
+    GET_ALL_SALE_PLACE_INFO(state, payload) {
+        state.saleAllPlaceInfo = payload;
     },
 };
 const actions = {
@@ -32,15 +36,18 @@ const actions = {
         { dispatch },
         { saleName, salePhone, address, longitude, latitude, size }
     ) {
-        addSalePlace({ saleName, salePhone, address, longitude, latitude }).then((res) => {
+        return addSalePlace({ saleName, salePhone, address, longitude, latitude }).then((res) => {
             //   新增之后跳转到最后一页
             dispatch('getSalePlaceInfo', { pn: res.data.data.pages, size });
+            // 刷新地图标记点
+            dispatch('getAllSalePlaceInfo');
         });
     },
     // 删除销售地点信息
     deleteSalePlace({ dispatch }, { saleId, pn, size, keyword }) {
-        deleteSalePlace(saleId).then(() => {
+        return deleteSalePlace(saleId).then(() => {
             dispatch('getSalePlaceInfo', { pn, size, keyword });
+            dispatch('getAllSalePlaceInfo');
         });
     },
     // 修改销售地点信息
@@ -48,7 +55,7 @@ const actions = {
         { dispatch },
         { saleId, saleName, salePhone, address, longitude, latitude, pn, size, keyword }
     ) {
-        modifySalePlaceInfo(saleId, {
+        return modifySalePlaceInfo(saleId, {
             saleName,
             salePhone,
             address,
@@ -56,12 +63,15 @@ const actions = {
             latitude,
         }).then(() => {
             dispatch('getSalePlaceInfo', { pn, size, keyword });
+            dispatch('getAllSalePlaceInfo');
         });
     },
-    // 获取所有销售地点
+    // 获取所有销售地点（地图视图用，写入独立的 saleAllPlaceInfo）
     getAllSalePlaceInfo({ commit }) {
-        getAllSalePlaceInfo().then((res) => {
-            commit('GET_SALE_PLACE_INFO', res.data.data.salePageInfo);
+        return getAllSalePlaceInfo().then((res) => {
+            if (res) {
+                commit('GET_ALL_SALE_PLACE_INFO', res.data.data.salePageInfo);
+            }
         });
     },
 };

@@ -15,6 +15,7 @@ const getters = {
   doctorInfo: (state) => state.doctorInfoManage.doctorInfo,
   doctorLevelAndType: (state) => state.doctorInfoManage.doctorLevelAndType,
   materialInfo: (state) => state.materialInfoManage.materialInfo,
+  saleAllPlaceInfo: (state) => state.saleInfoManage.saleAllPlaceInfo,
 
 
 };
