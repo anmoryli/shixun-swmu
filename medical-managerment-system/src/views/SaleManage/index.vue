@@ -10,75 +10,103 @@
       </el-breadcrumb>
     </el-header>
     <el-main>
-      <div class="main-title">
-        <h3>销售地点列表</h3>
-        <button class="new-add" @click="addFormVisible = true" v-if="hasRole" />
+      <el-switch
+        v-model="visualization"
+        active-text="销售地点地图展示"
+        class="map-switch"
+        style="--el-switch-on-color: #13ce66"
+        @change="handleVisualizationChange"
+      />
+      <!-- 列表视图 -->
+      <div v-show="!visualization">
+        <div class="main-title">
+          <h3>销售地点列表</h3>
+          <button class="new-add" @click="addFormVisible = true" v-if="hasRole" />
+        </div>
+        <!-- 搜索 -->
+        <el-row :gutter="20">
+          <el-col :span="23" class="search-col">
+            <keep-alive>
+              <el-input
+                placeholder="查询（输入要查询的药店名称）"
+                size="small"
+                v-model="keyword"
+                @input="handelQuery"
+              >
+              </el-input>
+            </keep-alive>
+          </el-col>
+        </el-row>
+        <!-- 表格 -->
+        <el-table
+          stripe
+          :default-sort="{ prop: 'date', order: 'descending' }"
+          :data="tableData.list"
+          highlight-current-row
+        >
+          <el-table-column prop="saleId" label="药店编号" sortable />
+          <el-table-column prop="saleName" label="药店名称" />
+          <el-table-column prop="salePhone" label="药店电话" />
+          <el-table-column prop="address" label="详细地址" min-width="190">
+            <template #default="scope">
+              <span>{{ scope.row.address || "暂无地址" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="地理坐标" min-width="190">
+            <template #default="scope">
+              <div v-if="hasCoordinate(scope.row)" class="coordinate-badge">
+                <i class="el-icon-location-outline"></i>
+                {{ formatCoordinate(scope.row) }}
+              </div>
+              <span v-else class="coordinate-empty">暂未标注</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" v-if="hasRole">
+            <!-- 通过slot-scope拿到对应行的数据 -->
+            <template #default="scope">
+              <button
+                class="table-btn-delete"
+                @click="
+                  handleDeleteSalePlace(scope.row.saleId, scope.row.saleName)
+                "
+              ></button>
+              <button
+                class="table-btn-update"
+                @click="
+                  handleModifyFormVisible(scope.row)
+                "
+              />
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination">
+          <pagination
+            :page="currentPage"
+            :layout="'total,prev,pager,next,jumper'"
+            :total="tableData.total"
+            :page-size="pageSize"
+            @currentChange="handleCurrentChange($event)"
+            @update:page="currentPage = $event"
+          ></pagination>
+        </div>
       </div>
-      <!-- 搜索 -->
-      <el-row :gutter="20">
-        <el-col :span="23" class="search-col">
-          <keep-alive>
-            <el-input
-              placeholder="查询（输入要查询的药店名称）"
-              size="small"
-              v-model="keyword"
-              @input="handelQuery"
-            >
-            </el-input>
-          </keep-alive>
-        </el-col>
-      </el-row>
-      <!-- 表格 -->
-      <el-table
-        stripe
-        :default-sort="{ prop: 'date', order: 'descending' }"
-        :data="tableData.list"
-        highlight-current-row
-      >
-        <el-table-column prop="saleId" label="药店编号" sortable />
-        <el-table-column prop="saleName" label="药店名称" />
-        <el-table-column prop="salePhone" label="药店电话" />
-        <el-table-column prop="address" label="详细地址" min-width="190">
-          <template #default="scope">
-            <span>{{ scope.row.address || "暂无地址" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="地理坐标" min-width="190">
-          <template #default="scope">
-            <div v-if="hasCoordinate(scope.row)" class="coordinate-badge">
-              <i class="el-icon-location-outline"></i>
-              {{ formatCoordinate(scope.row) }}
-            </div>
-            <span v-else class="coordinate-empty">暂未标注</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" v-if="hasRole">
-          <!-- 通过slot-scope拿到对应行的数据 -->
-          <template #default="scope">
-            <button
-              class="table-btn-delete"
-              @click="
-                handleDeleteSalePlace(scope.row.saleId, scope.row.saleName)
-              "
-            ></button>
-            <button
-              class="table-btn-update"
-              @click="
-                handleModifyFormVisible(scope.row)
-              "
-            />
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination">
-        <pagination
-          :page="currentPage"
-          :layout="'total,prev,pager,next,jumper'"
-          :total="tableData.total"
-          :page-size="pageSize"
-          @currentChange="handleCurrentChange($event)"
-          @update:page="currentPage = $event"
-        ></pagination>
+      <!-- 地图视图 -->
+      <div v-show="visualization" class="map-panel">
+        <div class="map-toolbar">
+          <el-button
+            type="primary"
+            v-if="hasRole"
+            @click="handleAdd"
+          >新增地点</el-button>
+          <span v-if="addStatus === 1" class="map-hint">
+            <i class="el-icon-location-outline"></i>
+            请在地图上点击要新增的位置
+          </span>
+        </div>
+        <div id="mapContainer" class="map-container"></div>
+        <div v-if="!amapJsKey" class="map-placeholder">
+          未配置高德地图 Key，请在 .env 设置 VITE_AMAP_JS_KEY 后重新构建
+        </div>
       </div>
     </el-main>
     <el-dialog
@@ -115,7 +143,7 @@
           <el-input
             v-model.trim="addForm.address"
             autocomplete="off"
-            placeholder="请输入药店所在的详细地址"
+            placeholder="地图新增时自动填充，可手动修正"
           ></el-input>
         </el-form-item>
         <el-form-item label="经度" prop="longitude" :rules="saleRules.longitude">
@@ -230,6 +258,8 @@
 import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
+import AMapLoader from '@amap/amap-jsapi-loader';
+import axios from 'axios';
 
 function coordinateValidator(min, max, label) {
   return (rule, value, callback) => {
@@ -288,6 +318,12 @@ export default {
           { validator: coordinateValidator(-90, 90, '纬度'), trigger: 'change' },
         ],
       },
+      // 地图相关
+      visualization: false, // 列表/地图视图切换
+      map: null, // 高德地图实例
+      amap: null, // AMap 命名空间（用于 new AMap.Marker 等）
+      markers: [], // 当前地图上的标记点
+      addStatus: 0, // 1=等待用户在地图上点击新增位置
     };
   },
   methods: {
@@ -297,6 +333,10 @@ export default {
         pn: this.currentPage,
         size: this.pageSize,
       });
+    },
+    // 拉取全部销售地点（地图标记点用）
+    getAllSalePlaceInfo() {
+      return this.$store.dispatch('saleInfoManage/getAllSalePlaceInfo');
     },
     // 当前页改变时触发,跳转其他页
     handleCurrentChange(event) {
@@ -397,6 +437,7 @@ export default {
     // 每次关闭表单的时候清除验证器和输入框内容
     handleAddClose() {
       this.addForm = emptySaleForm();
+      this.addStatus = 0;
       this.$nextTick(() => this.$refs.addForm && this.$refs.addForm.clearValidate());
     },
     handleModifyClose() {
@@ -420,14 +461,144 @@ export default {
       const latitude = this.toCoordinate(saleInfo.latitude);
       return `${longitude.toFixed(6)}, ${latitude.toFixed(6)}`;
     },
+    // ===== 地图相关 =====
+    // 切换列表/地图视图
+    handleVisualizationChange(val) {
+      if (!val) {
+        return;
+      }
+      // 首次打开时懒加载地图；已加载则 resize 修正尺寸并刷新标记点
+      if (!this.map) {
+        this.$nextTick(() => this.loadMap());
+      } else {
+        this.$nextTick(() => {
+          this.map.resize();
+          this.refreshMap();
+        });
+      }
+    },
+    // 点击「新增地点」按钮，进入等待地图点击状态
+    handleAdd() {
+      this.addStatus = 1;
+      this.$message({
+        message: '请点击地图上的位置',
+        type: 'warning',
+      });
+    },
+    // 地图点击后，经纬度逆地理编码为地址，打开新增弹窗
+    creatLocation(lng, lat) {
+      const webKey = import.meta.env.VITE_AMAP_WEB_KEY;
+      const url = `https://restapi.amap.com/v3/geocode/regeo?key=${webKey}&output=json&location=${lng},${lat}`;
+      axios
+        .get(url)
+        .then((res) => {
+          const formatted =
+            res &&
+            res.data &&
+            res.data.regeocode &&
+            res.data.regeocode.formatted_address;
+          this.addForm.longitude = lng;
+          this.addForm.latitude = lat;
+          this.addForm.address = formatted || '';
+          this.addStatus = 0;
+          this.$message({
+            showClose: true,
+            message: '位置选择成功，请输入详细信息',
+            type: 'success',
+          });
+          this.addFormVisible = true;
+        })
+        .catch((error) => {
+          // 逆地理编码失败时仍允许新增，只是地址留空
+          console.log(error);
+          this.addForm.longitude = lng;
+          this.addForm.latitude = lat;
+          this.addForm.address = '';
+          this.addStatus = 0;
+          this.addFormVisible = true;
+        });
+    },
+    // 清除旧标记点，按全量销售地点重新渲染
+    refreshMap() {
+      if (!this.map || !this.amap) {
+        return;
+      }
+      if (this.markers.length > 0) {
+        this.map.remove(this.markers);
+      }
+      this.markers = [];
+      const list = this.mapData.list || [];
+      list.forEach((element) => {
+        if (!this.hasCoordinate(element)) {
+          return; // 跳过无坐标的销售地点
+        }
+        const marker = new this.amap.Marker({
+          title: element.saleName,
+          position: [element.longitude, element.latitude],
+        });
+        // 点击标记点 -> 打开修改弹窗
+        marker.on('click', () => {
+          this.handleModifyFormVisible(element);
+        });
+        this.markers.push(marker);
+        this.map.add(marker);
+      });
+    },
+    // 加载高德地图
+    loadMap() {
+      const jsKey = this.amapJsKey;
+      if (!jsKey) {
+        return;
+      }
+      // JS API 2.0 安全密钥配置，必须在 load 之前设置
+      window._AMapSecurityConfig = {
+        securityJsCode: import.meta.env.VITE_AMAP_SECURITY_CODE || '',
+      };
+      AMapLoader.load({
+        key: jsKey,
+        version: '2.0',
+        plugins: [],
+      })
+        .then((AMap) => {
+          this.amap = AMap;
+          this.map = new AMap.Map('mapContainer', {
+            mapStyle: 'amap://styles/whitesmoke',
+            zoom: 11,
+            center: [104.06707, 30.660842], // 成都
+          });
+          // 点击地图：若处于新增等待状态，取经纬度逆地理编码
+          this.map.on('click', (e) => {
+            if (this.addStatus === 1) {
+              this.creatLocation(e.lnglat.getLng(), e.lnglat.getLat());
+            }
+          });
+          this.refreshMap();
+        })
+        .catch((e) => {
+          console.log('高德地图加载失败', e);
+        });
+    },
+  },
+  watch: {
+    // 全量数据变化（增删改后）时，地图视图自动刷新标记点
+    mapData: {
+      handler() {
+        if (this.visualization && this.map) {
+          this.refreshMap();
+        }
+      },
+      deep: true,
+    },
   },
   mounted() {
-    this.getSalePlaceInfo(); // 首次渲染
+    this.getSalePlaceInfo(); // 首次渲染列表
+    this.getAllSalePlaceInfo(); // 预加载全量数据，地图打开即可标点
   },
   computed: {
     // 后端返回的数据
     ...mapGetters({
       tableData: 'salePlaceInfo',
+      mapData: 'saleAllPlaceInfo',
     }),
     // 用户输入的关键字
     keyword: {
@@ -437,6 +608,9 @@ export default {
       set(val) {
         this.keywordDefault = val;
       },
+    },
+    amapJsKey() {
+      return import.meta.env.VITE_AMAP_JS_KEY || '';
     },
   },
 };
@@ -463,5 +637,35 @@ export default {
   margin-left: 10px;
   color: #8c939d;
   font-size: 12px;
+}
+.map-switch {
+  margin: 12px 0 16px;
+}
+.map-panel {
+  margin-top: 8px;
+}
+.map-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.map-hint {
+  color: #e6a23c;
+  font-size: 13px;
+}
+.map-container {
+  width: 100%;
+  height: 700px;
+  border: 1px solid #e5e9ef;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.map-placeholder {
+  padding: 24px;
+  color: #909399;
+  text-align: center;
+  border: 1px dashed #dcdfe6;
+  border-radius: 8px;
 }
 </style>
