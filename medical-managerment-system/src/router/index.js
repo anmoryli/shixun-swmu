@@ -1,16 +1,8 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import Login from '../views/Login.vue';
-import { Message } from 'element-ui';
+import { ElMessage } from 'element-plus';
 import { isLoggedIn } from '../utils/authStore';
 
-Vue.use(VueRouter);
-
-// 解决导航栏或者底部导航tabBar中的vue-router在3.0版本以上频繁点击菜单报错的问题。
-const originalPush = VueRouter.prototype.push;
-VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch((err) => err);
-};
 export const constantRoutes = [
     {
       path: '/user/login',
@@ -20,12 +12,12 @@ export const constantRoutes = [
     },
     {
       path: '/',
-      redirect: '/home',
+      redirect: () => (isLoggedIn() ? '/home' : '/user/login'),
     },
   ];
   
-  const router = new VueRouter({
-    mode: 'hash',
+  const router = createRouter({
+    history: createWebHashHistory(),
     routes: constantRoutes,
   });
   // 判断登录状态
@@ -42,7 +34,7 @@ router.beforeEach((to, from, next) => {
     }
 
     // store 在守卫执行时再加载，避免 router/store 相互引用导致初始化竞态。
-    const store = require('../store').default;
+    const store = router.appStore;
     if (store.state.app.routesLoaded) {
       if (to.path === '/user/login') {
         next('/');
@@ -63,9 +55,13 @@ router.beforeEach((to, from, next) => {
       })
       .catch((error) => {
         store.dispatch('app/logout');
-        Message.error(error.message || '登录状态已失效，请重新登录');
+        ElMessage.error(error.message || '登录状态已失效，请重新登录');
         next('/user/login');
       });
   });
   
-  export default router;
+export function attachStore(store) {
+  router.appStore = store;
+}
+
+export default router;

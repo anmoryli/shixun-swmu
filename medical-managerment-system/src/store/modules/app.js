@@ -1,5 +1,5 @@
 import { login } from '../../api/Login';
-import { Message } from 'element-ui';
+import { ElMessage } from 'element-plus';
 import router, { constantRoutes } from '../../router/index';
 import {getMenu} from '../../utils/routeParse';
 import { getToken, setToken, setUserInfo, clearAuth } from '../../utils/authStore';
@@ -19,8 +19,7 @@ const mutations = {
     const routes = constantRoutes.concat(dynamicRoutes);
     state.menuList = routes;
     state.routesLoaded = true;
-    router.options.routes = routes;
-    router.addRoutes(dynamicRoutes);
+    dynamicRoutes.forEach((route) => router.addRoute(route));
   },
   RESET_AUTH(state) {
     state.token = '';
@@ -47,7 +46,7 @@ const actions = {
     setUserInfo(data.userInfo);
     setToken(data.token);
     commit('SET_TOKEN', data.token);
-    Message({
+    ElMessage({
       type: 'success',
       message: '登录成功',
     });

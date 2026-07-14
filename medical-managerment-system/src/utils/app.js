@@ -2,16 +2,16 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
  */
 
-import { Message } from 'element-ui';
+import { ElMessage } from 'element-plus';
 // 判断删除结果
 export function judgeDeleteResult(res) {
   if (res.data.code === 20000) {
-    Message({
+    ElMessage({
       type: 'success',
       message: '删除成功!',
     });
   } else {
-    Message({
+    ElMessage({
       type: 'error',
       message: '删除失败!',
     });
@@ -21,17 +21,17 @@ export function judgeDeleteResult(res) {
 // 判断新增结果
 export function judgeAddResult(res) {
   if (res.data.code === 20000) {
-    Message({
+    ElMessage({
       type: 'success',
       message: '新增成功!',
     });
   } else if (res.data.code === 10001) {
-    Message({
+    ElMessage({
       type: 'error',
       message: '该手机号已被注册',
     });
   } else {
-    Message({
+    ElMessage({
       type: 'error',
       message: '新增失败',
     });
@@ -43,7 +43,7 @@ export function judgeQueryResult(res) {
   if (res.data.code === 20000) {
     return res;
   } else {
-    Message({
+    ElMessage({
       type: 'error',
       message: '加载数据失败!',
     });
@@ -53,17 +53,17 @@ export function judgeQueryResult(res) {
 // 判断修改结果
 export function judgeModifyResult(res) {
   if (res.data.code === 20000) {
-    Message({
+    ElMessage({
       type: 'success',
       message: '修改成功!',
     });
   } else if (res.data.code === 10001) {
-    Message({
+    ElMessage({
       type: 'error',
       message: '该手机号已被注册',
     });
   } else {
-    Message({
+    ElMessage({
       type: 'error',
       message: '修改失败!',
     });
@@ -73,12 +73,12 @@ export function judgeModifyResult(res) {
 // 判断重置密码结果
 export function judgeResetResult(res) {
   if (res.data.code === 20000) {
-    Message({
+    ElMessage({
       type: 'success',
       message: '重置密码成功!',
     });
   } else {
-    Message({
+    ElMessage({
       type: 'error',
       message: '重置密码失败!',
     });

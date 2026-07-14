@@ -1,8 +1,8 @@
 <template>
   <div class="pagination-container">
     <el-pagination
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
+      v-model:current-page="currentPage"
+      v-model:page-size="currentPageSize"
       :layout="layout"
       :total="total"
       @current-change="handleCurrentChange"
@@ -37,6 +37,14 @@ export default {
       },
       set(val) {
         this.$emit('update:page', val);
+      },
+    },
+    currentPageSize: {
+      get() {
+        return this.pageSize;
+      },
+      set(val) {
+        this.$emit('update:pageSize', val);
       },
     },
   },

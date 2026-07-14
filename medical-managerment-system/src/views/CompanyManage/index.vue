@@ -50,7 +50,7 @@
         </el-table-column>
         <el-table-column prop="companyOperation" label="操作" v-if="hasRole">
           <!-- 通过slot-scope拿到对应行的数据 -->
-          <template slot-scope="scope">
+          <template #default="scope">
             <button
               class="table-btn-delete"
               @click="
@@ -73,10 +73,10 @@
       <!-- 分页 -->
       <div class="pagination">
         <pagination
-          :current-page.sync="currentPage"
+          :page="currentPage"
           :layout="'total,prev,pager,next,jumper'"
           :total="tableData.total"
-          :page-size.sync="pageSize"
+          :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
         ></pagination>
@@ -85,7 +85,7 @@
     <!-- 点击新增后的弹窗 -->
     <el-dialog
       title="新增医药公司"
-      :visible.sync="addFormVisible"
+      v-model="addFormVisible"
       :modal-append-to-body="false"
       @close="handleAddClose"
     >
@@ -128,7 +128,7 @@
     <!-- 点击修改后的弹窗 -->
     <el-dialog
       title="修改医药公司信息"
-      :visible.sync="modifyFormVisible"
+      v-model="modifyFormVisible"
       :modal-append-to-body="false"
       @close="handleModifyClose"
     >
@@ -179,7 +179,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 

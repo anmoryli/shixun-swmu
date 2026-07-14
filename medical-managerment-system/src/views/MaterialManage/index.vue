@@ -49,7 +49,7 @@
           <el-table-column prop="title" label="材料标题" />
           <el-table-column prop="message" label="材料内容" min-width="400" />
           <el-table-column label="操作" v-if="hasRole">
-            <template slot-scope="scope">
+            <template #default="scope">
               <button
                 class="table-btn-delete"
                 @click="handleDeleteMaterial(scope.row.id, scope.row.title)"
@@ -70,10 +70,10 @@
         <!-- 分页 -->
         <div class="pagination">
           <pagination
-            :current-page.sync="currentPage"
+            :page="currentPage"
             :layout="'total,prev,pager,next,jumper'"
             :total="tableData.total"
-            :page-size.sync="pageSize"
+            :page-size="pageSize"
             @currentChange="handleCurrentChange($event)"
             @update:page="currentPage = $event"
           ></pagination>
@@ -82,7 +82,7 @@
       <!-- 点击新增后的弹窗 -->
       <el-dialog
         title="新增必备材料"
-        :visible.sync="addFormVisible"
+        v-model="addFormVisible"
         :modal-append-to-body="false"
         @close="handleAddClose"
       >
@@ -122,7 +122,7 @@
       <!-- 点击修改后的弹窗 -->
       <el-dialog
         title="修改必备材料信息"
-        :visible.sync="modifyFormVisible"
+        v-model="modifyFormVisible"
         :modal-append-to-body="false"
         @close="handleModifyClose"
       >
@@ -169,7 +169,7 @@
     </el-container>
   </template>
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 export default {

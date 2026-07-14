@@ -3,18 +3,18 @@
  */
 
 import axios from 'axios';
-import { Message } from 'element-ui';
+import { ElMessage } from 'element-plus';
 import router from '../router/index';
 import { getToken, clearAuth } from './authStore';
 
 // 默认使用同源 /api，生产部署时可通过环境变量切换到独立网关。
 export const API_BASE_URL = (
-  process.env.VUE_APP_API_BASE_URL ||
-  process.env.VUE_APP_URL ||
+  import.meta.env.VITE_API_BASE_URL ||
+  import.meta.env.VITE_URL ||
   '/api'
 ).replace(/\/$/, '');
 
-const withCredentials = process.env.VUE_APP_WITH_CREDENTIALS !== 'false';
+const withCredentials = import.meta.env.VITE_WITH_CREDENTIALS !== 'false';
 axios.defaults.withCredentials = withCredentials;
 
 export function resolveApiUrl(path = '') {
@@ -24,7 +24,7 @@ export function resolveApiUrl(path = '') {
 // 创建 axios 实例
 const service = axios.create({
   baseURL: API_BASE_URL,
-  timeout: Number(process.env.VUE_APP_API_TIMEOUT) || 10000,
+  timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 10000,
   withCredentials,
 });
 // request 拦截器
@@ -47,13 +47,13 @@ service.interceptors.response.use(
         const res = response.data;
         // code为10006代表token失效，需要重新登录
         if (res.code === 10006) {
-            Message({
+            ElMessage({
                 type: 'error',
                 message: '登录已失效，请重新登录',
             });
             setTimeout(() => {
                 clearAuth();
-                if (router.currentRoute.path !== '/user/login') {
+                if (router.currentRoute.value.path !== '/user/login') {
                     router.replace('/user/login');
                 }
             }, 500);

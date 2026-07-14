@@ -38,7 +38,7 @@
         highlight-current-row
       >
         <el-table-column type="expand">
-          <template slot-scope="scope">
+          <template #default="scope">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="药品信息">
                 <span>{{ scope.row.drugInfo }}</span>
@@ -51,7 +51,7 @@
         </el-table-column>
         <el-table-column prop="drugId" label="药品编号" sortable />
         <el-table-column prop="drugImg" label="药品图片">
-          <template slot-scope="scope">
+          <template #default="scope">
             <el-image
               style="width: 150px; height: 100px"
               :src="scope.row.drugImg"
@@ -61,7 +61,7 @@
         </el-table-column>
         <el-table-column prop="drugName" label="药品名称" />
         <el-table-column prop="drugSales.saleName" label="销售地点">
-          <template slot-scope="scope">
+          <template #default="scope">
             <span v-for="i in scope.row.drugSales" :key="i.saleId"
               >{{ i.saleName }}&nbsp;&nbsp;</span
             >
@@ -69,7 +69,7 @@
         </el-table-column>
         <el-table-column prop="drugPublisher" label="发布者" sortable />
         <el-table-column label="操作" v-if="hasRole">
-          <template slot-scope="scope">
+          <template #default="scope">
             <button
               class="table-btn-delete"
               @click="handleDeleteDrug(scope.row.drugId, scope.row.drugName)"
@@ -93,10 +93,10 @@
       <!-- 分页 -->
       <div class="pagination">
         <pagination
-          :current-page.sync="currentPage"
+          :page="currentPage"
           :layout="'total,prev,pager,next,jumper'"
           :total="tableData.total"
-          :page-size.sync="pageSize"
+          :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
         ></pagination>
@@ -104,7 +104,7 @@
     </el-main>
     <el-dialog
       title="新增药品"
-      :visible.sync="addFormVisible"
+      v-model="addFormVisible"
       :modal-append-to-body="false"
       @close="handleAddClose"
     >
@@ -203,7 +203,7 @@
     </el-dialog>
     <el-dialog
       title="修改药品信息"
-      :visible.sync="modifyFormVisible"
+      v-model="modifyFormVisible"
       :modal-append-to-body="false"
       @close="handleModifyClose"
     >
@@ -296,7 +296,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 import { resolveApiUrl } from '../../utils/request';

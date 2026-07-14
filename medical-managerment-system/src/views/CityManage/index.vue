@@ -43,7 +43,7 @@
         <el-table-column prop="city" label="城市名称" />
         <el-table-column prop="cityOperation" label="操作" v-if="hasRole">
           <!-- 通过slot-scope拿到对应行的数据 -->
-          <template slot-scope="scope">
+          <template #default="scope">
             <button
               class="table-btn-delete"
               @click="handleDeletecity(scope.row.cityId, scope.row.city)"
@@ -54,10 +54,10 @@
       <!-- 分页 -->
       <div class="pagination">
         <pagination
-          :current-page.sync="currentPage"
+          :page="currentPage"
           :layout="'total,prev,pager,next,jumper'"
           :total="tableData.total"
-          :page-size.sync="pageSize"
+          :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
         ></pagination>
@@ -65,7 +65,7 @@
     </el-main>
     <el-dialog
       title="新增城市"
-      :visible.sync="addFormVisible"
+      v-model="addFormVisible"
       :modal-append-to-body="false"
       @close="handleAddClose"
     >
@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 import { provinceAndCityData } from 'element-china-area-data';
@@ -208,8 +208,6 @@ export default {
     },
   },
 };
-</script>
-
 </script>
 <style lang="less" scoped>
 @import "../../style/infoManage.less";

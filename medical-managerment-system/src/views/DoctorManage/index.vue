@@ -41,7 +41,7 @@
         <el-table-column prop="name" label="医生姓名" />
         <el-table-column prop="age" label="年龄" sortable />
         <el-table-column prop="sex" label="性别" sortable>
-          <template slot-scope="scope">
+          <template #default="scope">
             <span>{{ scope.row.sex == 1 ? "男" : "女" }}</span>
           </template>
         </el-table-column>
@@ -49,7 +49,7 @@
         <el-table-column prop="phoneNumber" label="手机号" />
         <el-table-column prop="treatType" label="诊治类别" sortable />
         <el-table-column label="操作" width="210px" v-if="hasRole">
-          <template slot-scope="scope">
+          <template #default="scope">
             <button
               class="table-btn-delete"
               @click="handleDeleteDoctor(scope.row.id, scope.row.name)"
@@ -84,10 +84,10 @@
       <!-- 分页 -->
       <div class="pagination">
         <pagination
-          :current-page.sync="currentPage"
+          :page="currentPage"
           :layout="'total,prev,pager,next,jumper'"
           :total="tableData.total"
-          :page-size.sync="pageSize"
+          :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
         ></pagination>
@@ -96,7 +96,7 @@
     <!-- 点击新增后的弹窗 -->
     <el-dialog
       title="新增医生信息"
-      :visible.sync="addFormVisible"
+      v-model="addFormVisible"
       :modal-append-to-body="false"
       @close="handleAddClose"
     >
@@ -202,7 +202,7 @@
     <!-- 点击修改后的弹窗 -->
     <el-dialog
       title="修改医生信息"
-      :visible.sync="modifyFormVisible"
+      v-model="modifyFormVisible"
       :modal-append-to-body="false"
       @close="handleModifyClose"
     >
@@ -279,7 +279,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import { doctorRules, validatePass } from '../../utils/validator';
 import { resetPassword } from '../../api/admin/doctorInfoManage';

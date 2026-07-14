@@ -39,12 +39,12 @@
         <el-table-column prop="saleName" label="药店名称" />
         <el-table-column prop="salePhone" label="药店电话" />
         <el-table-column prop="address" label="详细地址" min-width="190">
-          <template slot-scope="scope">
+          <template #default="scope">
             <span>{{ scope.row.address || "暂无地址" }}</span>
           </template>
         </el-table-column>
         <el-table-column label="地理坐标" min-width="190">
-          <template slot-scope="scope">
+          <template #default="scope">
             <div v-if="hasCoordinate(scope.row)" class="coordinate-badge">
               <i class="el-icon-location-outline"></i>
               {{ formatCoordinate(scope.row) }}
@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="hasRole">
           <!-- 通过slot-scope拿到对应行的数据 -->
-          <template slot-scope="scope">
+          <template #default="scope">
             <button
               class="table-btn-delete"
               @click="
@@ -72,10 +72,10 @@
       </el-table>
       <div class="pagination">
         <pagination
-          :current-page.sync="currentPage"
+          :page="currentPage"
           :layout="'total,prev,pager,next,jumper'"
           :total="tableData.total"
-          :page-size.sync="pageSize"
+          :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
         ></pagination>
@@ -83,7 +83,7 @@
     </el-main>
     <el-dialog
       title="新增销售地点"
-      :visible.sync="addFormVisible"
+      v-model="addFormVisible"
       :modal-append-to-body="false"
       @close="handleAddClose"
     >
@@ -151,7 +151,7 @@
     <!-- 点击修改后的弹窗 -->
     <el-dialog
       title="修改销售地点信息"
-      :visible.sync="modifyFormVisible"
+      v-model="modifyFormVisible"
       :modal-append-to-body="false"
       @close="handleModifyClose"
     >
@@ -227,7 +227,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 

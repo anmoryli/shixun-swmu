@@ -6,6 +6,8 @@ import { getMenuList } from '../api/Login';
 import Layout from '../layout/index.vue';
 import { getUserInfo } from '../utils/authStore';
 
+const viewModules = import.meta.glob('../views/*/index.vue');
+
 function tree(data, arr) {
   if (!Array.isArray(data)) {
     return arr;
@@ -16,13 +18,17 @@ function tree(data, arr) {
       return;
     }
 
+    const viewComponent = item.component === 'Layout'
+      ? Layout
+      : viewModules[`../views/${item.component}/index.vue`];
+    if (!viewComponent) {
+      return;
+    }
+
     const route = {
       path: item.path,
       name: item.name || item.path,
-      component:
-        item.component === 'Layout'
-          ? Layout
-          : () => import(`../views/${item.component}/index.vue`),
+      component: viewComponent,
       meta: {
         title: (item.meta && item.meta.title) || item.title || item.name || '慧医数字医疗',
       },
