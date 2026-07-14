@@ -259,7 +259,7 @@ import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 import AMapLoader from '@amap/amap-jsapi-loader';
-import axios from 'axios';
+import service from '../../utils/request';
 
 function coordinateValidator(min, max, label) {
   return (rule, value, callback) => {
@@ -487,16 +487,10 @@ export default {
     },
     // 地图点击后，经纬度逆地理编码为地址，打开新增弹窗
     creatLocation(lng, lat) {
-      const webKey = import.meta.env.VITE_AMAP_WEB_KEY;
-      const url = `https://restapi.amap.com/v3/geocode/regeo?key=${webKey}&output=json&location=${lng},${lat}`;
-      axios
-        .get(url)
+      service
+        .get('/regeo', { params: { lng, lat } })
         .then((res) => {
-          const formatted =
-            res &&
-            res.data &&
-            res.data.regeocode &&
-            res.data.regeocode.formatted_address;
+          const formatted = res && res.data && res.data.data;
           this.addForm.longitude = lng;
           this.addForm.latitude = lat;
           this.addForm.address = formatted || '';

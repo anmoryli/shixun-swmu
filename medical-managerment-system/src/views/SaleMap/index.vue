@@ -163,7 +163,7 @@
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 import AMapLoader from '@amap/amap-jsapi-loader';
-import axios from 'axios';
+import service from '../../utils/request';
 
 function coordinateValidator(min, max, label) {
   return (rule, value, callback) => {
@@ -240,13 +240,10 @@ export default {
       this.$message({ message: '请点击地图上的位置', type: 'warning' });
     },
     creatLocation(lng, lat) {
-      const webKey = import.meta.env.VITE_AMAP_WEB_KEY;
-      const url = `https://restapi.amap.com/v3/geocode/regeo?key=${webKey}&output=json&location=${lng},${lat}`;
-      axios
-        .get(url)
+      service
+        .get('/regeo', { params: { lng, lat } })
         .then((res) => {
-          const formatted =
-            res && res.data && res.data.regeocode && res.data.regeocode.formatted_address;
+          const formatted = res && res.data && res.data.data;
           this.addForm.longitude = lng;
           this.addForm.latitude = lat;
           this.addForm.address = formatted || '';
