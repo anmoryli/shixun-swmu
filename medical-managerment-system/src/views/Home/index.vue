@@ -86,6 +86,32 @@
         </div>
       </el-card>
     </section>
+
+    <section class="news-section">
+      <el-card class="news-card" shadow="never">
+        <div slot="header" class="section-title">
+          <span>最新政策资讯</span>
+          <small>医疗政策 / 企业政策 / 必备材料</small>
+        </div>
+        <ul class="news-list" v-loading="dashboardLoading">
+          <li
+            v-for="item in newsList"
+            :key="item.id"
+            class="news-item"
+          >
+            <span class="news-tag" :class="newsTagClass(item.id)">{{ newsTagText(item.id) }}</span>
+            <div class="news-body">
+              <p class="news-title">{{ item.title }}</p>
+              <p class="news-summary">{{ item.summary }}</p>
+            </div>
+            <span class="news-time">{{ formatTime(item.publishedAt) }}</span>
+          </li>
+          <li v-if="!newsList.length && !dashboardLoading" class="news-empty">
+            暂无资讯
+          </li>
+        </ul>
+      </el-card>
+    </section>
   </div>
 </template>
 
@@ -212,6 +238,9 @@ export default {
         value: this.pickMetric(definition.aliases),
       }));
     },
+    newsList() {
+      return (this.dashboardData.news || []).slice(0, 5);
+    },
   },
   mounted() {
     this.loadDashboard();
@@ -317,6 +346,31 @@ export default {
           // 目标路由已在动态菜单中注册；忽略重复导航等非致命错误。
         });
       }
+    },
+    formatTime(value) {
+      if (!value) {
+        return '';
+      }
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return value;
+      }
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    },
+    newsTagText(id) {
+      if (!id) return '资讯';
+      if (id.startsWith('medical-')) return '医疗政策';
+      if (id.startsWith('company-')) return '企业政策';
+      if (id.startsWith('material-')) return '必备材料';
+      return '资讯';
+    },
+    newsTagClass(id) {
+      if (!id) return 'tag-default';
+      if (id.startsWith('medical-')) return 'tag-medical';
+      if (id.startsWith('company-')) return 'tag-company';
+      if (id.startsWith('material-')) return 'tag-material';
+      return 'tag-default';
     },
     pickMetric(aliases) {
       const sources = [
@@ -518,6 +572,87 @@ h1 {
   background: linear-gradient(transparent, rgba(20, 48, 46, 0.82));
   font-size: 13px;
   font-weight: 600;
+}
+.news-section {
+  margin-top: 20px;
+}
+.news-card {
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(41, 91, 87, 0.07);
+}
+.news-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.news-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 4px;
+  border-bottom: 1px solid #eef3f3;
+}
+.news-item:last-child {
+  border-bottom: 0;
+}
+.news-tag {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.news-tag.tag-medical {
+  color: #168f84;
+  background: #e3f6f2;
+}
+.news-tag.tag-company {
+  color: #5b4dc4;
+  background: #ece9fb;
+}
+.news-tag.tag-material {
+  color: #b5641a;
+  background: #fdf0df;
+}
+.news-tag.tag-default {
+  color: #5a6b6a;
+  background: #eef3f3;
+}
+.news-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.news-title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #263b3a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.news-summary {
+  margin: 0;
+  font-size: 12px;
+  color: #8a9998;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.news-time {
+  flex: 0 0 auto;
+  color: #93a09f;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.news-empty {
+  padding: 24px;
+  text-align: center;
+  color: #93a09f;
+  font-size: 13px;
 }
 @media (max-width: 1200px) {
   .metric-grid {
