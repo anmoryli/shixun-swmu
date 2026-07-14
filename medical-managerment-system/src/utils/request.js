@@ -15,7 +15,6 @@ export const API_BASE_URL = (
 ).replace(/\/$/, '');
 
 const withCredentials = import.meta.env.VITE_WITH_CREDENTIALS !== 'false';
-axios.defaults.withCredentials = withCredentials;
 
 export function resolveApiUrl(path = '') {
   return `${API_BASE_URL}/${String(path).replace(/^\//, '')}`;
