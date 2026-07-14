@@ -1,4 +1,4 @@
-import { login } from '../../api/Login';
+import { login, getSession } from '../../api/Login';
 import { ElMessage } from 'element-plus';
 import router, { constantRoutes } from '../../router/index';
 import {getMenu} from '../../utils/routeParse';
@@ -60,6 +60,22 @@ const actions = {
     const routes = await getMenu();
     commit('SET_ROUTER_MENULIST', routes);
     return routes;
+  },
+  // 会话恢复：刷新后内存登录态丢失，调 /api/session 从 httpOnly cookie 恢复。
+  async checkSession({ commit }) {
+    try {
+      const data = await getSession();
+      if (data && Number(data.code) === 20000 && data.data) {
+        setUserInfo(data.data);
+        setLoggedIn(true);
+        return true;
+      }
+    } catch (e) {
+      // 网络异常等视为未登录
+    }
+    clearAuth();
+    commit('RESET_AUTH');
+    return false;
   },
   logout({ commit }) {
     clearAuth();
