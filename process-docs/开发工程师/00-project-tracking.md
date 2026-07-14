@@ -2,7 +2,7 @@
 
 ## 项目目标
 
-基于现有 Vue 2 前端、需求规格说明书与 `sql/medical.sql`，补齐 Spring Boot 后端，连接远程 MySQL/Redis，完成数据库导入、接口测试、前后端联调、部署验证，并保留可复核的过程文档和截图证据。
+基于现有 Vue 3 前端、需求规格说明书与 `sql/medical.sql`，补齐 Spring Boot 后端，连接远程 MySQL/Redis，完成数据库导入、接口测试、前后端联调、部署验证，并保留可复核的过程文档和截图证据。
 
 ## 输入基线
 
@@ -31,7 +31,7 @@
 
 ## 关键决策
 
-1. 后端遵循需求指定的 Spring Boot 2.5.3、Spring MVC、Spring Security 与 MyBatis。
+1. 后端从需求指定的 Spring Boot 2.5.3 升级至 2.7.18（修复 CVE-2022-22950 / CVE-2022-22965），沿用 Spring MVC、Spring Security 与 MyBatis。
 2. 目标 Java 运行时为 JDK 17；不使用 Lombok，降低旧版 Spring Boot 与新 JDK 组合的构建风险。
 3. 登录密码使用 BCrypt；Token 为随机不透明令牌，仅在 Redis 保存会话，避免把权限完全交给客户端。
 4. 管理员可维护全部数据；医生仅开放需求范围内的只读接口，服务端再次鉴权。
@@ -50,3 +50,4 @@
 - 2026-07-13：完成本地 Git 分阶段提交；未配置 CodeArts 远程仓库，因为当前未提供项目地址和平台授权。
 - 2026-07-13：后端默认端口调整为 8082，前端代理、测试和部署配置同步；本机通过 IPv6 回环避开 QQ 的 IPv4 端口占用，API 回归 57/57。
 - 2026-07-13：完成 Docker Compose 部署；前后端镜像实构建、2/2 容器健康、同源 API 回归 57/57、上传卷跨容器重建保持可访问。
+- 2026-07-14：高严重度代码评审整改（H1–H9）——Spring Boot 升级 2.7.18、Token SHA-256 摘要存储、高德地图后端 `/api/regeo` 代理、SQL 迁移幂等化、CodeArts 流水线修复、过程文档与实现对齐；CodeArts 流水线已配置并双库同步至 GitHub origin 与 codearts。
