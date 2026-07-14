@@ -14,9 +14,11 @@ services:
     environment:
       SERVER_PORT: "8082"
       SERVER_ADDRESS: "0.0.0.0"
+      # 安全警示：生产应走内网/隧道并启用 useSSL=true&verifyServerCertificate=true；当前远程公网 useSSL=false 仅为实训便捷默认。
       DB_URL: "${MEDICINE_DB_URL:-jdbc:mysql://106.54.210.109:3306/medicine?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}"
       DB_USERNAME: "${MEDICINE_DB_USERNAME:-root}"
       DB_PASSWORD_FILE: /run/secrets/mysql_password
+      # 安全警示：生产应内网监听+强口令；当前默认公网 host 仅为实训便捷默认。
       REDIS_HOST: "${MEDICINE_REDIS_HOST:-106.54.210.109}"
       REDIS_PORT: "${MEDICINE_REDIS_PORT:-6379}"
       REDIS_PASSWORD_FILE: /run/secrets/redis_password
