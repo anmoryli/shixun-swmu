@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 module.exports = {
   publicPath: '/',
   lintOnSave: false, // 关闭ESLint检查
