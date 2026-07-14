@@ -22,6 +22,8 @@ uploads/
 # Local secrets and machine-specific overrides
 **/.env.local
 **/.env.*.local
+medical-managerment-system/.env.development
+medical-managerment-system/.env.production
 **/application-local.yml
 **/application-local.yaml
 **/application-secrets.yml
