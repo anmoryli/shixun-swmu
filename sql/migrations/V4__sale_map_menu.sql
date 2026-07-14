@@ -17,3 +17,14 @@ AND NOT EXISTS (
   WHERE rp.`roleName` = 'ROLE_1'
   AND rp.`per_id` = (SELECT `id` FROM `permission` WHERE `name` = 'BaseSaleMap' AND `path` = '/base/salemap' LIMIT 1)
 );
+
+-- ROLE_2 普通用户也可见地图 tab(只读,新增/修改按钮由前端 hasRole 隐藏)
+INSERT INTO `role_permission` (`roleName`, `per_id`)
+SELECT 'ROLE_2', `id`
+FROM `permission`
+WHERE `name` = 'BaseSaleMap' AND `path` = '/base/salemap'
+AND NOT EXISTS (
+  SELECT 1 FROM `role_permission` rp
+  WHERE rp.`roleName` = 'ROLE_2'
+  AND rp.`per_id` = (SELECT `id` FROM `permission` WHERE `name` = 'BaseSaleMap' AND `path` = '/base/salemap' LIMIT 1)
+);
