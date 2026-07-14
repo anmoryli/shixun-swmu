@@ -13,9 +13,10 @@
 
 | 方法 | 路径 | 权限 | 说明 |
 |---|---|---|---|
-| POST | `/api/login` | 公开 | 表单/JSON 登录，返回 Token 和用户信息 |
+| POST | `/api/login` | 公开 | 表单/JSON 登录，通过 httpOnly Cookie 下发会话令牌，返回用户信息 |
 | GET | `/api/permissions` | 已登录 | 按真实会话角色返回动态菜单 |
-| POST | `/api/logout` | 已登录 | 删除 Redis 会话 |
+| POST | `/api/logout` | 已登录 | 删除 Redis 会话并清除 Cookie |
+| GET | `/api/session` | 公开 | 探测当前登录态，已登录返回用户信息，未登录返回 10006 |
 | GET | `/api/dashboard` | 管理员/医生 | 八类数量、医生分布、资讯 |
 | GET | `/actuator/health` | 公开 | MySQL、Redis 和应用健康检查 |
 
