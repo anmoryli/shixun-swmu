@@ -61,6 +61,7 @@ fi
 
 WEB_PORT="$(sed -n 's/^MEDICINE_WEB_PORT=//p' "${ENV_FILE}" | tail -n 1)"
 WEB_PORT="${WEB_PORT:-9092}"
+# Verify the new release locally before promoting it as the current deployment.
 HEALTH_URL="http://127.0.0.1:${WEB_PORT}/actuator/health"
 if command -v curl >/dev/null 2>&1; then
   curl --fail --silent --show-error --retry 6 --retry-delay 5 "${HEALTH_URL}" >/dev/null || {
