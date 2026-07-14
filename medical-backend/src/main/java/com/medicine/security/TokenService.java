@@ -49,14 +49,18 @@ public class TokenService {
         if (token == null || token.trim().isEmpty()) {
             return Optional.empty();
         }
-        String value = redisTemplate.opsForValue().get(tokenPrefix + token);
+        String key = tokenPrefix + token;
+        String value = redisTemplate.opsForValue().get(key);
         if (value == null) {
             return Optional.empty();
         }
         try {
-            return Optional.of(objectMapper.readValue(value, AuthSession.class));
+            AuthSession session = objectMapper.readValue(value, AuthSession.class);
+            // 滑动续期：每次命中刷新 TTL，活跃用户不掉线，7 天不活动才过期。
+            redisTemplate.expire(key, tokenTtl);
+            return Optional.of(session);
         } catch (JsonProcessingException exception) {
-            redisTemplate.delete(tokenPrefix + token);
+            redisTemplate.delete(key);
             return Optional.empty();
         }
     }
