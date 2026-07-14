@@ -90,7 +90,7 @@ public class AuthController {
      * 将不透明 token 写入 httpOnly cookie，由浏览器自动携带、前端 JS 读不到，实现持久登录。
      */
     private void addAuthCookie(HttpServletResponse response, String token) {
-        ResponseCookie.Builder builder = ResponseCookie.from(cookieProperties.getName(), token)
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(cookieProperties.getName(), token)
                 .httpOnly(true)
                 .secure(cookieProperties.isSecure())
                 .sameSite(cookieProperties.getSameSite())
