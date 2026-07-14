@@ -56,7 +56,7 @@ public class TokenService {
     public String create(AuthSession session) {
         String token = UUID.randomUUID().toString().replace("-", "");
         try {
-            redisTemplate.opsForValue().set(tokenPrefix + token, objectMapper.writeValueAsString(session), tokenTtl);
+            redisTemplate.opsForValue().set(tokenPrefix + digest(token), objectMapper.writeValueAsString(session), tokenTtl);
             return token;
         } catch (JsonProcessingException exception) {
             throw new BusinessException(ErrorCode.INTERNAL_ERROR, "创建登录会话失败");
@@ -67,7 +67,7 @@ public class TokenService {
         if (token == null || token.trim().isEmpty()) {
             return Optional.empty();
         }
-        String key = tokenPrefix + token;
+        String key = tokenPrefix + digest(token);
         String value = redisTemplate.opsForValue().get(key);
         if (value == null) {
             return Optional.empty();
@@ -85,7 +85,7 @@ public class TokenService {
 
     public void delete(String token) {
         if (token != null && !token.trim().isEmpty()) {
-            redisTemplate.delete(tokenPrefix + token);
+            redisTemplate.delete(tokenPrefix + digest(token));
         }
     }
 
