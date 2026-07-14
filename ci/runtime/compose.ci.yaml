@@ -1,0 +1,68 @@
+name: "${MEDICINE_PROJECT_NAME:-medicine-ci}"
+
+services:
+  backend:
+    image: "medicine-backend:${MEDICINE_IMAGE_TAG:?MEDICINE_IMAGE_TAG is required}"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    stop_grace_period: 40s
+    environment:
+      SERVER_PORT: "8082"
+      SERVER_ADDRESS: "0.0.0.0"
+      DB_URL: "${MEDICINE_DB_URL:?MEDICINE_DB_URL is required}"
+      DB_USERNAME: "${MEDICINE_DB_USERNAME:?MEDICINE_DB_USERNAME is required}"
+      DB_PASSWORD_FILE: /run/secrets/mysql_password
+      REDIS_HOST: "${MEDICINE_REDIS_HOST:?MEDICINE_REDIS_HOST is required}"
+      REDIS_PORT: "${MEDICINE_REDIS_PORT:-6379}"
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
+      REDIS_DATABASE: "${MEDICINE_REDIS_DATABASE:-0}"
+      TOKEN_TTL: "${MEDICINE_TOKEN_TTL:-8h}"
+      CORS_ALLOWED_ORIGINS: "${MEDICINE_CORS_ALLOWED_ORIGINS:-}"
+      APP_UPLOAD_DIRECTORY: /app/uploads
+      MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: never
+    secrets:
+      - mysql_password
+      - redis_password
+    volumes:
+      - medicine_uploads:/app/uploads
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - medicine_net
+
+  web:
+    image: "medicine-web:${MEDICINE_IMAGE_TAG:?MEDICINE_IMAGE_TAG is required}"
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${MEDICINE_BIND_ADDRESS:-0.0.0.0}:${MEDICINE_WEB_PORT:-9092}:80"
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - medicine_net
+
+volumes:
+  medicine_uploads:
+    name: "${MEDICINE_UPLOAD_VOLUME:-medicine_ci_uploads}"
+
+networks:
+  medicine_net:
+    name: "${MEDICINE_NETWORK_NAME:-medicine_ci_net}"
+
+secrets:
+  mysql_password:
+    file: "${MEDICINE_MYSQL_PASSWORD_FILE:-/etc/medicine/secrets/mysql-password.txt}"
+  redis_password:
+    file: "${MEDICINE_REDIS_PASSWORD_FILE:-/etc/medicine/secrets/redis-password.txt}"

@@ -1,5 +1,6 @@
 # Temporary analysis and rendered source-review artifacts
 .work/
+ci-output/
 
 # Runtime logs and process files
 *.log
@@ -32,3 +33,7 @@ Thumbs.db
 .vscode/
 __pycache__/
 *.py[cod]
+
+# Docker Compose secrets must never be committed
+deploy/docker/secrets/*
+!deploy/docker/secrets/.gitkeep

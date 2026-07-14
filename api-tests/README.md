@@ -3,6 +3,7 @@
 本目录提供两套彼此独立的黑盒测试入口，均以当前 Spring Boot 控制器和 Vue API 调用契约为基线：
 
 - `postman/medicine-api.postman_collection.json`：人工联调、Postman Collection Runner 和 Newman 使用。
+- `postman/medicine-codearts-smoke.postman_collection.json`：供 CodeArts TestPlan 导入的部署后烟测请求；检查点和 Token 提取按 `ci/codearts/README.md` 配置。
 - `run_api_tests.py`：无需第三方包的 Python 3 自动回归脚本，适合本机、CI 和部署验收。
 
 所有账号密码仅从本地环境读取。示例环境中不包含远程 MySQL、Redis 或业务账号密钥。
