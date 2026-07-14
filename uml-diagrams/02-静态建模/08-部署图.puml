@@ -2,7 +2,7 @@
 ' =========================================================================
 ' 慧医数字医疗应用系统 -- 部署图（Deployment Diagram）
 ' 阶段：静态建模（物理部署）
-' 数据来源：compose.yaml + deploy/ + PROJECT_README.md
+' 数据来源：compose.yaml + deploy/ + README.md
 ' 说明：Docker Compose 一键部署的节点与通信
 ' =========================================================================
 skinparam shadowing false
