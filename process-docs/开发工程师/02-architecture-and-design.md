@@ -5,7 +5,7 @@
 ```mermaid
 flowchart LR
     U[管理员或医生] --> N[Nginx/开发服务器]
-    N --> V[Vue 2 前端]
+    N --> V[Vue 3 前端]
     N --> B[Spring Boot API]
     B --> S[Spring Security]
     S --> R[(Redis 7 登录会话)]
@@ -48,8 +48,8 @@ sequenceDiagram
     A->>DB: 按用户名查询账号
     A->>A: BCrypt校验密码和状态
     A->>R: 保存Token摘要和登录态(TTL)
-    A-->>C: token + userInfo(utype=1/2)
-    C->>A: Authorization Token + /permissions
+    A-->>C: httpOnly Cookie 下发令牌 + userInfo(utype=1/2)
+    C->>A: Cookie 自动携带 + /permissions
     A->>R: 读取真实角色
     A->>DB: 查询角色权限
     A-->>C: Layout动态路由树
@@ -57,7 +57,7 @@ sequenceDiagram
 
 安全原则：
 
-- 不相信客户端提交的 `roleName` 或 localStorage 中的角色。
+- 不相信客户端提交的 `roleName` 或前端缓存的角色。
 - Redis key 使用 Token 的 SHA-256，不把原始 Token 作为 key。
 - 管理员写接口使用服务端方法级鉴权；医生只有业务 GET。
 - Token 过期或退出后返回前端可识别的 `10006`。
@@ -93,7 +93,7 @@ erDiagram
 2. 扩展名与 Content-Type 仅允许 JPEG/PNG。
 3. 使用图片解码进一步校验真实文件内容。
 4. 服务端生成 UUID 文件名，拒绝用户路径。
-5. 上传目录通过 `UPLOAD_DIR` 配置，生产推荐 `/opt/medicine/uploads`。
+5. 上传目录通过 `app.upload.directory` 配置，生产推荐 `/opt/medicine/uploads`。
 6. 返回 URL 通过公开基址配置生成，不写死 localhost。
 
 ## 7. 配置与凭据
