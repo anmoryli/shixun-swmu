@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Login from "../views/Login.vue";
 import { Message } from "element-ui";
+import { isLoggedIn } from "../utils/authStore";
 
 Vue.use(VueRouter);
 
@@ -30,7 +31,7 @@ export const constantRoutes = [
   // 判断登录状态
 router.beforeEach((to, from, next) => {
     document.title = (to.meta && to.meta.title) || "慧医数字医疗应用系统";
-    const token = localStorage.getItem("token");
+    const token = isLoggedIn();
     if (!token && to.path !== "/user/login") {
       next("/user/login");
       return;

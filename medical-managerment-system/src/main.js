@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router' // 引入router
 import store from './store' // 引入vuex
+import { getUserInfo } from './utils/authStore'
 
 import _ from 'lodash' // js库
 import "./style/reset.css"; // 引入样式
@@ -19,15 +24,11 @@ Vue.mixin({
   computed: {
       // 进行按钮权限控制
       hasRole() {
-          if(localStorage.getItem('userInfo')) {
-              if(JSON.parse(localStorage.getItem('userInfo')).utype === 1) {
-                  return true
-              } else {
-                  return false
-              }
-          } else {
-              return false
+          const userInfo = getUserInfo();
+          if (userInfo) {
+              return userInfo.utype === 1;
           }
+          return false;
       }
   }
 });

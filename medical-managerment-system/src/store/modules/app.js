@@ -2,8 +2,9 @@ import { login } from "../../api/Login";
 import { Message } from "element-ui";
 import router, { constantRoutes } from '../../router/index'
 import {getMenu} from '../../utils/routeParse'
-const state = {
-  token: localStorage.getItem("token") || "",
+import { getToken, setToken, setUserInfo, clearAuth } from "../../utils/authStore";
+const initialState = {
+  token: getToken(),
   menuList: constantRoutes.slice(),
   routesLoaded: false,
 };
@@ -43,8 +44,8 @@ const actions = {
       throw new Error("登录接口返回的数据不完整");
     }
 
-    localStorage.setItem("userInfo", JSON.stringify(data.userInfo));
-    localStorage.setItem("token", data.token);
+    setUserInfo(data.userInfo);
+    setToken(data.token);
     commit("SET_TOKEN", data.token);
     Message({
       type: "success",
@@ -62,14 +63,13 @@ const actions = {
     return routes;
   },
   logout({ commit }) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userInfo");
+    clearAuth();
     commit("RESET_AUTH");
   },
 };
 export default {
   namespaced: true,
-  state,
+  state: initialState,
   mutations,
   actions,
 };

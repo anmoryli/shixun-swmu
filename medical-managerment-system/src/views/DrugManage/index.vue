@@ -300,6 +300,7 @@ import Pagination from "../../components/Pagination";
 import { mapGetters } from "vuex";
 import rules from "../../utils/validator";
 import { resolveApiUrl } from "../../utils/request";
+import { getToken, getUserInfo } from "../../utils/authStore";
 
 export default {
   name: "CompanyManage",
@@ -329,7 +330,7 @@ export default {
         saleIds: [],
       },
       rules, // 封装好的表单验证
-      token: localStorage.getItem("token"), //用于给上传操作添加token请求头
+      token: getToken(), //用于给上传操作添加token请求头
       actionUrl: resolveApiUrl("/base/upload"), //图片上传接口
       uploading: false, // 是否显示上传进度条
       percentage: 0, // 进度条进度
@@ -422,12 +423,10 @@ export default {
             drugImg: this.addForm.drugImg,
             saleIds: this.addForm.saleIds,
             size: this.pageSize,
-            drugPublisher: JSON.parse(localStorage.getItem("userInfo"))
-              .realname,
+            drugPublisher: (getUserInfo() || {}).realname,
           });
         } else {
           this.$message.warning("请检查输入的内容是否合规");
-          return false;
         }
       });
     },
@@ -496,7 +495,6 @@ export default {
             message: "请检查输入的内容是否合规",
             type: "warning",
           });
-          return false;
         }
       });
     },

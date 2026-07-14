@@ -85,7 +85,7 @@ export default {
                 error && (error.isAxiosError || error.request) && !error.response
               );
               if (
-                localStorage.getItem("token") &&
+                this.$store.state.app.token &&
                 !this.$store.state.app.routesLoaded
               ) {
                 this.$store.dispatch("app/logout");
@@ -105,7 +105,6 @@ export default {
             message: " 请输入正确的用户名密码",
           });
 
-          return false;
         }
       });
     }

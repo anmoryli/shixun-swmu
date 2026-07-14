@@ -19,6 +19,7 @@
   </div>
 </template>
 <script>
+import { getUserInfo } from "../../../utils/authStore";
 export default {
   name: "PageHeader",
   methods: {
@@ -31,12 +32,8 @@ export default {
   },
   computed: {
     userName() {
-      try {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-        return (userInfo && (userInfo.realname || userInfo.username)) || "用户";
-      } catch (error) {
-        return "用户";
-      }
+      const userInfo = getUserInfo();
+      return (userInfo && (userInfo.realname || userInfo.username)) || "用户";
     },
   },
 };

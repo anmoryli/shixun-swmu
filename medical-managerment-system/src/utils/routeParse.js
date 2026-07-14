@@ -1,5 +1,10 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 import { getMenuList } from "../api/Login";
 import Layout from "../layout/index.vue";
+import { getUserInfo } from "../utils/authStore";
 
 function tree(data, arr) {
   if (!Array.isArray(data)) {
@@ -33,12 +38,8 @@ function tree(data, arr) {
 }
 
 function getStoredRole() {
-  try {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "null");
-    return userInfo && userInfo.utype;
-  } catch (error) {
-    return null;
-  }
+  const userInfo = getUserInfo();
+  return userInfo && userInfo.utype;
 }
 
 export async function getMenu() {
