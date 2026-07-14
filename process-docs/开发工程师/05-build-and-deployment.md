@@ -9,7 +9,7 @@
 | 后端打包 | `mvn package` | 成功 |
 | 后端 JAR | `medical-backend-1.0.0.jar` | 38,131,660 bytes |
 
-Spring Boot 固定为 2.5.3，Spring Framework 实际解析为 5.3.10，编译目标为 Java 17。
+Spring Boot 固定为 2.7.18（已升级修复 CVE-2022-22950 / CVE-2022-22965），编译目标为 Java 17。
 
 ## 2. JDK 17 实际运行门禁
 
@@ -58,7 +58,7 @@ Actuator 最终状态：
 - `scripts/verify-deployment.ps1`
 - `README.md`
 
-Docker 拓扑：BusyBox 发布前端静态文件，浏览器直接访问后端 `8082` API 与 `/image`；后端以非 root 用户运行，密码来自 Docker Secrets。
+Docker 拓扑：nginx:1.27-alpine 同源发布前端静态文件并反向代理 `/api`、`/image` 到后端 `8082`；后端以非 root 用户运行，密码来自 Docker Secrets。
 
 ## 5. 部署验证与回滚
 
@@ -98,7 +98,7 @@ docker compose up -d --build
 ```
 
 - `medicine-backend:1.0.0`：Temurin JRE 17.0.19，非 root UID/GID 10001，内部端口 8082，只读根文件系统，默认 768 MB/1.5 CPU/PID 256 上限。
-- `medicine-web:1.0.0`：BusyBox 静态文件服务，对外发布 9092；API 基址通过 `MEDICINE_API_BASE_URL` 构建参数配置。
+- `medicine-web:1.0.0`：nginx:1.27-alpine 静态文件服务 + 同源反向代理，对外发布 9092；`/api`、`/image` 由 nginx 反向代理到后端 8082。
 - MySQL/Redis 密码通过 `.work/private/docker/*.txt` 以 Docker Secrets 只读挂载，不进入镜像、Compose 明文或容器环境。
 - 上传文件保存在命名卷 `medicine_uploads`；执行 `docker compose down` 后重建容器，测试图片仍返回 HTTP 200。
 - 两个容器均为 `healthy`；同源健康检查 HTTP 200；Docker 入口黑盒回归 57/57。
