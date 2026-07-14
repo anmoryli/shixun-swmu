@@ -38,13 +38,13 @@ const actions = {
       throw new Error((res.data && res.data.message) || '账号或密码错误');
     }
 
-    const data = res.data.data || {};
-    // token 已由后端写入 httpOnly cookie，前端不再持有，仅校验用户信息。
-    if (!data.userInfo) {
+    const data = res.data.data || null;
+    // 后端仅返回 userInfo（token 已写入 httpOnly cookie），前端不再持有 token。
+    if (!data) {
       throw new Error('登录接口返回的数据不完整');
     }
 
-    setUserInfo(data.userInfo);
+    setUserInfo(data);
     setLoggedIn(true);
     ElMessage({
       type: 'success',

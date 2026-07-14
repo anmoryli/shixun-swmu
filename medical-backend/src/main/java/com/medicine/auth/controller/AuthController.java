@@ -55,17 +55,18 @@ public class AuthController {
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ApiResponse<LoginResult> loginForm(@Valid LoginRequest request, HttpServletResponse response) {
+    public ApiResponse<UserInfo> loginForm(@Valid LoginRequest request, HttpServletResponse response) {
         LoginResult result = authService.login(request.getUsername(), request.getPassword());
         addAuthCookie(response, result.getToken());
-        return ApiResponse.success(result);
+        // token 仅通过 httpOnly cookie 下发，响应体不再暴露，前端 JS 读不到。
+        return ApiResponse.success(result.getUserInfo());
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<LoginResult> loginJson(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+    public ApiResponse<UserInfo> loginJson(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         LoginResult result = authService.login(request.getUsername(), request.getPassword());
         addAuthCookie(response, result.getToken());
-        return ApiResponse.success(result);
+        return ApiResponse.success(result.getUserInfo());
     }
 
     @GetMapping("/permissions")
