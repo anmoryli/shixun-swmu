@@ -2,9 +2,9 @@ import { login } from '../../api/Login';
 import { ElMessage } from 'element-plus';
 import router, { constantRoutes } from '../../router/index';
 import {getMenu} from '../../utils/routeParse';
-import { getToken, setToken, setUserInfo, clearAuth } from '../../utils/authStore';
+import { setUserInfo, setLoggedIn, clearAuth } from '../../utils/authStore';
 const initialState = {
-  token: getToken(),
+  token: '',
   menuList: constantRoutes.slice(),
   routesLoaded: false,
 };
@@ -39,13 +39,13 @@ const actions = {
     }
 
     const data = res.data.data || {};
-    if (!data.token || !data.userInfo) {
+    // token 已由后端写入 httpOnly cookie，前端不再持有，仅校验用户信息。
+    if (!data.userInfo) {
       throw new Error('登录接口返回的数据不完整');
     }
 
     setUserInfo(data.userInfo);
-    setToken(data.token);
-    commit('SET_TOKEN', data.token);
+    setLoggedIn(true);
     ElMessage({
       type: 'success',
       message: '登录成功',
