@@ -18,6 +18,7 @@ test -n "${ADMIN_PASSWORD:-}" || {
   exit 2
 }
 
+# Wait for the deployed service to become healthy before running API assertions.
 deadline=$((SECONDS + WAIT_SECONDS))
 until python3 - "${BASE_URL%/}/actuator/health" <<'PY'
 import sys
