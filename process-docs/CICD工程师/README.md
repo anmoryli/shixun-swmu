@@ -21,6 +21,7 @@
 
 ## 交付物
 
+- [`07-codearts-cicd-walkthrough.md`](07-codearts-cicd-walkthrough.md)：CodeArts 从代码提交、构建、检查、制品到 ECS 部署和接口验证的全过程记录
 - `ci/`：CodeArts 流水线配置与 `ci-build` 构建脚本
 - `deploy/`：systemd 服务单元、nginx 配置、环境变量样例、部署与验证脚本
 - `compose.yaml`：前后端一键构建与启动（`medicine-backend:1.0.0` + `medicine-web:1.0.0`）
@@ -34,4 +35,4 @@
 - MySQL/Redis 密码经 Docker Secrets 只读挂载，不进镜像或 Compose 明文
 - 上传文件持久化于命名卷 `medicine_uploads`
 
-> 角色专属的详细过程文档（构建记录、部署手册、回滚预案等）将按软件工程阶段补充至本目录。
+详细执行结果、部署参数组织、故障排查和日常发布流程见上述全过程记录；文档不保存任何真实密码。
