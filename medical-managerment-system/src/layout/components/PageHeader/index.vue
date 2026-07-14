@@ -23,11 +23,10 @@ import { getUserInfo } from '../../../utils/authStore';
 export default {
   name: 'PageHeader',
   methods: {
-    handleLogout() {
-      this.$store.dispatch('app/logout');
+    async handleLogout() {
+      await this.$store.dispatch('app/logout');
       this.$message.warning('已退出登录');
       this.$router.replace('/user/login');
-      this.$router.go(0);
     },
   },
   computed: {

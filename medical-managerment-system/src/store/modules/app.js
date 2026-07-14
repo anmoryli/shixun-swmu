@@ -1,4 +1,4 @@
-import { login, getSession } from '../../api/Login';
+import { login, getSession, logoutApi } from '../../api/Login';
 import { ElMessage } from 'element-plus';
 import router, { constantRoutes } from '../../router/index';
 import {getMenu} from '../../utils/routeParse';
@@ -77,7 +77,13 @@ const actions = {
     commit('RESET_AUTH');
     return false;
   },
-  logout({ commit }) {
+  // 登出：调后端清 cookie + 删 Redis 会话，再清前端内存状态。
+  async logout({ commit }) {
+    try {
+      await logoutApi();
+    } catch (e) {
+      // 后端登出失败也清前端状态，避免残留
+    }
     clearAuth();
     commit('RESET_AUTH');
   },

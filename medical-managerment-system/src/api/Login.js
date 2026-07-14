@@ -21,6 +21,12 @@ export function getMenuList(roleName) {
         },
     });
 }
+export function logoutApi() {
+    return request({
+        url: '/logout',
+        method: 'POST',
+    });
+}
 
 // 会话探测：用 fetch 绕过通用响应拦截器，未登录(10006)时不触发"登录已失效"弹窗。
 // httpOnly cookie 由浏览器自动携带（credentials: include）。
