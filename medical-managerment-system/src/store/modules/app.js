@@ -1,7 +1,7 @@
 import { login } from '../../api/Login';
 import { Message } from 'element-ui';
-import router, { constantRoutes } from '../../router/index'
-import {getMenu} from '../../utils/routeParse'
+import router, { constantRoutes } from '../../router/index';
+import {getMenu} from '../../utils/routeParse';
 import { getToken, setToken, setUserInfo, clearAuth } from '../../utils/authStore';
 const initialState = {
   token: getToken(),

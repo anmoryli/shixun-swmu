@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
  */
 
-import request from '../utils/request'
+import request from '../utils/request';
 import Qs from 'qs';
 
 export function login(username, password) {
@@ -19,5 +19,5 @@ export function getMenuList(roleName) {
         params: {
             roleName
         }
-    })
+    });
 }

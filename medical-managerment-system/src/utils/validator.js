@@ -51,7 +51,7 @@ function validatorPhone(rule, value, callback) {
         trigger: 'change',
       },
     ],
-  }
+  };
   // 验证密码   密码，以字母开头，长度在5~18之间，只能包含字母、数字和下划线
   export function validatePass(str) {
     const reg = /^[a-zA-Z]\w{4,18}$/;

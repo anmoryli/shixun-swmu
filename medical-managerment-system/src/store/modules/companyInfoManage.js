@@ -51,7 +51,7 @@ const actions = {
             commit('GET_COMPANY_INFO', res.data.data.pageInfo);
         });
     }
-}
+};
 export default {
     namespaced: true,
     state: initialState,

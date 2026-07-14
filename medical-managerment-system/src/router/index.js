@@ -22,7 +22,7 @@ export const constantRoutes = [
       path: '/',
       redirect: '/home',
     },
-  ]
+  ];
   
   const router = new VueRouter({
     mode: 'hash',

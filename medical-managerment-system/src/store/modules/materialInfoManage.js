@@ -41,7 +41,7 @@ const actions = {
             dispatch('getMaterialInfo', { pn, size, keyword });
         });
     },
-}
+};
 export default {
     namespaced: true,
     state: initialState,
