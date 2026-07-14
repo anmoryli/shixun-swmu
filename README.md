@@ -1,10 +1,10 @@
 # 慧医数字医疗应用系统
 
-基于 Vue 2、Spring Boot 2.5.3、Spring Security、MyBatis、MySQL 和 Redis 的前后端分离医疗基础数据管理系统。
+基于 Vue 3、Spring Boot 2.7.18、Spring Security、MyBatis、MySQL 和 Redis 的前后端分离医疗基础数据管理系统。
 
 ## 目录
 
-- `medical-managerment-system/`：Vue 2 前端
+- `medical-managerment-system/`：Vue 3 + Vite 前端
 - `medical-backend/`：Spring Boot 后端
 - `sql/`：原始 SQL 与增量迁移
 - `api-tests/`：Python 黑盒回归和 Postman Collection
