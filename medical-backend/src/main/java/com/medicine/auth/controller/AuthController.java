@@ -24,11 +24,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -81,8 +81,11 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ApiResponse<Void> logout(@RequestHeader(value = "Authorization", required = false) String authorization) {
-        tokenService.delete(TokenService.normalizeAuthorization(authorization).orElse(null));
+    public ApiResponse<Void> logout(Authentication authentication, HttpServletResponse response) {
+        // token 已由过滤器解析并置于 Authentication.credentials，直接复用，无需再解析 cookie/header。
+        Object credentials = authentication != null ? authentication.getCredentials() : null;
+        tokenService.delete(credentials != null ? credentials.toString() : null);
+        clearAuthCookie(response);
         return ApiResponse.success();
     }
 
@@ -96,6 +99,22 @@ public class AuthController {
                 .sameSite(cookieProperties.getSameSite())
                 .path(cookieProperties.getPath())
                 .maxAge(cookieProperties.getMaxAge());
+        if (cookieProperties.getDomain() != null && !cookieProperties.getDomain().isEmpty()) {
+            builder.domain(cookieProperties.getDomain());
+        }
+        response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
+    }
+
+    /**
+     * 清除 httpOnly 登录 cookie（Max-Age=0 立即失效）。
+     */
+    private void clearAuthCookie(HttpServletResponse response) {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(cookieProperties.getName(), "")
+                .httpOnly(true)
+                .secure(cookieProperties.isSecure())
+                .sameSite(cookieProperties.getSameSite())
+                .path(cookieProperties.getPath())
+                .maxAge(Duration.ZERO);
         if (cookieProperties.getDomain() != null && !cookieProperties.getDomain().isEmpty()) {
             builder.domain(cookieProperties.getDomain());
         }
