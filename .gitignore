@@ -37,3 +37,6 @@ __pycache__/
 # Docker Compose secrets must never be committed
 deploy/docker/secrets/*
 !deploy/docker/secrets/.gitkeep
+
+# Claude Code local working directory
+.claude/
