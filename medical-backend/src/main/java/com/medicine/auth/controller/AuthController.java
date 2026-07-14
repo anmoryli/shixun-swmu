@@ -13,9 +13,12 @@ import com.medicine.common.ApiResponse;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
 import com.medicine.security.AuthSession;
+import com.medicine.security.CookieProperties;
 import com.medicine.security.TokenService;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Validated
@@ -39,21 +43,28 @@ public class AuthController {
     private final AuthService authService;
     private final PermissionService permissionService;
     private final TokenService tokenService;
+    private final CookieProperties cookieProperties;
 
-    public AuthController(AuthService authService, PermissionService permissionService, TokenService tokenService) {
+    public AuthController(AuthService authService, PermissionService permissionService, TokenService tokenService,
+                          CookieProperties cookieProperties) {
         this.authService = authService;
         this.permissionService = permissionService;
         this.tokenService = tokenService;
+        this.cookieProperties = cookieProperties;
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ApiResponse<LoginResult> loginForm(@Valid LoginRequest request) {
-        return ApiResponse.success(authService.login(request.getUsername(), request.getPassword()));
+    public ApiResponse<LoginResult> loginForm(@Valid LoginRequest request, HttpServletResponse response) {
+        LoginResult result = authService.login(request.getUsername(), request.getPassword());
+        addAuthCookie(response, result.getToken());
+        return ApiResponse.success(result);
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<LoginResult> loginJson(@Valid @RequestBody LoginRequest request) {
-        return ApiResponse.success(authService.login(request.getUsername(), request.getPassword()));
+    public ApiResponse<LoginResult> loginJson(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
+        LoginResult result = authService.login(request.getUsername(), request.getPassword());
+        addAuthCookie(response, result.getToken());
+        return ApiResponse.success(result);
     }
 
     @GetMapping("/permissions")
@@ -73,5 +84,21 @@ public class AuthController {
     public ApiResponse<Void> logout(@RequestHeader(value = "Authorization", required = false) String authorization) {
         tokenService.delete(TokenService.normalizeAuthorization(authorization).orElse(null));
         return ApiResponse.success();
+    }
+
+    /**
+     * 将不透明 token 写入 httpOnly cookie，由浏览器自动携带、前端 JS 读不到，实现持久登录。
+     */
+    private void addAuthCookie(HttpServletResponse response, String token) {
+        ResponseCookie.Builder builder = ResponseCookie.from(cookieProperties.getName(), token)
+                .httpOnly(true)
+                .secure(cookieProperties.isSecure())
+                .sameSite(cookieProperties.getSameSite())
+                .path(cookieProperties.getPath())
+                .maxAge(cookieProperties.getMaxAge());
+        if (cookieProperties.getDomain() != null && !cookieProperties.getDomain().isEmpty()) {
+            builder.domain(cookieProperties.getDomain());
+        }
+        response.addHeader(HttpHeaders.SET_COOKIE, builder.build().toString());
     }
 }
