@@ -5,7 +5,7 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '../router/index';
-import { getToken, clearAuth } from './authStore';
+import { clearAuth } from './authStore';
 
 // 默认使用同源 /api，生产部署时可通过环境变量切换到独立网关。
 export const API_BASE_URL = (
@@ -30,11 +30,7 @@ const service = axios.create({
 // request 拦截器
 service.interceptors.request.use(
     (config) => {
-        const token = getToken();
-        if (token) {
-            config.headers = config.headers || {};
-            config.headers.Authorization = token;
-        }
+        // token 由 httpOnly cookie 承载，浏览器随请求自动携带（withCredentials），无需手动塞 Authorization。
         return config;
     },
     (error) => {

@@ -151,7 +151,7 @@
           <el-upload
             class="drugimg-uploader"
             :action="actionUrl"
-            :headers="{ Authorization: token }"
+            :with-credentials="true"
             :show-file-list="false"
             :on-success="handleUploadSuccess"
             :on-error="handleUploadError"
@@ -250,7 +250,7 @@
           <el-upload
             class="drugimg-uploader"
             :action="actionUrl"
-            :headers="{ Authorization: token }"
+            :with-credentials="true"
             :show-file-list="false"
             :on-success="handleUploadSuccess"
             :on-error="handleUploadError"
@@ -300,7 +300,7 @@ import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 import { resolveApiUrl } from '../../utils/request';
-import { getToken, getUserInfo } from '../../utils/authStore';
+import { getUserInfo } from '../../utils/authStore';
 
 export default {
   name: 'CompanyManage',
@@ -330,7 +330,6 @@ export default {
         saleIds: [],
       },
       rules, // 封装好的表单验证
-      token: getToken(), // 用于给上传操作添加token请求头
       actionUrl: resolveApiUrl('/base/upload'), // 图片上传接口
       uploading: false, // 是否显示上传进度条
       percentage: 0, // 进度条进度
