@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.common;
 
 import java.util.Collections;
 import java.util.List;
 
-public class PageView<T> {
+public class PageView<T extends Object> {
 
     private long total;
     private List<T> list;
@@ -11,7 +15,7 @@ public class PageView<T> {
     private int pageSize;
 
     public PageView() {
-        this.list = Collections.emptyList();
+        this(0, Collections.emptyList(), 0, 0);
     }
 
     public PageView(long total, List<T> list, int pageNum, int pageSize) {

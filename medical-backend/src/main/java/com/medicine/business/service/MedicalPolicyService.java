@@ -1,14 +1,19 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
+
+import com.medicine.business.mapper.MedicalPolicyMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.medicine.business.mapper.MedicalPolicyMapper;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalLong;
 
 @Service
 public class MedicalPolicyService {
@@ -40,17 +45,19 @@ public class MedicalPolicyService {
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
         String updateTime = dateOrToday(request.get("updateTime"));
-        mapper.insert(PageSupport.longValue(request.get("cityId")),
-                PageSupport.stringValue(request.get("title")), updateTime,
-                PageSupport.stringValue(request.get("message")));
+        OptionalLong cityId = PageSupport.longValue(request.get("cityId"));
+        mapper.insert(cityId.isPresent() ? cityId.getAsLong() : null,
+                PageSupport.stringValue(request.get("title")).orElse(null), updateTime,
+                PageSupport.stringValue(request.get("message")).orElse(null));
         return PageSupport.pages(mapper.count(null, null, null, null), PageSupport.pageSize(pageSize));
     }
 
     @Transactional
     public void update(Long id, Map<String, Object> request) {
-        mapper.update(id, PageSupport.longValue(request.get("cityId")),
-                PageSupport.stringValue(request.get("title")), dateOrToday(request.get("updateTime")),
-                PageSupport.stringValue(request.get("message")));
+        OptionalLong cityId = PageSupport.longValue(request.get("cityId"));
+        mapper.update(id, cityId.isPresent() ? cityId.getAsLong() : null,
+                PageSupport.stringValue(request.get("title")).orElse(null), dateOrToday(request.get("updateTime")),
+                PageSupport.stringValue(request.get("message")).orElse(null));
     }
 
     @Transactional
@@ -59,7 +66,7 @@ public class MedicalPolicyService {
     }
 
     private static String dateOrToday(Object value) {
-        String date = PageSupport.stringValue(value);
+        String date = PageSupport.stringValue(value).orElse(null);
         return date == null || date.isBlank() ? LocalDate.now().toString() : date;
     }
 }

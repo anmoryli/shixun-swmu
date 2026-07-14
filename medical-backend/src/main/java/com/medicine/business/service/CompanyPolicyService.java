@@ -1,13 +1,18 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
+
+import com.medicine.business.mapper.CompanyPolicyMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.medicine.business.mapper.CompanyPolicyMapper;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalLong;
 
 @Service
 public class CompanyPolicyService {
@@ -34,15 +39,17 @@ public class CompanyPolicyService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
-        mapper.insert(PageSupport.longValue(request.get("companyId")),
-                PageSupport.stringValue(request.get("title")), PageSupport.stringValue(request.get("message")));
+        OptionalLong companyId = PageSupport.longValue(request.get("companyId"));
+        mapper.insert(companyId.isPresent() ? companyId.getAsLong() : null,
+                PageSupport.stringValue(request.get("title")).orElse(null), PageSupport.stringValue(request.get("message")).orElse(null));
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
 
     @Transactional
     public void update(Long id, Map<String, Object> request) {
-        mapper.update(id, PageSupport.longValue(request.get("companyId")),
-                PageSupport.stringValue(request.get("title")), PageSupport.stringValue(request.get("message")));
+        OptionalLong companyId = PageSupport.longValue(request.get("companyId"));
+        mapper.update(id, companyId.isPresent() ? companyId.getAsLong() : null,
+                PageSupport.stringValue(request.get("title")).orElse(null), PageSupport.stringValue(request.get("message")).orElse(null));
     }
 
     @Transactional

@@ -1,15 +1,8 @@
-package com.medicine.auth.controller;
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
 
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+package com.medicine.auth.controller;
 
 import com.medicine.auth.dto.LoginRequest;
 import com.medicine.auth.dto.LoginResult;
@@ -22,10 +15,20 @@ import com.medicine.common.ErrorCode;
 import com.medicine.security.AuthSession;
 import com.medicine.security.TokenService;
 
+import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import javax.validation.Valid;
 
 @Validated
@@ -68,7 +71,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ApiResponse<Void> logout(@RequestHeader(value = "Authorization", required = false) String authorization) {
-        tokenService.delete(TokenService.normalizeAuthorization(authorization));
+        tokenService.delete(TokenService.normalizeAuthorization(authorization).orElse(null));
         return ApiResponse.success();
     }
 }

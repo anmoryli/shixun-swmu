@@ -1,13 +1,17 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medicine.common.BusinessException;
+import com.medicine.common.ErrorCode;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
-import com.medicine.common.BusinessException;
-import com.medicine.common.ErrorCode;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -63,14 +67,14 @@ public class TokenService {
         }
     }
 
-    public static String normalizeAuthorization(String authorization) {
+    public static Optional<String> normalizeAuthorization(String authorization) {
         if (authorization == null) {
-            return null;
+            return Optional.empty();
         }
         String token = authorization.trim();
         if (token.regionMatches(true, 0, "Bearer ", 0, 7)) {
             token = token.substring(7).trim();
         }
-        return token.isEmpty() ? null : token;
+        return token.isEmpty() ? Optional.empty() : Optional.of(token);
     }
 }

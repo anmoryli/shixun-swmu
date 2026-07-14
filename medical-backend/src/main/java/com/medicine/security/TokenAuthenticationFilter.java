@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,7 +12,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +30,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = TokenService.normalizeAuthorization(request.getHeader("Authorization"));
+        String token = TokenService.normalizeAuthorization(request.getHeader("Authorization")).orElse(null);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             tokenService.find(token).ifPresent(session -> {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

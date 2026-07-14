@@ -1,14 +1,19 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
+
+import com.medicine.business.mapper.DrugMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.medicine.business.mapper.DrugMapper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,12 +31,20 @@ public class DrugService {
         long total = mapper.count(name);
         List<Map<String, Object>> rows = mapper.page(name, PageSupport.offset(pageNumber, pageSize), pageSize);
         if (!rows.isEmpty()) {
-            List<Long> ids = rows.stream().map(row -> PageSupport.longValue(row.get("drugId"))).toList();
+            List<Long> ids = rows.stream().map(row -> {
+                OptionalLong v = PageSupport.longValue(row.get("drugId"));
+                return v.isPresent() ? v.getAsLong() : null;
+            }).toList();
             Map<Long, List<Map<String, Object>>> sales = mapper.findSales(ids).stream()
-                    .collect(Collectors.groupingBy(row -> PageSupport.longValue(row.remove("drugId")),
+                    .collect(Collectors.groupingBy(row -> {
+                                OptionalLong v = PageSupport.longValue(row.remove("drugId"));
+                                return v.isPresent() ? v.getAsLong() : null;
+                            },
                             LinkedHashMap::new, Collectors.toList()));
-            rows.forEach(row -> row.put("drugSales",
-                    sales.getOrDefault(PageSupport.longValue(row.get("drugId")), List.of())));
+            rows.forEach(row -> {
+                OptionalLong v = PageSupport.longValue(row.get("drugId"));
+                row.put("drugSales", sales.getOrDefault(v.isPresent() ? v.getAsLong() : null, List.of()));
+            });
         }
         return PageSupport.page(rows, total, pageNumber, pageSize);
     }
@@ -39,13 +52,14 @@ public class DrugService {
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
         Map<String, Object> values = new LinkedHashMap<>(request);
-        values.put("drugName", PageSupport.stringValue(request.get("drugName")));
-        values.put("drugInfo", PageSupport.stringValue(request.get("drugInfo")));
-        values.put("drugEffect", PageSupport.stringValue(request.get("drugEffect")));
-        values.put("drugImg", PageSupport.stringValue(request.get("drugImg")));
-        values.put("drugPublisher", PageSupport.stringValue(request.get("drugPublisher")));
+        values.put("drugName", PageSupport.stringValue(request.get("drugName")).orElse(null));
+        values.put("drugInfo", PageSupport.stringValue(request.get("drugInfo")).orElse(null));
+        values.put("drugEffect", PageSupport.stringValue(request.get("drugEffect")).orElse(null));
+        values.put("drugImg", PageSupport.stringValue(request.get("drugImg")).orElse(null));
+        values.put("drugPublisher", PageSupport.stringValue(request.get("drugPublisher")).orElse(null));
         mapper.insertDrug(values);
-        Long drugId = PageSupport.longValue(values.get("drugId"));
+        OptionalLong drugIdOpt = PageSupport.longValue(values.get("drugId"));
+        Long drugId = drugIdOpt.isPresent() ? drugIdOpt.getAsLong() : null;
         replaceSales(drugId, request.get("saleIds"));
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
@@ -75,7 +89,8 @@ public class DrugService {
         List<Long> result = new ArrayList<>();
         if (value instanceof Iterable<?> iterable) {
             for (Object item : iterable) {
-                Long id = PageSupport.longValue(item);
+                OptionalLong idOpt = PageSupport.longValue(item);
+                Long id = idOpt.isPresent() ? idOpt.getAsLong() : null;
                 if (id != null) {
                     result.add(id);
                 }

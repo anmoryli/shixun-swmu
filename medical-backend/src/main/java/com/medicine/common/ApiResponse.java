@@ -1,6 +1,10 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.common;
 
-public class ApiResponse<T> {
+public class ApiResponse<T extends Object> {
 
     private int code;
     private String message;

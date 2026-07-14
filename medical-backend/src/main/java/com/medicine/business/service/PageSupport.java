@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 final class PageSupport {
     static final int MAX_PAGE_SIZE = 200;
@@ -50,28 +57,28 @@ final class PageSupport {
         return page(list, list.size(), 1, Math.max(list.size(), 1));
     }
 
-    static Long longValue(Object value) {
+    static OptionalLong longValue(Object value) {
         if (value == null || value.toString().isBlank()) {
-            return null;
+            return OptionalLong.empty();
         }
-        return value instanceof Number number ? number.longValue() : Long.valueOf(value.toString());
+        return OptionalLong.of(value instanceof Number number ? number.longValue() : Long.valueOf(value.toString()));
     }
 
-    static Integer intValue(Object value) {
+    static OptionalInt intValue(Object value) {
         if (value == null || value.toString().isBlank()) {
-            return null;
+            return OptionalInt.empty();
         }
-        return value instanceof Number number ? number.intValue() : Integer.valueOf(value.toString());
+        return OptionalInt.of(value instanceof Number number ? number.intValue() : Integer.valueOf(value.toString()));
     }
 
-    static String stringValue(Object value) {
-        return value == null ? null : value.toString().trim();
+    static Optional<String> stringValue(Object value) {
+        return value == null ? Optional.empty() : Optional.of(value.toString().trim());
     }
 
-    static BigDecimal decimalValue(Object value) {
+    static Optional<BigDecimal> decimalValue(Object value) {
         if (value == null || value.toString().isBlank()) {
-            return null;
+            return Optional.empty();
         }
-        return value instanceof BigDecimal decimal ? decimal : new BigDecimal(value.toString());
+        return Optional.of(value instanceof BigDecimal decimal ? decimal : new BigDecimal(value.toString()));
     }
 }
