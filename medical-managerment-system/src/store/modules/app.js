@@ -12,7 +12,7 @@ const mutations = {
   SET_TOKEN(state, payload) {
     state.token = payload;
   },
-  //存储完整的路由
+  // 存储完整的路由
   SET_ROUTER_MENULIST(state, payload) {
     // 把固定路由和后端传来的路由合并为完整路由
     const dynamicRoutes = Array.isArray(payload) ? payload : [];

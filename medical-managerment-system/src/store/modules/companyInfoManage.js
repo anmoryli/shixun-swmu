@@ -7,7 +7,7 @@ import {
 } from '../../api/admin/companyInfoManage';
 
 const initialState = {
-    companyInfo: {}, //公司信息
+    companyInfo: {}, // 公司信息
 };
 const mutations = {
     GET_COMPANY_INFO(state, payload) {

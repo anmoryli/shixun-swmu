@@ -298,7 +298,7 @@ export default {
         size: this.pageSize,
       });
     },
-    //当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页
     handleCurrentChange(event) {
       this.currentPage = event.page;
       if (this.keyword.length) {
@@ -315,7 +315,7 @@ export default {
         keyword,
       });
     },
-    //新增销售地点
+    // 新增销售地点
     handleAddSalePlace(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -425,7 +425,7 @@ export default {
     this.getSalePlaceInfo(); // 首次渲染
   },
   computed: {
-    //后端返回的数据
+    // 后端返回的数据
     ...mapGetters({
       tableData: 'salePlaceInfo',
     }),

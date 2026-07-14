@@ -330,8 +330,8 @@ export default {
         saleIds: [],
       },
       rules, // 封装好的表单验证
-      token: getToken(), //用于给上传操作添加token请求头
-      actionUrl: resolveApiUrl('/base/upload'), //图片上传接口
+      token: getToken(), // 用于给上传操作添加token请求头
+      actionUrl: resolveApiUrl('/base/upload'), // 图片上传接口
       uploading: false, // 是否显示上传进度条
       percentage: 0, // 进度条进度
       status: null, // 进度条状态
@@ -352,7 +352,7 @@ export default {
         }
       }, 50);
     },
-    //选择完图片后自动上传，并拿到服务器返回的图片url地址
+    // 选择完图片后自动上传，并拿到服务器返回的图片url地址
     handleUploadSuccess(res) {
       this.$message.success('上传成功');
       setTimeout(() => {
@@ -371,9 +371,9 @@ export default {
       this.uploading = false;
       this.percentage = 0;
       this.status = null;
-      let myError = err.toString(); //转字符串
+      let myError = err.toString(); // 转字符串
       myError = myError.replace('Error: ', ''); // 去掉前面的' Error: '
-      myError = JSON.parse(myError); //转对象
+      myError = JSON.parse(myError); // 转对象
     },
     // 对上传的文件类型及大小进行限制
     beforeImgUpload(file) {
@@ -394,7 +394,7 @@ export default {
         size: this.pageSize,
       });
     },
-    //当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页
     handleCurrentChange(event) {
       this.currentPage = event.page;
       if (this.keyword.length) {
@@ -411,7 +411,7 @@ export default {
         keyword,
       });
     },
-    //新增药品
+    // 新增药品
     handleAddDrug(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -514,7 +514,7 @@ export default {
     ...mapGetters({
       tableData: 'drugInfo',
       salePlaceInfo: 'salePlaceInfo',
-    }), //后端返回的数据
+    }), // 后端返回的数据
     keyword: {
       get() {
         return this.keywordDefault;

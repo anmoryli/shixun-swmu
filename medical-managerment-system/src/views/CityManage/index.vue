@@ -114,9 +114,9 @@ export default {
       addForm: {
         cityNumber: [],
       },
-      formLabelWidth: '110px', //表单 label 的宽度
+      formLabelWidth: '110px', // 表单 label 的宽度
       rules, // 封装好的表单验证
-      options: provinceAndCityData, //element-china-area-data组件
+      options: provinceAndCityData, // element-china-area-data组件
     };
   },
   methods: {
@@ -126,7 +126,7 @@ export default {
         size: this.pageSize,
       });
     },
-    //当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页
     handleCurrentChange(event) {
       this.currentPage = event.page;
       if (this.keyword.length) {
@@ -143,7 +143,7 @@ export default {
         keyword,
       });
     },
-    //新增城市
+    // 新增城市
     handleAddcity(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -197,7 +197,7 @@ export default {
   computed: {
     ...mapGetters({
       tableData: 'cityInfo',
-    }), //后端返回的数据
+    }), // 后端返回的数据
     keyword: {
       get() {
         return this.keywordDefault;

@@ -6,7 +6,7 @@ import {
 } from '../../api/admin/medicalPolicyInfoManage';
 
 const initialState = {
-    medicalPolicyInfo: {}, //医保政策信息
+    medicalPolicyInfo: {}, // 医保政策信息
 };
 
 const mutations = {

@@ -10,7 +10,7 @@ import {
   } from '../../api/admin/companyPolicyInfoManage';
   
   const initialState = {
-    companyPolicyInfo: {}, //医药公司政策管理信息
+    companyPolicyInfo: {}, // 医药公司政策管理信息
   };
   const mutations = {
     GET_COMPANY_POLICY_INFO(state, payload) {

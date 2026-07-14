@@ -6,7 +6,7 @@ import {
 } from '../../api/admin/drugInfoManage';
 
 const initialState = {
-    drugInfo: {}, //药品信息
+    drugInfo: {}, // 药品信息
 };
 const mutations = {
     GET_DRUG_INFO(state, payload) {

@@ -276,7 +276,7 @@ export default {
     };
   },
   methods: {
-    //当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页
     handleCurrentChange(event) {
       this.currentPage = event.page;
       this.getMedicalPolicyInfo();
@@ -298,7 +298,7 @@ export default {
         }
       });
     },
-    //新增医保政策
+    // 新增医保政策
     handleAddMedicalPolicy(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -386,9 +386,9 @@ export default {
     ...mapGetters({
       tableData: 'medicalPolicyInfo',
       cityInfo: 'cityInfo',
-    }), //后端返回的数据
+    }), // 后端返回的数据
     params() {
-      //查询操作用到的参数
+      // 查询操作用到的参数
       return {
         pn: this.currentPage,
         size: this.pageSize,

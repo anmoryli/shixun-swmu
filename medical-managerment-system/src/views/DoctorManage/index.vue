@@ -320,7 +320,7 @@ export default {
       pageSize: 5, // 每页的数据条数
       keywordDefault: '',
       addFormVisible: false, // 控制新增页面的显示
-      resetPwdDialogVisible: false, //控制重置密码对话框显示
+      resetPwdDialogVisible: false, // 控制重置密码对话框显示
       addForm: {
         age: '',
         levelId: '',
@@ -357,7 +357,7 @@ export default {
         size: this.pageSize,
       });
     },
-    //当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页
     handleCurrentChange(event) {
       this.currentPage = event.page;
       if (this.keyword.length) {
@@ -374,7 +374,7 @@ export default {
         keyword,
       });
     },
-    //新增
+    // 新增
     handleAddDoctor(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -513,7 +513,7 @@ export default {
     ...mapGetters({
       tableData: 'doctorInfo',
       levelAndTypeData: 'doctorLevelAndType',
-    }), //后端返回的数据
+    }), // 后端返回的数据
     keyword: {
       get() {
         return this.keywordDefault;

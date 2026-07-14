@@ -6,7 +6,7 @@ import {
 } from '../../api/admin/cityInfoManage.js';
 
 const initialState = {
-    cityInfo: {}, //城市管理信息
+    cityInfo: {}, // 城市管理信息
 };
 const mutations = {
     GET_CITY_INFO(state, payload) {

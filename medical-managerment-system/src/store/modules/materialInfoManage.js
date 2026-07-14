@@ -6,7 +6,7 @@ import {
 } from '../../api/admin/materialInfoManage.js';
 
 const initialState = {
-    materialInfo: {}, //必备材料信息
+    materialInfo: {}, // 必备材料信息
 };
 const mutations = {
     GET_MATERIAL_INFO(state, payload) {

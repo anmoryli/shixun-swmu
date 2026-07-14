@@ -11,7 +11,7 @@ import {
 } from '../../api/admin/saleInfoManage';
 
 const initialState = {
-    salePlaceInfo: {}, //销售地点信息
+    salePlaceInfo: {}, // 销售地点信息
 };
 const mutations = {
     GET_SALE_PLACE_INFO(state, payload) {
