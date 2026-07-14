@@ -93,7 +93,7 @@
           highlight-current-row
         >
           <el-table-column type="expand">
-            <template slot-scope="scope">
+            <template #default="scope">
               <el-form label-position="left" inline class="demo-table-expand">
                 <el-form-item label="医保内容">
                   <span>{{ scope.row.message }}</span>
@@ -110,7 +110,7 @@
             label="操作"
             v-if="hasRole"
           >
-            <template slot-scope="scope">
+            <template #default="scope">
               <button
                class="table-btn-delete"
                 @click="handleDeletMedicalPolicy(scope.row.id, scope.row.title)"
@@ -133,10 +133,10 @@
       <!-- 分页 -->
       <div class="pagination">
         <pagination
-          :current-page.sync="currentPage"
+          :page="currentPage"
           :layout="'total,prev,pager,next,jumper'"
           :total="tableData.total"
-          :page-size.sync="pageSize"
+          :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
         ></pagination>
@@ -145,7 +145,7 @@
     <!-- 点击新增后的弹窗 -->
     <el-dialog
       title="新增医保政策"
-      :visible.sync="addFormVisible"
+      v-model="addFormVisible"
       :modal-append-to-body="false"
       @close="handleAddClose"
     >
@@ -187,7 +187,7 @@
     <!-- 点击修改后的弹窗 -->
     <el-dialog
       title="修改医保政策信息"
-      :visible.sync="modifyFormVisible"
+      v-model="modifyFormVisible"
       :modal-append-to-body="false"
       @close="handleModifyClose"
     >
@@ -237,7 +237,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules, { searchRules } from '../../utils/validator';
 import dayjs from 'dayjs';

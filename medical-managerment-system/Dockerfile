@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-# ===== Stage 1: build Vue 2 SPA =====
+# ===== Stage 1: build Vue 3 + Vite SPA =====
 FROM node:20-alpine AS build
 WORKDIR /workspace
 
@@ -13,7 +13,7 @@ COPY . .
 # When MEDICINE_API_BASE_URL=/api the frontend uses same-origin /api,
 # which the nginx layer below reverse-proxies to medicine-backend:8082.
 ARG MEDICINE_API_BASE_URL=/api
-ENV VUE_APP_API_BASE_URL=${MEDICINE_API_BASE_URL}
+ENV VITE_API_BASE_URL=${MEDICINE_API_BASE_URL}
 RUN npm run build
 
 # ===== Stage 2: serve via nginx (handles /api reverse proxy, /actuator, SPA fallback) =====

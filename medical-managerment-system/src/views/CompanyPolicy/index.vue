@@ -46,7 +46,7 @@
         highlight-current-row
       >
         <el-table-column type="expand">
-          <template slot-scope="scope">
+          <template #default="scope">
             <el-form label-position="left" inline class="demo-table-expand">
               <el-form-item label="医药公司政策内容">
                 <span>{{ scope.row.message }}</span>
@@ -59,7 +59,7 @@
         <el-table-column prop="title" label="政策名称" />
         <el-table-column prop="updateTime" label="发布时间" sortable />
         <el-table-column label="操作" v-if="hasRole">
-          <template slot-scope="scope">
+          <template #default="scope">
             <button
               class="table-btn-delete"
               @click="handleDeleteCompanyPolicy(scope.row.id, scope.row.title)"
@@ -81,10 +81,10 @@
       <!-- 分页 -->
       <div class="pagination">
         <pagination
-          :current-page.sync="currentPage"
+          :page="currentPage"
           :layout="'total,prev,pager,next,jumper'"
           :total="tableData.total"
-          :page-size.sync="pageSize"
+          :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
         ></pagination>
@@ -93,7 +93,7 @@
     <!-- 点击新增后的弹窗 -->
     <el-dialog
       title="新增医药公司政策"
-      :visible.sync="addFormVisible"
+      v-model="addFormVisible"
       :modal-append-to-body="false"
       @close="handleAddClose"
     >
@@ -144,7 +144,7 @@
     <!-- 点击修改后的弹窗 -->
     <el-dialog
       title="修改医药公司政策信息"
-      :visible.sync="modifyFormVisible"
+      v-model="modifyFormVisible"
       :modal-append-to-body="false"
       @close="handleModifyClose"
     >
@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
 import dayjs from 'dayjs';
