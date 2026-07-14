@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/image/**").permitAll()
-                    .antMatchers("/api/login", "/actuator/health", "/actuator/info").permitAll()
+                    .antMatchers("/api/login", "/api/session", "/actuator/health", "/actuator/info").permitAll()
                     .anyRequest().authenticated().and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

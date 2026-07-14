@@ -11,16 +11,19 @@ public class AuthSession {
     private String realname;
     private String roleName;
     private int userType;
+    private String phonenumber;
 
     public AuthSession() {
     }
 
-    public AuthSession(Long userId, String username, String realname, String roleName, int userType) {
+    public AuthSession(Long userId, String username, String realname, String roleName, int userType,
+                       String phonenumber) {
         this.userId = userId;
         this.username = username;
         this.realname = realname;
         this.roleName = roleName;
         this.userType = userType;
+        this.phonenumber = phonenumber;
     }
 
     public Long getUserId() {
@@ -61,5 +64,13 @@ public class AuthSession {
 
     public void setUserType(int userType) {
         this.userType = userType;
+    }
+
+    public String getPhonenumber() {
+        return phonenumber;
+    }
+
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
     }
 }

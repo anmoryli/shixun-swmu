@@ -7,6 +7,7 @@ package com.medicine.auth.controller;
 import com.medicine.auth.dto.LoginRequest;
 import com.medicine.auth.dto.LoginResult;
 import com.medicine.auth.dto.PermissionNode;
+import com.medicine.auth.dto.UserInfo;
 import com.medicine.auth.service.AuthService;
 import com.medicine.auth.service.PermissionService;
 import com.medicine.common.ApiResponse;
@@ -87,6 +88,24 @@ public class AuthController {
         tokenService.delete(credentials != null ? credentials.toString() : null);
         clearAuthCookie(response);
         return ApiResponse.success();
+    }
+
+    /**
+     * 探测当前登录态：供前端刷新后恢复（前端读不到 httpOnly cookie，需询问后端）。
+     * 已登录返回 userInfo，未登录返回 10006。接口放行，由方法主动区分，不走认证异常流程。
+     */
+    @GetMapping("/session")
+    public ApiResponse<UserInfo> session(Authentication authentication) {
+        Object principal = authentication != null ? authentication.getPrincipal() : null;
+        if (!(principal instanceof AuthSession)) {
+            return ApiResponse.error(ErrorCode.TOKEN_EXPIRED, "登录已失效，请重新登录");
+        }
+        AuthSession session = (AuthSession) principal;
+        UserInfo userInfo = new UserInfo(
+                session.getUserId(), session.getRealname(), session.getUsername(),
+                session.getPhonenumber(), session.getUserType()
+        );
+        return ApiResponse.success(userInfo);
     }
 
     /**

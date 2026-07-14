@@ -36,7 +36,8 @@ public class AuthService {
         }
         int userType = toNumericUserType(account.getUtype());
         AuthSession session = new AuthSession(
-                account.getId(), account.getUname(), account.getRealname(), account.getUtype(), userType
+                account.getId(), account.getUname(), account.getRealname(), account.getUtype(), userType,
+                account.getPhonenumber()
         );
         String token = tokenService.create(session);
         UserInfo userInfo = new UserInfo(
