@@ -49,7 +49,15 @@
           <small>常用业务入口</small>
         </div>
         <div class="quick-list">
-          <div v-for="card in cardList" :key="card.content" class="quick-item">
+          <div
+            v-for="card in cardList"
+            :key="card.content"
+            class="quick-item"
+            role="button"
+            tabindex="0"
+            @click="goTo(card.route)"
+            @keydown.enter="goTo(card.route)"
+          >
             <el-image
               :src="card.pic"
               :alt="card.content"
@@ -144,26 +152,32 @@ export default {
         {
           pic: stethoscope,
           content: '基础信息管理',
+          route: '/base/city',
         },
         {
           pic: medicineBlister,
           content: '药品信息管理',
+          route: '/manage/drug',
         },
         {
           pic: healthcareTeam,
           content: '医保政策管理',
+          route: '/manage/medical/policy',
         },
         {
           pic: medicalLab,
           content: '企业政策管理',
+          route: '/manage/company/policy',
         },
         {
           pic: medicineHand,
           content: '医生信息管理',
+          route: '/manage/doctor',
         },
         {
           pic: medicineAssorted,
           content: '必备材料管理',
+          route: '/manage/material',
         },
       ],
     };
@@ -183,6 +197,17 @@ export default {
     this.loadDashboard();
   },
   methods: {
+    goTo(route) {
+      if (!route) {
+        return;
+      }
+      // 仅在路由不同时跳转，避免重复点击产生多余的 history 记录。
+      if (this.$route.path !== route) {
+        this.$router.push(route).catch(() => {
+          // 目标路由已在动态菜单中注册；忽略重复导航等非致命错误。
+        });
+      }
+    },
     pickMetric(aliases) {
       const sources = [
         this.dashboardData,
@@ -343,6 +368,14 @@ h1 {
   overflow: hidden;
   border-radius: 9px;
   background: #edf4f3;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.quick-item:hover,
+.quick-item:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(41, 91, 87, 0.18);
+  outline: none;
 }
 .quick-image {
   width: 100%;
