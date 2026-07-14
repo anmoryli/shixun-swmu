@@ -8,7 +8,7 @@ import {
     deleteSalePlace,
     modifySalePlaceInfo,
     getAllSalePlaceInfo,
-} from "../../api/admin/saleInfoManage";
+} from '../../api/admin/saleInfoManage';
 
 const initialState = {
     salePlaceInfo: {}, //销售地点信息
@@ -23,7 +23,7 @@ const actions = {
     getSalePlaceInfo({ commit }, { pn, size, keyword }) {
         getSalePlaceInfo(pn, size, keyword).then((res) => {
             if (res) {
-                commit("GET_SALE_PLACE_INFO", res.data.data.salePageInfo);
+                commit('GET_SALE_PLACE_INFO', res.data.data.salePageInfo);
             }
         });
     },
@@ -34,13 +34,13 @@ const actions = {
     ) {
         addSalePlace({ saleName, salePhone, address, longitude, latitude }).then((res) => {
             //   新增之后跳转到最后一页
-            dispatch("getSalePlaceInfo", { pn: res.data.data.pages, size });
+            dispatch('getSalePlaceInfo', { pn: res.data.data.pages, size });
         });
     },
     // 删除销售地点信息
     deleteSalePlace({ dispatch }, { saleId, pn, size, keyword }) {
         deleteSalePlace(saleId).then(() => {
-            dispatch("getSalePlaceInfo", { pn, size, keyword });
+            dispatch('getSalePlaceInfo', { pn, size, keyword });
         });
     },
     // 修改销售地点信息
@@ -55,13 +55,13 @@ const actions = {
             longitude,
             latitude,
         }).then(() => {
-            dispatch("getSalePlaceInfo", { pn, size, keyword });
+            dispatch('getSalePlaceInfo', { pn, size, keyword });
         });
     },
     // 获取所有销售地点
     getAllSalePlaceInfo({ commit }) {
         getAllSalePlaceInfo().then((res) => {
-            commit("GET_SALE_PLACE_INFO", res.data.data.salePageInfo);
+            commit('GET_SALE_PLACE_INFO', res.data.data.salePageInfo);
         });
     },
 };

@@ -19,21 +19,21 @@
   </div>
 </template>
 <script>
-import { getUserInfo } from "../../../utils/authStore";
+import { getUserInfo } from '../../../utils/authStore';
 export default {
-  name: "PageHeader",
+  name: 'PageHeader',
   methods: {
     handleLogout() {
-      this.$store.dispatch("app/logout");
-      this.$message.warning("已退出登录");
-      this.$router.replace("/user/login");
+      this.$store.dispatch('app/logout');
+      this.$message.warning('已退出登录');
+      this.$router.replace('/user/login');
       this.$router.go(0);
     },
   },
   computed: {
     userName() {
       const userInfo = getUserInfo();
-      return (userInfo && (userInfo.realname || userInfo.username)) || "用户";
+      return (userInfo && (userInfo.realname || userInfo.username)) || '用户';
     },
   },
 };

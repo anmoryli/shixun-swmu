@@ -296,14 +296,14 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import rules from "../../utils/validator";
-import { resolveApiUrl } from "../../utils/request";
-import { getToken, getUserInfo } from "../../utils/authStore";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import rules from '../../utils/validator';
+import { resolveApiUrl } from '../../utils/request';
+import { getToken, getUserInfo } from '../../utils/authStore';
 
 export default {
-  name: "CompanyManage",
+  name: 'CompanyManage',
   components: {
     Pagination,
   },
@@ -311,27 +311,27 @@ export default {
     return {
       currentPage: 1,
       pageSize: 5, // 每页的数据条数
-      keywordDefault: "",
+      keywordDefault: '',
       addFormVisible: false, // 控制新增药品页面的显示
       addForm: {
-        drugName: "",
-        drugInfo: "",
-        drugEffect: "",
-        drugImg: "",
+        drugName: '',
+        drugInfo: '',
+        drugEffect: '',
+        drugImg: '',
         saleIds: [],
       },
       modifyFormVisible: false, // 控制修改信息页面的显示
       modifyForm: {
-        drugId: "",
-        drugName: "",
-        drugInfo: "",
-        drugEffect: "",
-        drugImg: "",
+        drugId: '',
+        drugName: '',
+        drugInfo: '',
+        drugEffect: '',
+        drugImg: '',
         saleIds: [],
       },
       rules, // 封装好的表单验证
       token: getToken(), //用于给上传操作添加token请求头
-      actionUrl: resolveApiUrl("/base/upload"), //图片上传接口
+      actionUrl: resolveApiUrl('/base/upload'), //图片上传接口
       uploading: false, // 是否显示上传进度条
       percentage: 0, // 进度条进度
       status: null, // 进度条状态
@@ -348,13 +348,13 @@ export default {
         if (num == 90) {
           clearInterval(t);
           this.percentage = 100;
-          this.status = "success";
+          this.status = 'success';
         }
       }, 50);
     },
     //选择完图片后自动上传，并拿到服务器返回的图片url地址
     handleUploadSuccess(res) {
-      this.$message.success("上传成功");
+      this.$message.success('上传成功');
       setTimeout(() => {
         this.uploading = false;
         this.percentage = 0;
@@ -367,29 +367,29 @@ export default {
       }, 800);
     },
     handleUploadError(err) {
-      this.$message.error("上传失败，请重试");
+      this.$message.error('上传失败，请重试');
       this.uploading = false;
       this.percentage = 0;
       this.status = null;
       let myError = err.toString(); //转字符串
-      myError = myError.replace("Error: ", ""); // 去掉前面的" Error: "
+      myError = myError.replace('Error: ', ''); // 去掉前面的' Error: '
       myError = JSON.parse(myError); //转对象
     },
     // 对上传的文件类型及大小进行限制
     beforeImgUpload(file) {
-      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
-        this.$message.error("上传的图片只能是 JPG 格式或 PNG 格式");
+        this.$message.error('上传的图片只能是 JPG 格式或 PNG 格式');
       }
       if (!isLt2M) {
-        this.$message.error("上传药品图片大小不能超过 2MB");
+        this.$message.error('上传药品图片大小不能超过 2MB');
       }
       return isJPG && isLt2M;
     },
     // 切换分页及首次进入获取数据
     getDrugInfo() {
-      this.$store.dispatch("drugInfoManage/getDrugInfo", {
+      this.$store.dispatch('drugInfoManage/getDrugInfo', {
         pn: this.currentPage,
         size: this.pageSize,
       });
@@ -405,7 +405,7 @@ export default {
     },
     // 通过关键字查询数据
     handelQuery(keyword) {
-      this.$store.dispatch("drugInfoManage/getDrugInfo", {
+      this.$store.dispatch('drugInfoManage/getDrugInfo', {
         pn: this.currentPage,
         size: this.pageSize,
         keyword,
@@ -416,7 +416,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
-          this.$store.dispatch("drugInfoManage/addDrug", {
+          this.$store.dispatch('drugInfoManage/addDrug', {
             drugName: this.addForm.drugName,
             drugInfo: this.addForm.drugInfo,
             drugEffect: this.addForm.drugEffect,
@@ -426,19 +426,19 @@ export default {
             drugPublisher: (getUserInfo() || {}).realname,
           });
         } else {
-          this.$message.warning("请检查输入的内容是否合规");
+          this.$message.warning('请检查输入的内容是否合规');
         }
       });
     },
     // 删除药品
     handleDeleteDrug(drugId, drugName) {
-      this.$confirm(`确定要删除“${drugName}”的相关信息吗？`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定要删除“${drugName}”的相关信息吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
-          this.$store.dispatch("drugInfoManage/deleteDrug", {
+          this.$store.dispatch('drugInfoManage/deleteDrug', {
             drugId,
             pn: this.currentPage,
             size: this.pageSize,
@@ -447,8 +447,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -479,7 +479,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;
-          this.$store.dispatch("drugInfoManage/modifyDrugInfo", {
+          this.$store.dispatch('drugInfoManage/modifyDrugInfo', {
             drugId: this.modifyForm.drugId,
             drugName: this.modifyForm.drugName,
             drugInfo: this.modifyForm.drugInfo,
@@ -492,8 +492,8 @@ export default {
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -508,12 +508,12 @@ export default {
   },
   mounted() {
     this.getDrugInfo(); // 首次渲染
-    this.$store.dispatch("saleInfoManage/getAllSalePlaceInfo");
+    this.$store.dispatch('saleInfoManage/getAllSalePlaceInfo');
   },
   computed: {
     ...mapGetters({
-      tableData: "drugInfo",
-      salePlaceInfo: "salePlaceInfo",
+      tableData: 'drugInfo',
+      salePlaceInfo: 'salePlaceInfo',
     }), //后端返回的数据
     keyword: {
       get() {

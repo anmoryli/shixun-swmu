@@ -1,8 +1,8 @@
-import { login } from "../../api/Login";
-import { Message } from "element-ui";
+import { login } from '../../api/Login';
+import { Message } from 'element-ui';
 import router, { constantRoutes } from '../../router/index'
 import {getMenu} from '../../utils/routeParse'
-import { getToken, setToken, setUserInfo, clearAuth } from "../../utils/authStore";
+import { getToken, setToken, setUserInfo, clearAuth } from '../../utils/authStore';
 const initialState = {
   token: getToken(),
   menuList: constantRoutes.slice(),
@@ -23,7 +23,7 @@ const mutations = {
     router.addRoutes(dynamicRoutes);
   },
   RESET_AUTH(state) {
-    state.token = "";
+    state.token = '';
     state.menuList = constantRoutes.slice();
     state.routesLoaded = false;
   }
@@ -32,24 +32,24 @@ const actions = {
   // 登录接口
   async login({ commit }, loginInfo) {
     // 清除同一浏览器会话中可能残留的上一账号菜单状态。
-    commit("RESET_AUTH");
+    commit('RESET_AUTH');
     const username = loginInfo.username.trim();
     const res = await login(username, loginInfo.password);
     if (!res.data || Number(res.data.code) !== 20000) {
-      throw new Error((res.data && res.data.message) || "账号或密码错误");
+      throw new Error((res.data && res.data.message) || '账号或密码错误');
     }
 
     const data = res.data.data || {};
     if (!data.token || !data.userInfo) {
-      throw new Error("登录接口返回的数据不完整");
+      throw new Error('登录接口返回的数据不完整');
     }
 
     setUserInfo(data.userInfo);
     setToken(data.token);
-    commit("SET_TOKEN", data.token);
+    commit('SET_TOKEN', data.token);
     Message({
-      type: "success",
-      message: "登录成功",
+      type: 'success',
+      message: '登录成功',
     });
     return data;
   },
@@ -59,12 +59,12 @@ const actions = {
       return state.menuList.slice(constantRoutes.length);
     }
     const routes = await getMenu();
-    commit("SET_ROUTER_MENULIST", routes);
+    commit('SET_ROUTER_MENULIST', routes);
     return routes;
   },
   logout({ commit }) {
     clearAuth();
-    commit("RESET_AUTH");
+    commit('RESET_AUTH');
   },
 };
 export default {

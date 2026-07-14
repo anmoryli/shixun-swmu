@@ -52,14 +52,14 @@
     </div>
 </template>
 <script>
-import { loginRules } from "../utils/validator";
+import { loginRules } from '../utils/validator';
 
 export default {
   data() {
     return {
       loginForm: {
-        username: "",
-        password: "",
+        username: '',
+        password: '',
       },
       loginRules,
       loggingIn: false,
@@ -75,10 +75,10 @@ export default {
           }
           this.loggingIn = true;
           this.$store
-            .dispatch("app/login", this.loginForm)
-            .then(() => this.$store.dispatch("app/setMenuList"))
+            .dispatch('app/login', this.loginForm)
+            .then(() => this.$store.dispatch('app/setMenuList'))
             .then(() => {
-              this.$router.replace("/");
+              this.$router.replace('/');
             })
             .catch((error) => {
               const isNetworkError = Boolean(
@@ -88,12 +88,12 @@ export default {
                 this.$store.state.app.token &&
                 !this.$store.state.app.routesLoaded
               ) {
-                this.$store.dispatch("app/logout");
+                this.$store.dispatch('app/logout');
               }
               this.$message.error(
                 isNetworkError
-                  ? "无法连接服务器，请检查网络或后端服务"
-                  : error.message || "账号或密码错误"
+                  ? '无法连接服务器，请检查网络或后端服务'
+                  : error.message || '账号或密码错误'
               );
             })
             .finally(() => {
@@ -101,8 +101,8 @@ export default {
             });
         } else {
           this.$notify.error({
-            title: " 错误",
-            message: " 请输入正确的用户名密码",
+            title: ' 错误',
+            message: ' 请输入正确的用户名密码',
           });
 
         }

@@ -227,13 +227,13 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import rules from "../../utils/validator";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import rules from '../../utils/validator';
 
 function coordinateValidator(min, max, label) {
   return (rule, value, callback) => {
-    if (value === "" || value === null || value === undefined) {
+    if (value === '' || value === null || value === undefined) {
       callback(new Error(`${label}不能为空`));
       return;
     }
@@ -247,15 +247,15 @@ function coordinateValidator(min, max, label) {
 }
 
 const emptySaleForm = () => ({
-  saleName: "",
-  salePhone: "",
-  address: "",
+  saleName: '',
+  salePhone: '',
+  address: '',
   longitude: null,
   latitude: null,
 });
 
 export default {
-  name: "SaleManage",
+  name: 'SaleManage',
   components: {
     Pagination,
   },
@@ -263,29 +263,29 @@ export default {
     return {
       currentPage: 1,
       pageSize: 5, // 每页的数据条数
-      keywordDefault: "",
+      keywordDefault: '',
       addFormVisible: false, // 控制新增销售地点页面的显示
       addForm: emptySaleForm(),
       modifyFormVisible: false, // 控制修改信息页面的显示
       modifyForm: {
-        saleId: "",
-        saleName: "",
-        salePhone: "",
-        address: "",
+        saleId: '',
+        saleName: '',
+        salePhone: '',
+        address: '',
         longitude: null,
         latitude: null,
       },
       rules, // 封装好的表单验证
       saleRules: {
         address: [
-          { required: true, message: "详细地址不能为空", trigger: "blur" },
-          { min: 4, max: 200, message: "详细地址长度应为 4 到 200 个字符", trigger: "blur" },
+          { required: true, message: '详细地址不能为空', trigger: 'blur' },
+          { min: 4, max: 200, message: '详细地址长度应为 4 到 200 个字符', trigger: 'blur' },
         ],
         longitude: [
-          { validator: coordinateValidator(-180, 180, "经度"), trigger: "change" },
+          { validator: coordinateValidator(-180, 180, '经度'), trigger: 'change' },
         ],
         latitude: [
-          { validator: coordinateValidator(-90, 90, "纬度"), trigger: "change" },
+          { validator: coordinateValidator(-90, 90, '纬度'), trigger: 'change' },
         ],
       },
     };
@@ -293,7 +293,7 @@ export default {
   methods: {
     // 切换分页及首次进入获取数据
     getSalePlaceInfo() {
-      this.$store.dispatch("saleInfoManage/getSalePlaceInfo", {
+      this.$store.dispatch('saleInfoManage/getSalePlaceInfo', {
         pn: this.currentPage,
         size: this.pageSize,
       });
@@ -309,7 +309,7 @@ export default {
     },
     // 通过关键字查询数据
     handelQuery(keyword) {
-      this.$store.dispatch("saleInfoManage/getSalePlaceInfo", {
+      this.$store.dispatch('saleInfoManage/getSalePlaceInfo', {
         pn: this.currentPage,
         size: this.pageSize,
         keyword,
@@ -320,7 +320,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
-          this.$store.dispatch("saleInfoManage/addSalePlace", {
+          this.$store.dispatch('saleInfoManage/addSalePlace', {
             saleName: this.addForm.saleName,
             salePhone: this.addForm.salePhone,
             address: this.addForm.address,
@@ -330,21 +330,21 @@ export default {
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
     },
     // 删除销售地点
     handleDeleteSalePlace(saleId, saleName) {
-      this.$confirm(`确定要删除“${saleName}”的相关信息吗？`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定要删除“${saleName}”的相关信息吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
-          this.$store.dispatch("saleInfoManage/deleteSalePlace", {
+          this.$store.dispatch('saleInfoManage/deleteSalePlace', {
             saleId,
             pn: this.currentPage,
             size: this.pageSize,
@@ -353,8 +353,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -364,7 +364,7 @@ export default {
         saleId: saleInfo.saleId,
         saleName: saleInfo.saleName,
         salePhone: saleInfo.salePhone,
-        address: saleInfo.address || "",
+        address: saleInfo.address || '',
         longitude: this.toCoordinate(saleInfo.longitude),
         latitude: this.toCoordinate(saleInfo.latitude),
       };
@@ -375,7 +375,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;
-          this.$store.dispatch("saleInfoManage/modifySalePlaceInfo", {
+          this.$store.dispatch('saleInfoManage/modifySalePlaceInfo', {
             saleId: this.modifyForm.saleId,
             saleName: this.modifyForm.saleName,
             salePhone: this.modifyForm.salePhone,
@@ -388,8 +388,8 @@ export default {
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -403,7 +403,7 @@ export default {
       this.$refs.modifyForm.resetFields();
     },
     toCoordinate(value) {
-      if (value === "" || value === null || value === undefined) {
+      if (value === '' || value === null || value === undefined) {
         return null;
       }
       const coordinate = Number(value);
@@ -427,7 +427,7 @@ export default {
   computed: {
     //后端返回的数据
     ...mapGetters({
-      tableData: "salePlaceInfo",
+      tableData: 'salePlaceInfo',
     }),
     // 用户输入的关键字
     keyword: {

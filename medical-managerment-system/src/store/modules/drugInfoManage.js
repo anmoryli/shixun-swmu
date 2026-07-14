@@ -3,7 +3,7 @@ import {
     addDrug,
     deleteDrug,
     modifyDrugInfo,
-} from "../../api/admin/drugInfoManage";
+} from '../../api/admin/drugInfoManage';
 
 const initialState = {
     drugInfo: {}, //药品信息
@@ -18,7 +18,7 @@ const actions = {
     getDrugInfo({ commit }, { pn, size, keyword }) {
         getDrugInfo(pn, size, keyword).then((res) => {
             if (res) {
-                commit("GET_DRUG_INFO", res.data.data.drugPageInfo);
+                commit('GET_DRUG_INFO', res.data.data.drugPageInfo);
             }
         });
     },
@@ -29,13 +29,13 @@ const actions = {
     ) {
         addDrug(drugName, drugInfo, drugEffect, drugImg, saleIds, drugPublisher).then((res) => {
             //   新增之后跳转到最后一页
-            dispatch("getDrugInfo", { pn: res.data.data.pages, size });
+            dispatch('getDrugInfo', { pn: res.data.data.pages, size });
         });
     },
     // 删除药品信息
     deleteDrug({ dispatch }, { drugId, pn, size, keyword }) {
         deleteDrug(drugId).then(() => {
-            dispatch("getDrugInfo", { pn, size, keyword });
+            dispatch('getDrugInfo', { pn, size, keyword });
         });
     },
     // 修改药品信息
@@ -61,7 +61,7 @@ const actions = {
             drugImg,
             saleIds
         ).then(() => {
-            dispatch("getDrugInfo", { pn, size, keyword });
+            dispatch('getDrugInfo', { pn, size, keyword });
         });
     },
 };

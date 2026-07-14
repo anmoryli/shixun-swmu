@@ -237,12 +237,12 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import rules, { searchRules } from "../../utils/validator";
-import dayjs from "dayjs";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import rules, { searchRules } from '../../utils/validator';
+import dayjs from 'dayjs';
 export default {
-  name: "MedicalPolicyManage",
+  name: 'MedicalPolicyManage',
   components: {
     Pagination,
   },
@@ -253,23 +253,23 @@ export default {
       pageSize: 5, // 每页的数据条数
       searchLimit: {
         // 查询条件
-        id: "",
-        title: "",
-        publishTime: "",
-        city: "",
+        id: '',
+        title: '',
+        publishTime: '',
+        city: '',
       },
       addForm: {
-        title: "",
-        message: "",
-        city: "",
-        updateTime: dayjs().format("YYYY-MM-DD"),
+        title: '',
+        message: '',
+        city: '',
+        updateTime: dayjs().format('YYYY-MM-DD'),
       },
       addFormVisible: false,
       modifyForm: {
-        id: "",
-        title: "",
-        message: "",
-        city: "",
+        id: '',
+        title: '',
+        message: '',
+        city: '',
       },
       modifyFormVisible: false,
       searchRules,
@@ -284,7 +284,7 @@ export default {
     // 查询医药政策信息
     getMedicalPolicyInfo() {
       this.$store.dispatch(
-        "medicalPolicyInfoManage/getMedicalPolicyInfo",
+        'medicalPolicyInfoManage/getMedicalPolicyInfo',
         this.params
       );
     },
@@ -294,7 +294,7 @@ export default {
         if (valid) {
           this.getMedicalPolicyInfo();
         } else {
-          this.$message.warning("请检查输入的内容是否合规");
+          this.$message.warning('请检查输入的内容是否合规');
         }
       });
     },
@@ -303,7 +303,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
-          this.$store.dispatch("medicalPolicyInfoManage/addMedicalPolicy", {
+          this.$store.dispatch('medicalPolicyInfoManage/addMedicalPolicy', {
             cityId: this.addForm.city,
             title: this.addForm.title,
             updateTime: this.addForm.updateTime,
@@ -312,27 +312,27 @@ export default {
           });
           this.$refs.searchLimit.resetFields();
         } else {
-          this.$message.warning("请检查输入的内容是否合规");
+          this.$message.warning('请检查输入的内容是否合规');
         }
       });
     },
     // 删除医保政策
     handleDeletMedicalPolicy(id, title) {
-      this.$confirm(`确定要删除“${title}”的相关信息吗？`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定要删除“${title}”的相关信息吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
-          this.$store.dispatch("medicalPolicyInfoManage/deleteMedicalPolicy", {
+          this.$store.dispatch('medicalPolicyInfoManage/deleteMedicalPolicy', {
             id,
             params: this.params,
           });
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -352,20 +352,20 @@ export default {
         if (valid) {
           this.modifyFormVisible = false;
           this.$store.dispatch(
-            "medicalPolicyInfoManage/modifyMedicalPolicyInfo",
+            'medicalPolicyInfoManage/modifyMedicalPolicyInfo',
             {
               id: this.modifyForm.id,
               cityId: this.modifyForm.city,
               title: this.modifyForm.title,
-              updateTime: dayjs().format("YYYY-MM-DD"),
+              updateTime: dayjs().format('YYYY-MM-DD'),
               message: this.modifyForm.message,
               params: this.params,
             }
           );
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -380,12 +380,12 @@ export default {
   },
   mounted() {
     this.getMedicalPolicyInfo();
-    this.$store.dispatch("cityInfoManage/getAllCityInfo");
+    this.$store.dispatch('cityInfoManage/getAllCityInfo');
   },
   computed: {
     ...mapGetters({
-      tableData: "medicalPolicyInfo",
-      cityInfo: "cityInfo",
+      tableData: 'medicalPolicyInfo',
+      cityInfo: 'cityInfo',
     }), //后端返回的数据
     params() {
       //查询操作用到的参数

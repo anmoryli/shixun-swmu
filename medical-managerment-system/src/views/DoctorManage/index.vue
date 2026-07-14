@@ -279,38 +279,38 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import { doctorRules, validatePass } from "../../utils/validator";
-import { resetPassword } from "../../api/admin/doctorInfoManage";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import { doctorRules, validatePass } from '../../utils/validator';
+import { resetPassword } from '../../api/admin/doctorInfoManage';
 
 export default {
-  name: "DoctorManage",
+  name: 'DoctorManage',
   components: {
     Pagination,
   },
   data() {
     let validatorPass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
+      if (value === '') {
+        callback(new Error('请输入密码'));
       } else if (!validatePass(value)) {
         callback(
           new Error(
-            "密码应以字母开头 长度在5~18之间 只能包含字母、数字和下划线"
+            '密码应以字母开头 长度在5~18之间 只能包含字母、数字和下划线'
           )
         );
       } else {
-        if (this.addForm.pwdCheck !== "") {
-          this.$refs.addForm.validateField("pwdCheck");
+        if (this.addForm.pwdCheck !== '') {
+          this.$refs.addForm.validateField('pwdCheck');
         }
         callback();
       }
     };
     let validatorPass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
       } else if (value !== this.addForm.pwd) {
-        callback(new Error("两次输入密码不一致!"));
+        callback(new Error('两次输入密码不一致!'));
       } else {
         callback();
       }
@@ -318,41 +318,41 @@ export default {
     return {
       currentPage: 1,
       pageSize: 5, // 每页的数据条数
-      keywordDefault: "",
+      keywordDefault: '',
       addFormVisible: false, // 控制新增页面的显示
       resetPwdDialogVisible: false, //控制重置密码对话框显示
       addForm: {
-        age: "",
-        levelId: "",
-        name: "",
-        phoneNumber: "",
-        pwd: "",
-        pwdCheck: "",
-        sex: "",
-        typeId: "",
+        age: '',
+        levelId: '',
+        name: '',
+        phoneNumber: '',
+        pwd: '',
+        pwdCheck: '',
+        sex: '',
+        typeId: '',
       },
       modifyFormVisible: false, // 控制修改信息页面的显示
       modifyForm: {
-        accountId: "",
-        age: "",
-        levelId: "",
-        name: "",
-        phoneNumber: "",
-        sex: "",
-        typeId: "",
-        id: "",
+        accountId: '',
+        age: '',
+        levelId: '',
+        name: '',
+        phoneNumber: '',
+        sex: '',
+        typeId: '',
+        id: '',
       },
       doctorRules, // 封装好的表单验证
-      pwdRules: [{ required: true, validator: validatorPass, trigger: "blur" }],
+      pwdRules: [{ required: true, validator: validatorPass, trigger: 'blur' }],
       checkPwdRules: [
-        { required: true, validator: validatorPass2, trigger: "blur" },
+        { required: true, validator: validatorPass2, trigger: 'blur' },
       ],
     };
   },
   methods: {
     // 切换分页及首次进入获取数据
     getDoctorInfo() {
-      this.$store.dispatch("doctorInfoManage/getDoctorInfo", {
+      this.$store.dispatch('doctorInfoManage/getDoctorInfo', {
         pn: this.currentPage,
         size: this.pageSize,
       });
@@ -368,7 +368,7 @@ export default {
     },
     // 通过关键字查询数据
     handelQuery(keyword) {
-      this.$store.dispatch("doctorInfoManage/getDoctorInfo", {
+      this.$store.dispatch('doctorInfoManage/getDoctorInfo', {
         pn: this.currentPage,
         size: this.pageSize,
         keyword,
@@ -379,7 +379,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$store
-            .dispatch("doctorInfoManage/addDoctor", {
+            .dispatch('doctorInfoManage/addDoctor', {
               age: this.addForm.age,
               levelId: this.addForm.levelId,
               name: this.addForm.name,
@@ -396,21 +396,21 @@ export default {
             });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
     },
     // 删除
     handleDeleteDoctor(id, name) {
-      this.$confirm(`确定要删除“${name}”的相关信息吗？`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定要删除“${name}”的相关信息吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
-          this.$store.dispatch("doctorInfoManage/deleteDoctor", {
+          this.$store.dispatch('doctorInfoManage/deleteDoctor', {
             id,
             pn: this.currentPage,
             size: this.pageSize,
@@ -419,8 +419,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -452,7 +452,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$store
-            .dispatch("doctorInfoManage/modifyDoctor", {
+            .dispatch('doctorInfoManage/modifyDoctor', {
               accountId: this.modifyForm.accountId,
               age: this.modifyForm.age,
               levelId: this.modifyForm.levelId,
@@ -473,26 +473,26 @@ export default {
             });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
     },
     // 重置医生密码
     resetPassword(id, name) {
-      this.$confirm(`确定要重置“${name}”的密码吗？`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定要重置“${name}”的密码吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
           resetPassword(id);
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消重置",
+            type: 'info',
+            message: '已取消重置',
           });
         });
     },
@@ -507,12 +507,12 @@ export default {
   },
   mounted() {
     this.getDoctorInfo(); // 首次渲染
-    this.$store.dispatch("doctorInfoManage/getDoctorLevelAndType");
+    this.$store.dispatch('doctorInfoManage/getDoctorLevelAndType');
   },
   computed: {
     ...mapGetters({
-      tableData: "doctorInfo",
-      levelAndTypeData: "doctorLevelAndType",
+      tableData: 'doctorInfo',
+      levelAndTypeData: 'doctorLevelAndType',
     }), //后端返回的数据
     keyword: {
       get() {

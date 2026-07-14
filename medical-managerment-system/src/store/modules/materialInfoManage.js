@@ -3,7 +3,7 @@ import {
     addMaterial,
     deleteMaterial,
     modifyMaterial,
-} from "../../api/admin/materialInfoManage.js";
+} from '../../api/admin/materialInfoManage.js';
 
 const initialState = {
     materialInfo: {}, //必备材料信息
@@ -18,7 +18,7 @@ const actions = {
     getMaterialInfo({ commit }, { pn, size, keyword }) {
         getMaterialInfo(pn, size, keyword).then((res) => {
             if (res) {
-                commit("GET_MATERIAL_INFO", res.data.data.materialInfo);
+                commit('GET_MATERIAL_INFO', res.data.data.materialInfo);
             }
         });
     },
@@ -26,19 +26,19 @@ const actions = {
     addMaterial({ dispatch }, { message, title, size }) {
         addMaterial(message, title).then((res) => {
             //   新增之后跳转到最后一页
-            dispatch("getMaterialInfo", { pn: res.data.data.pages, size });
+            dispatch('getMaterialInfo', { pn: res.data.data.pages, size });
         });
     },
     // 删除
     deleteMaterial({ dispatch }, { id, pn, size, keyword }) {
         deleteMaterial(id).then(() => {
-            dispatch("getMaterialInfo", { pn, size, keyword });
+            dispatch('getMaterialInfo', { pn, size, keyword });
         });
     },
     // 修改
     modifyMaterial({ dispatch }, { id, message, title, pn, size, keyword }) {
         modifyMaterial(id, message, title).then(() => {
-            dispatch("getMaterialInfo", { pn, size, keyword });
+            dispatch('getMaterialInfo', { pn, size, keyword });
         });
     },
 }

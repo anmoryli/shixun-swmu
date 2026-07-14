@@ -1,7 +1,7 @@
 // 鉴权信息的内存态持有者。
 // 出于安全考虑（G.WST.01），登录令牌与用户信息不再写入 localStorage / sessionStorage，
 // 仅保留在当前页面会话的内存中。代价：刷新页面后需重新登录。
-let token = "";
+let token = '';
 let userInfo = null;
 
 export function getToken() {
@@ -9,7 +9,7 @@ export function getToken() {
 }
 
 export function setToken(value) {
-  token = value || "";
+  token = value || '';
 }
 
 export function getUserInfo() {
@@ -21,7 +21,7 @@ export function setUserInfo(value) {
 }
 
 export function clearAuth() {
-  token = "";
+  token = '';
   userInfo = null;
 }
 

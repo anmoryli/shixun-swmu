@@ -3,14 +3,14 @@ import {
     judgeAddResult,
     judgeQueryResult,
     judgeModifyResult,
-} from "../../utils/app";
-import request from "../../utils/request";
+} from '../../utils/app';
+import request from '../../utils/request';
 
 // 查询销售地点信息api
-export function getSalePlaceInfo(pn, size, keyword = "") {
+export function getSalePlaceInfo(pn, size, keyword = '') {
     return request({
         url: `/sales/${pn}/${size}`,
-        method: "GET",
+        method: 'GET',
         params: {
             name: keyword,
         },
@@ -19,15 +19,15 @@ export function getSalePlaceInfo(pn, size, keyword = "") {
 // 查询所有销售地点信息
 export function getAllSalePlaceInfo() {
     return request({
-        url: "/sales",
-        method: "GET",
+        url: '/sales',
+        method: 'GET',
     });
 }
 // 新增销售地点api
 export function addSalePlace(saleInfo) {
     return request({
-        url: "/sales",
-        method: "POST",
+        url: '/sales',
+        method: 'POST',
         data: saleInfo,
     }).then((res) => judgeAddResult(res));
 }
@@ -35,7 +35,7 @@ export function addSalePlace(saleInfo) {
 export function deleteSalePlace(saleId) {
     return request({
         url: `/sales/${saleId}`,
-        method: "DELETE",
+        method: 'DELETE',
     }).then((res) => {
         judgeDeleteResult(res);
     });
@@ -44,7 +44,7 @@ export function deleteSalePlace(saleId) {
 export function modifySalePlaceInfo(saleId, saleInfo) {
     return request({
         url: `/sales/${saleId}`,
-        method: "PUT",
+        method: 'PUT',
         data: saleInfo,
     }).then((res) => {
         judgeModifyResult(res);

@@ -1,8 +1,8 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Login from "../views/Login.vue";
-import { Message } from "element-ui";
-import { isLoggedIn } from "../utils/authStore";
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Login from '../views/Login.vue';
+import { Message } from 'element-ui';
+import { isLoggedIn } from '../utils/authStore';
 
 Vue.use(VueRouter);
 
@@ -13,27 +13,27 @@ VueRouter.prototype.push = function push(location) {
 };
 export const constantRoutes = [
     {
-      path: "/user/login",
-      name: "Login",
+      path: '/user/login',
+      name: 'Login',
       component: Login,
-      meta: { title: "登录" },
+      meta: { title: '登录' },
     },
     {
-      path: "/",
-      redirect: "/home",
+      path: '/',
+      redirect: '/home',
     },
   ]
   
   const router = new VueRouter({
-    mode: "hash",
+    mode: 'hash',
     routes: constantRoutes
   });
   // 判断登录状态
 router.beforeEach((to, from, next) => {
-    document.title = (to.meta && to.meta.title) || "慧医数字医疗应用系统";
+    document.title = (to.meta && to.meta.title) || '慧医数字医疗应用系统';
     const token = isLoggedIn();
-    if (!token && to.path !== "/user/login") {
-      next("/user/login");
+    if (!token && to.path !== '/user/login') {
+      next('/user/login');
       return;
     }
     if (!token) {
@@ -42,10 +42,10 @@ router.beforeEach((to, from, next) => {
     }
 
     // store 在守卫执行时再加载，避免 router/store 相互引用导致初始化竞态。
-    const store = require("../store").default;
+    const store = require('../store').default;
     if (store.state.app.routesLoaded) {
-      if (to.path === "/user/login") {
-        next("/");
+      if (to.path === '/user/login') {
+        next('/');
       } else {
         next();
       }
@@ -53,18 +53,18 @@ router.beforeEach((to, from, next) => {
     }
 
     store
-      .dispatch("app/setMenuList")
+      .dispatch('app/setMenuList')
       .then(() => {
-        if (to.path === "/user/login") {
-          next("/");
+        if (to.path === '/user/login') {
+          next('/');
         } else {
           next({ path: to.fullPath, replace: true });
         }
       })
       .catch((error) => {
-        store.dispatch("app/logout");
-        Message.error(error.message || "登录状态已失效，请重新登录");
-        next("/user/login");
+        store.dispatch('app/logout');
+        Message.error(error.message || '登录状态已失效，请重新登录');
+        next('/user/login');
       });
   });
   

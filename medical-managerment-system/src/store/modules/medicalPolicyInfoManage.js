@@ -3,7 +3,7 @@ import {
     addMedicalPolicy,
     modifyMedicalPolicyInfo,
     deleteMedicalPolicy,
-} from "../../api/admin/medicalPolicyInfoManage";
+} from '../../api/admin/medicalPolicyInfoManage';
 
 const initialState = {
     medicalPolicyInfo: {}, //医保政策信息
@@ -19,7 +19,7 @@ const actions = {
     getMedicalPolicyInfo({ commit }, params) {
         getMedicalPolicyInfo(params).then((res) => {
             if (res) {
-                commit("GET_MEDICAL_POLICY_INFO", res.data.data.policyInfo);
+                commit('GET_MEDICAL_POLICY_INFO', res.data.data.policyInfo);
             }
         });
     },
@@ -27,7 +27,7 @@ const actions = {
     addMedicalPolicy({ dispatch }, { cityId, title, updateTime, message, size }) {
         addMedicalPolicy(cityId, title, updateTime, message).then((res) => {
             //   新增之后跳转到最后一页
-            dispatch("getMedicalPolicyInfo", { pn: res.data.data.pages, size });
+            dispatch('getMedicalPolicyInfo', { pn: res.data.data.pages, size });
         });
     },
     //  修改医保政策
@@ -36,13 +36,13 @@ const actions = {
         { id, cityId, title, updateTime, message, params }
     ) {
         modifyMedicalPolicyInfo(id, cityId, title, updateTime, message).then(() => {
-            dispatch("getMedicalPolicyInfo", params);
+            dispatch('getMedicalPolicyInfo', params);
         });
     },
     // 删除医保政策
     deleteMedicalPolicy({ dispatch }, { id, params }) {
         deleteMedicalPolicy(id).then(() => {
-            dispatch("getMedicalPolicyInfo", params);
+            dispatch('getMedicalPolicyInfo', params);
         });
     },
 };

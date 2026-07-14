@@ -7,7 +7,7 @@ import {
     addCompanyPolicy,
     deleteCompanyPolicy,
     modifyCompanyPolicyInfo,
-  } from "../../api/admin/companyPolicyInfoManage";
+  } from '../../api/admin/companyPolicyInfoManage';
   
   const initialState = {
     companyPolicyInfo: {}, //医药公司政策管理信息
@@ -22,7 +22,7 @@ import {
         getCompanyPolicyInfo({ commit }, { pn, size, keyword }) {
             getCompanyPolicyInfo(pn, size, keyword).then((res) => {
               if (res) {
-                commit("GET_COMPANY_POLICY_INFO", res.data.data.policyInfo);
+                commit('GET_COMPANY_POLICY_INFO', res.data.data.policyInfo);
               }
             });
           },
@@ -30,13 +30,13 @@ import {
     addCompanyPolicy({ dispatch }, { companyId, message, title, size }) {
         addCompanyPolicy(companyId, message, title).then((res) => {
           // 新增之后跳转到最后一页
-          dispatch("getCompanyPolicyInfo", { pn: res.data.data.pages, size });
+          dispatch('getCompanyPolicyInfo', { pn: res.data.data.pages, size });
         });
       },
           // 删除
     deleteCompanyPolicy({ dispatch }, { id, pn, size, keyword }) {
         deleteCompanyPolicy(id).then(() => {
-          dispatch("getCompanyPolicyInfo", { pn, size, keyword });
+          dispatch('getCompanyPolicyInfo', { pn, size, keyword });
         });
       },
           //  修改
@@ -45,7 +45,7 @@ import {
         { id, companyId, title, message, pn, size }
       ) {
         modifyCompanyPolicyInfo(id, companyId, title, message).then(() => {
-          dispatch("getCompanyPolicyInfo", { pn, size });
+          dispatch('getCompanyPolicyInfo', { pn, size });
         });
       },
   }

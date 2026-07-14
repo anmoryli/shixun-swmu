@@ -2,18 +2,18 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
  */
 
-import { Message } from "element-ui";
+import { Message } from 'element-ui';
 // 判断删除结果
 export function judgeDeleteResult(res) {
   if (res.data.code === 20000) {
     Message({
-      type: "success",
-      message: "删除成功!",
+      type: 'success',
+      message: '删除成功!',
     });
   } else {
     Message({
-      type: "error",
-      message: "删除失败!",
+      type: 'error',
+      message: '删除失败!',
     });
   }
   return res;
@@ -22,18 +22,18 @@ export function judgeDeleteResult(res) {
 export function judgeAddResult(res) {
   if (res.data.code === 20000) {
     Message({
-      type: "success",
-      message: "新增成功!",
+      type: 'success',
+      message: '新增成功!',
     });
   } else if (res.data.code === 10001) {
     Message({
-      type: "error",
-      message: "该手机号已被注册",
+      type: 'error',
+      message: '该手机号已被注册',
     });
   } else {
     Message({
-      type: "error",
-      message: "新增失败",
+      type: 'error',
+      message: '新增失败',
     });
   }
   return res;
@@ -44,8 +44,8 @@ export function judgeQueryResult(res) {
     return res;
   } else {
     Message({
-      type: "error",
-      message: "加载数据失败!",
+      type: 'error',
+      message: '加载数据失败!',
     });
     return false;
   }
@@ -54,18 +54,18 @@ export function judgeQueryResult(res) {
 export function judgeModifyResult(res) {
   if (res.data.code === 20000) {
     Message({
-      type: "success",
-      message: "修改成功!",
+      type: 'success',
+      message: '修改成功!',
     });
   } else if (res.data.code === 10001) {
     Message({
-      type: "error",
-      message: "该手机号已被注册",
+      type: 'error',
+      message: '该手机号已被注册',
     });
   } else {
     Message({
-      type: "error",
-      message: "修改失败!",
+      type: 'error',
+      message: '修改失败!',
     });
   }
   return res;
@@ -74,13 +74,13 @@ export function judgeModifyResult(res) {
 export function judgeResetResult(res) {
   if (res.data.code === 20000) {
     Message({
-      type: "success",
-      message: "重置密码成功!",
+      type: 'success',
+      message: '重置密码成功!',
     });
   } else {
     Message({
-      type: "error",
-      message: "重置密码失败!",
+      type: 'error',
+      message: '重置密码失败!',
     });
   }
   return res;

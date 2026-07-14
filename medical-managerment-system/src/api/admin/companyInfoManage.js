@@ -7,14 +7,14 @@ import {
     judgeAddResult,
     judgeQueryResult,
     judgeModifyResult,
-} from "../../utils/app";
-import request from "../../utils/request";
+} from '../../utils/app';
+import request from '../../utils/request';
 
 // 查询公司信息api
-export function getCompanyInfo(pn, size, keyword = "") {
+export function getCompanyInfo(pn, size, keyword = '') {
     return request({
         url: `/companys/${pn}/${size}`,
-        method: "GET",
+        method: 'GET',
         params: {
             name: keyword,
         },
@@ -23,15 +23,15 @@ export function getCompanyInfo(pn, size, keyword = "") {
 // 查询所有公司信息api
 export function getAllCompanyInfo() {
     return request({
-        url: "/companys",
-        method: "GET",
+        url: '/companys',
+        method: 'GET',
     });
 }
 // 新增公司api
 export function addCompany(companyName, companyPhone) {
     return request({
-        url: "/companys",
-        method: "POST",
+        url: '/companys',
+        method: 'POST',
         data: {
             companyName,
             companyPhone,
@@ -42,7 +42,7 @@ export function addCompany(companyName, companyPhone) {
 export function deleteCompany(companyId) {
     return request({
         url: `/companys/${companyId}`,
-        method: "DELETE",
+        method: 'DELETE',
     }).then((res) => {
         judgeDeleteResult(res);
     });
@@ -51,7 +51,7 @@ export function deleteCompany(companyId) {
 export function modifyCompanyInfo(companyId, companyName, companyPhone) {
     return request({
         url: `/companys/${companyId}`,
-        method: "PUT",
+        method: 'PUT',
         data: {
             companyName,
             companyPhone,

@@ -201,13 +201,13 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import rules from "../../utils/validator";
-import dayjs from "dayjs";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import rules from '../../utils/validator';
+import dayjs from 'dayjs';
 
 export default {
-  name: "CompanyPolicy",
+  name: 'CompanyPolicy',
   components: {
     Pagination,
   },
@@ -215,19 +215,19 @@ export default {
     return {
       currentPage: 1,
       pageSize: 5, // 每页的数据条数
-      keywordDefault: "",
+      keywordDefault: '',
       addFormVisible: false, // 控制新增公司页面的显示
       addForm: {
-        companyId: "",
-        message: "",
-        title: "",
+        companyId: '',
+        message: '',
+        title: '',
       },
       modifyFormVisible: false,
       modifyForm: {
-        companyId: "",
-        id: "",
-        message: "",
-        title: "",
+        companyId: '',
+        id: '',
+        message: '',
+        title: '',
       },
       rules, // 封装好的表单验证
     };
@@ -235,7 +235,7 @@ export default {
   methods: {
     // 切换分页及首次进入获取数据
     getCompanyPolicyInfo() {
-      this.$store.dispatch("companyPolicyInfoManage/getCompanyPolicyInfo", {
+      this.$store.dispatch('companyPolicyInfoManage/getCompanyPolicyInfo', {
         pn: this.currentPage,
         size: this.pageSize,
       });
@@ -251,7 +251,7 @@ export default {
     },
     // 通过关键字查询数据
     handelQuery(keyword) {
-      this.$store.dispatch("companyPolicyInfoManage/getCompanyPolicyInfo", {
+      this.$store.dispatch('companyPolicyInfoManage/getCompanyPolicyInfo', {
         pn: this.currentPage,
         size: this.pageSize,
         keyword,
@@ -262,7 +262,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
-          this.$store.dispatch("companyPolicyInfoManage/addCompanyPolicy", {
+          this.$store.dispatch('companyPolicyInfoManage/addCompanyPolicy', {
             companyId: this.addForm.companyId,
             message: this.addForm.message,
             title: this.addForm.title,
@@ -270,21 +270,21 @@ export default {
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
     },
     // 删除
     handleDeleteCompanyPolicy(id, title) {
-      this.$confirm(`确定要删除“${title}”的相关信息吗？`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定要删除“${title}”的相关信息吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
-          this.$store.dispatch("companyPolicyInfoManage/deleteCompanyPolicy", {
+          this.$store.dispatch('companyPolicyInfoManage/deleteCompanyPolicy', {
             id,
             pn: this.currentPage,
             size: this.pageSize,
@@ -292,8 +292,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -313,12 +313,12 @@ export default {
         if (valid) {
           this.modifyFormVisible = false;
           this.$store.dispatch(
-            "companyPolicyInfoManage/modifyCompanyPolicyInfo",
+            'companyPolicyInfoManage/modifyCompanyPolicyInfo',
             {
               id: this.modifyForm.id,
               companyId: this.modifyForm.companyId,
               title: this.modifyForm.title,
-              updateTime: dayjs().format("YYYY-MM-DD"),
+              updateTime: dayjs().format('YYYY-MM-DD'),
               message: this.modifyForm.message,
               pn: this.currentPage,
               size: this.pageSize,
@@ -326,8 +326,8 @@ export default {
           );
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -343,12 +343,12 @@ export default {
   },
   mounted() {
     this.getCompanyPolicyInfo(); // 首次渲染
-    this.$store.dispatch("companyInfoManage/getAllCompanyInfo");
+    this.$store.dispatch('companyInfoManage/getAllCompanyInfo');
   },
   computed: {
     ...mapGetters({
-      tableData: "companyPolicyInfo",
-      companyInfo: "companyInfo",
+      tableData: 'companyPolicyInfo',
+      companyInfo: 'companyInfo',
     }), //后端返回的数据
     keyword: {
       get() {

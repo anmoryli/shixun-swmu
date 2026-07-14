@@ -179,12 +179,12 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import rules from "../../utils/validator";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import rules from '../../utils/validator';
 
 export default {
-  name: "CompanyManage",
+  name: 'CompanyManage',
   components: {
     Pagination,
   },
@@ -192,17 +192,17 @@ export default {
     return {
       currentPage: 1,
       pageSize: 5, // 每页的数据条数
-      keywordDefault: "",
+      keywordDefault: '',
       addFormVisible: false, // 控制新增公司页面的显示
       addForm: {
-        companyName: "",
-        companyPhone: "",
+        companyName: '',
+        companyPhone: '',
       },
       modifyFormVisible: false, // 控制修改信息页面的显示
       modifyForm: {
-        companyId: "",
-        companyName: "",
-        companyPhone: "",
+        companyId: '',
+        companyName: '',
+        companyPhone: '',
       },
       rules, // 封装好的表单验证
     };
@@ -210,7 +210,7 @@ export default {
   methods: {
     // 切换分页及首次进入获取数据
     getCompanyInfo() {
-      this.$store.dispatch("companyInfoManage/getCompanyInfo", {
+      this.$store.dispatch('companyInfoManage/getCompanyInfo', {
         pn: this.currentPage,
         size: this.pageSize,
       });
@@ -226,7 +226,7 @@ export default {
     },
     // 通过关键字查询数据
     handelQuery(keyword) {
-      this.$store.dispatch("companyInfoManage/getCompanyInfo", {
+      this.$store.dispatch('companyInfoManage/getCompanyInfo', {
         pn: this.currentPage,
         size: this.pageSize,
         keyword,
@@ -237,15 +237,15 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
-          this.$store.dispatch("companyInfoManage/addCompany", {
+          this.$store.dispatch('companyInfoManage/addCompany', {
             companyName: this.addForm.companyName,
             companyPhone: this.addForm.companyPhone,
             size: this.pageSize,
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -254,15 +254,15 @@ export default {
     handleDeleteCompany(companyId, companyName) {
       this.$confirm(
         `确定要删除“${companyName}”的相关信息吗？该操作会同时删除对应的公司政策`,
-        "提示",
+        '提示',
         {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
         }
       )
         .then(() => {
-          this.$store.dispatch("companyInfoManage/deleteCompany", {
+          this.$store.dispatch('companyInfoManage/deleteCompany', {
             companyId,
             pn: this.currentPage,
             size: this.pageSize,
@@ -271,8 +271,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -290,7 +290,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;
-          this.$store.dispatch("companyInfoManage/modifyCompanyInfo", {
+          this.$store.dispatch('companyInfoManage/modifyCompanyInfo', {
             companyId: this.modifyForm.companyId,
             companyName: this.modifyForm.companyName,
             companyPhone: this.modifyForm.companyPhone,
@@ -300,8 +300,8 @@ export default {
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -321,7 +321,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tableData: "companyInfo",
+      tableData: 'companyInfo',
     }), //后端返回的数据
     keyword: {
       get() {

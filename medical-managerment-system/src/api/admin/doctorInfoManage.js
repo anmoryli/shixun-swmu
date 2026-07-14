@@ -8,14 +8,14 @@ import {
     judgeQueryResult,
     judgeModifyResult,
     judgeResetResult,
-} from "../../utils/app";
-import request from "../../utils/request";
+} from '../../utils/app';
+import request from '../../utils/request';
 
 // 查询医生管理信息api
-export function getDoctorInfo(pn, size, keyword = "") {
+export function getDoctorInfo(pn, size, keyword = '') {
     return request({
-        url: "/doctors",
-        method: "GET",
+        url: '/doctors',
+        method: 'GET',
         params: {
             pn,
             size,
@@ -26,15 +26,15 @@ export function getDoctorInfo(pn, size, keyword = "") {
 // 查询医生级别及诊治部位
 export function getDoctorLevelAndType() {
     return request({
-        url: "/doctors/info",
-        method: "GET",
+        url: '/doctors/info',
+        method: 'GET',
     });
 }
 // 新增
 export function addDoctor(age, levelId, name, phoneNumber, pwd, sex, typeId) {
     return request({
-        url: "/doctors",
-        method: "POST",
+        url: '/doctors',
+        method: 'POST',
         data: { age, levelId, name, phoneNumber, pwd, sex, typeId },
     }).then((res) => judgeAddResult(res));
 }
@@ -42,7 +42,7 @@ export function addDoctor(age, levelId, name, phoneNumber, pwd, sex, typeId) {
 export function deleteDoctor(id) {
     return request({
         url: `/doctors/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
     }).then((res) => {
         judgeDeleteResult(res);
     });
@@ -61,7 +61,7 @@ export function deleteDoctor(id) {
   ) {
     return request({
       url: `/doctors/${id}`,
-      method: "PUT",
+      method: 'PUT',
       data: {
         accountId,
         age,
@@ -78,7 +78,7 @@ export function deleteDoctor(id) {
     export function resetPassword(id) {
         return request({
           url: `/doctors/reset/${id}`,
-          method: "PUT",
+          method: 'PUT',
         }).then((res) => {
           judgeResetResult(res);
         });

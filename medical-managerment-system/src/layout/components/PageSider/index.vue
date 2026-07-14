@@ -54,7 +54,7 @@
 </template>
 <script>
 export default {
-  name: "PageSider",
+  name: 'PageSider',
   data() {
     return {
       submenuList: [],
@@ -63,13 +63,13 @@ export default {
   methods: {
     handleMenuListData(data, arr) {
       (Array.isArray(data) ? data : []).forEach((route) => {
-        if (!route || !route.path || route.path === "/user/login") {
+        if (!route || !route.path || route.path === '/user/login') {
           return;
         }
         arr.push({
           path: route.path,
-          title: (route.meta && route.meta.title) || route.name || "未命名菜单",
-          icon: "el-icon-menu",
+          title: (route.meta && route.meta.title) || route.name || '未命名菜单',
+          icon: 'el-icon-menu',
           children: this.handleMenuListData(route.children, []),
         });
       });
@@ -77,7 +77,7 @@ export default {
     },
     refreshMenuList(routes) {
       const availableRoutes = (Array.isArray(routes) ? routes : []).filter(
-        (route) => route && route.path !== "/user/login" && !route.redirect
+        (route) => route && route.path !== '/user/login' && !route.redirect
       );
       const layoutRoute = availableRoutes.find(
         (route) => Array.isArray(route.children) && route.children.length

@@ -18,10 +18,10 @@
 </template>
 
 <script>
-import PageSider from "./components/PageSider/index.vue";
-import PageHeader from "./components/PageHeader/index.vue";
+import PageSider from './components/PageSider/index.vue';
+import PageHeader from './components/PageHeader/index.vue';
 export default {
-  name: "LayoutIndex",
+  name: 'LayoutIndex',
   components: { PageSider, PageHeader },
 };
 </script>

@@ -6,13 +6,13 @@
 </template>
 
 <script>
-import UiThemeToggle from "./components/UiThemeToggle.vue";
+import UiThemeToggle from './components/UiThemeToggle.vue';
 
-const UI_MODE_STORAGE_KEY = "medical-ui-mode";
-const DEFAULT_UI_MODE = "ios26";
+const UI_MODE_STORAGE_KEY = 'medical-ui-mode';
+const DEFAULT_UI_MODE = 'ios26';
 
 function normalizeUiMode(mode) {
-  return mode === "classic" || mode === "ios26" ? mode : DEFAULT_UI_MODE;
+  return mode === 'classic' || mode === 'ios26' ? mode : DEFAULT_UI_MODE;
 }
 
 function readStoredUiMode() {
@@ -24,7 +24,7 @@ function readStoredUiMode() {
 }
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
     UiThemeToggle,
   },
@@ -46,10 +46,10 @@ export default {
       }
     },
     syncDocumentUiMode(mode) {
-      const isIos26 = mode === "ios26";
-      document.documentElement.classList.toggle("ios26-ui", isIos26);
+      const isIos26 = mode === 'ios26';
+      document.documentElement.classList.toggle('ios26-ui', isIos26);
       if (document.body) {
-        document.body.classList.toggle("ios26-ui", isIos26);
+        document.body.classList.toggle('ios26-ui', isIos26);
       }
     },
     handleUiModeChange(mode) {
@@ -65,7 +65,7 @@ export default {
 
       this.$nextTick(() => {
         window.dispatchEvent(
-          new CustomEvent("medical-ui-mode-change", {
+          new CustomEvent('medical-ui-mode-change', {
             detail: {
               mode: nextMode,
               previousMode,

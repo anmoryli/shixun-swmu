@@ -65,45 +65,45 @@
 </template>
 
 <script>
-import { getDashboard } from "../../api/dashboard";
+import { getDashboard } from '../../api/dashboard';
 
 const metricDefinitions = [
   {
-    key: "drugCount",
-    aliases: ["drugCount", "drugTotal", "totalDrugs", "drugs"],
-    label: "药品总数",
-    unit: "种",
-    icon: "el-icon-first-aid-kit",
-    color: "linear-gradient(135deg, #21b7a8, #45d3ba)",
+    key: 'drugCount',
+    aliases: ['drugCount', 'drugTotal', 'totalDrugs', 'drugs'],
+    label: '药品总数',
+    unit: '种',
+    icon: 'el-icon-first-aid-kit',
+    color: 'linear-gradient(135deg, #21b7a8, #45d3ba)',
   },
   {
-    key: "doctorCount",
-    aliases: ["doctorCount", "doctorTotal", "totalDoctors", "doctors"],
-    label: "医生总数",
-    unit: "人",
-    icon: "el-icon-user",
-    color: "linear-gradient(135deg, #3f8efc, #69b7ff)",
+    key: 'doctorCount',
+    aliases: ['doctorCount', 'doctorTotal', 'totalDoctors', 'doctors'],
+    label: '医生总数',
+    unit: '人',
+    icon: 'el-icon-user',
+    color: 'linear-gradient(135deg, #3f8efc, #69b7ff)',
   },
   {
-    key: "saleCount",
-    aliases: ["saleCount", "salesCount", "saleTotal", "totalSales", "sales"],
-    label: "销售地点",
-    unit: "家",
-    icon: "el-icon-location-outline",
-    color: "linear-gradient(135deg, #f59d32, #ffc45d)",
+    key: 'saleCount',
+    aliases: ['saleCount', 'salesCount', 'saleTotal', 'totalSales', 'sales'],
+    label: '销售地点',
+    unit: '家',
+    icon: 'el-icon-location-outline',
+    color: 'linear-gradient(135deg, #f59d32, #ffc45d)',
   },
   {
-    key: "companyCount",
-    aliases: ["companyCount", "companyTotal", "totalCompanies", "companies"],
-    label: "医药企业",
-    unit: "家",
-    icon: "el-icon-office-building",
-    color: "linear-gradient(135deg, #7a66ee, #a58cf5)",
+    key: 'companyCount',
+    aliases: ['companyCount', 'companyTotal', 'totalCompanies', 'companies'],
+    label: '医药企业',
+    unit: '家',
+    icon: 'el-icon-office-building',
+    color: 'linear-gradient(135deg, #7a66ee, #a58cf5)',
   },
 ];
 
 export default {
-  name: "welcome",
+  name: 'welcome',
   data() {
     return {
       dashboardLoading: false,
@@ -111,57 +111,57 @@ export default {
       dashboardData: {},
       picList: [
         {
-          image: require("../../assets/medical-samples/healthcare-team.jpg"),
-          alt: "医疗团队协作示例图",
+          image: require('../../assets/medical-samples/healthcare-team.jpg'),
+          alt: '医疗团队协作示例图',
         },
         {
-          image: require("../../assets/medical-samples/medical-lab.jpg"),
-          alt: "医学检验实验室示例图",
+          image: require('../../assets/medical-samples/medical-lab.jpg'),
+          alt: '医学检验实验室示例图',
         },
         {
-          image: require("../../assets/medical-samples/stethoscope.jpg"),
-          alt: "听诊器与医疗器械示例图",
+          image: require('../../assets/medical-samples/stethoscope.jpg'),
+          alt: '听诊器与医疗器械示例图',
         },
         {
-          image: require("../../assets/medical-samples/medicine-blister.jpg"),
-          alt: "药品板装示例图",
+          image: require('../../assets/medical-samples/medicine-blister.jpg'),
+          alt: '药品板装示例图',
         },
         {
-          image: require("../../assets/medical-samples/medicine-capsule.jpg"),
-          alt: "胶囊药品示例图",
+          image: require('../../assets/medical-samples/medicine-capsule.jpg'),
+          alt: '胶囊药品示例图',
         },
       ],
       cardList: [
         {
-          pic: require("../../assets/medical-samples/stethoscope.jpg"),
-          content: "基础信息管理",
+          pic: require('../../assets/medical-samples/stethoscope.jpg'),
+          content: '基础信息管理',
         },
         {
-          pic: require("../../assets/medical-samples/medicine-blister.jpg"),
-          content: "药品信息管理",
+          pic: require('../../assets/medical-samples/medicine-blister.jpg'),
+          content: '药品信息管理',
         },
         {
-          pic: require("../../assets/medical-samples/healthcare-team.jpg"),
-          content: "医保政策管理",
+          pic: require('../../assets/medical-samples/healthcare-team.jpg'),
+          content: '医保政策管理',
         },
         {
-          pic: require("../../assets/medical-samples/medical-lab.jpg"),
-          content: "企业政策管理",
+          pic: require('../../assets/medical-samples/medical-lab.jpg'),
+          content: '企业政策管理',
         },
         {
-          pic: require("../../assets/medical-samples/medicine-hand.jpg"),
-          content: "医生信息管理",
+          pic: require('../../assets/medical-samples/medicine-hand.jpg'),
+          content: '医生信息管理',
         },
         {
-          pic: require("../../assets/medical-samples/medicine-assorted.jpg"),
-          content: "必备材料管理",
+          pic: require('../../assets/medical-samples/medicine-assorted.jpg'),
+          content: '必备材料管理',
         },
       ],
     };
   },
   computed: {
     dashboardStatusText() {
-      return this.dashboardDegraded ? "统计接口暂不可用，业务入口仍可使用" : "数据已同步";
+      return this.dashboardDegraded ? '统计接口暂不可用，业务入口仍可使用' : '数据已同步';
     },
     metrics() {
       return metricDefinitions.map((definition) => ({
@@ -188,14 +188,14 @@ export default {
           }
         }
       }
-      return "--";
+      return '--';
     },
     async loadDashboard() {
       this.dashboardLoading = true;
       try {
         const res = await getDashboard();
         if (!res.data || Number(res.data.code) !== 20000) {
-          throw new Error("统计数据加载失败");
+          throw new Error('统计数据加载失败');
         }
         this.dashboardData = res.data.data || {};
         this.dashboardDegraded = false;

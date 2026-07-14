@@ -7,14 +7,14 @@ import {
     judgeAddResult,
     judgeQueryResult,
     judgeModifyResult,
-} from "../../utils/app";
-import request from "../../utils/request";
+} from '../../utils/app';
+import request from '../../utils/request';
 
 // 查询必备材料信息api
-export function getMaterialInfo(pn, size, keyword = "") {
+export function getMaterialInfo(pn, size, keyword = '') {
     return request({
-        url: "/materials",
-        method: "GET",
+        url: '/materials',
+        method: 'GET',
         params: {
             pn,
             size,
@@ -25,8 +25,8 @@ export function getMaterialInfo(pn, size, keyword = "") {
 // 新增
 export function addMaterial(message, title) {
     return request({
-        url: "/materials",
-        method: "POST",
+        url: '/materials',
+        method: 'POST',
         data: { message, title },
     }).then((res) => judgeAddResult(res));
 }
@@ -34,7 +34,7 @@ export function addMaterial(message, title) {
 export function deleteMaterial(id) {
     return request({
         url: `/materials/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
         data: {
             id,
         },
@@ -46,7 +46,7 @@ export function deleteMaterial(id) {
 export function modifyMaterial(id, message, title) {
     return request({
         url: `/materials/${id}`,
-        method: "PUT",
+        method: 'PUT',
         data: {
             message,
             title,

@@ -17,27 +17,27 @@
 
 <script>
 export default {
-  name: "UiThemeToggle",
+  name: 'UiThemeToggle',
   props: {
     mode: {
       type: String,
       required: true,
       validator(value) {
-        return value === "classic" || value === "ios26";
+        return value === 'classic' || value === 'ios26';
       },
     },
   },
   computed: {
     isIos26() {
-      return this.mode === "ios26";
+      return this.mode === 'ios26';
     },
     toggleLabel() {
-      return this.isIos26 ? "切换到经典界面" : "切换到新界面";
+      return this.isIos26 ? '切换到经典界面' : '切换到新界面';
     },
   },
   methods: {
     toggleMode() {
-      this.$emit("change", this.isIos26 ? "classic" : "ios26");
+      this.$emit('change', this.isIos26 ? 'classic' : 'ios26');
     },
   },
 };

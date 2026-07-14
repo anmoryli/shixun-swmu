@@ -7,13 +7,13 @@ import {
     judgeAddResult,
     judgeQueryResult,
     judgeModifyResult,
-} from "../../utils/app";
-import request from "../../utils/request";
+} from '../../utils/app';
+import request from '../../utils/request';
 // 查询药品信息api
-export function getDrugInfo(pn, size, keyword = "") {
+export function getDrugInfo(pn, size, keyword = '') {
     return request({
         url: `/drugs/${pn}/${size}`,
-        method: "GET",
+        method: 'GET',
         params: {
             name: keyword,
         },
@@ -22,8 +22,8 @@ export function getDrugInfo(pn, size, keyword = "") {
 // 新增药品api
 export function addDrug(drugName, drugInfo, drugEffect, drugImg, saleIds, drugPublisher) {
     return request({
-        url: "/drugs",
-        method: "POST",
+        url: '/drugs',
+        method: 'POST',
         data: {
             drugName,
             drugInfo,
@@ -38,7 +38,7 @@ export function addDrug(drugName, drugInfo, drugEffect, drugImg, saleIds, drugPu
 export function deleteDrug(drugId) {
     return request({
         url: `/drugs/${drugId}`,
-        method: "DELETE",
+        method: 'DELETE',
     }).then((res) => {
         judgeDeleteResult(res);
     });
@@ -54,7 +54,7 @@ export function modifyDrugInfo(
 ) {
     return request({
         url: `/drugs/${drugId}`,
-        method: "PUT",
+        method: 'PUT',
         data: {
             drugName,
             drugInfo,

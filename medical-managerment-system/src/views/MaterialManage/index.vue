@@ -169,11 +169,11 @@
     </el-container>
   </template>
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import rules from "../../utils/validator";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import rules from '../../utils/validator';
 export default {
-  name: "",
+  name: '',
   components: {
     Pagination,
   },
@@ -181,17 +181,17 @@ export default {
     return {
       currentPage: 1,
       pageSize: 5,
-      keywordDefault: "",
+      keywordDefault: '',
       addFormVisible: false,
       addForm: {
-        title: "",
-        message: "",
+        title: '',
+        message: '',
       },
       modifyFormVisible: false,
       modifyForm: {
-        id: "",
-        message: "",
-        title: "",
+        id: '',
+        message: '',
+        title: '',
       },
       rules,
     };
@@ -199,7 +199,7 @@ export default {
   methods:{
        // 切换分页及首次进入获取数据
        getMaterialInfo() {
-      this.$store.dispatch("materialInfoManage/getMaterialInfo", {
+      this.$store.dispatch('materialInfoManage/getMaterialInfo', {
         pn: this.currentPage,
         size: this.pageSize,
       });
@@ -215,7 +215,7 @@ export default {
     },
         // 通过关键字查询数据
         handelQuery(keyword) {
-      this.$store.dispatch("materialInfoManage/getMaterialInfo", {
+      this.$store.dispatch('materialInfoManage/getMaterialInfo', {
         pn: this.currentPage,
         size: this.pageSize,
         keyword,
@@ -226,7 +226,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
-          this.$store.dispatch("materialInfoManage/addMaterial", {
+          this.$store.dispatch('materialInfoManage/addMaterial', {
             title: this.addForm.title,
             message: this.addForm.message,
             size: this.pageSize,
@@ -234,21 +234,21 @@ export default {
           this.currentPage += 1;
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
     },
         // 删除
         handleDeleteMaterial(id, title) {
-      this.$confirm(`确定要删除“${title}”的相关信息吗？`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm(`确定要删除“${title}”的相关信息吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       })
         .then(() => {
-          this.$store.dispatch("materialInfoManage/deleteMaterial", {
+          this.$store.dispatch('materialInfoManage/deleteMaterial', {
             id,
             pn: this.currentPage,
             size: this.pageSize,
@@ -257,8 +257,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -276,7 +276,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;
-          this.$store.dispatch("materialInfoManage/modifyMaterial", {
+          this.$store.dispatch('materialInfoManage/modifyMaterial', {
             id: this.modifyForm.id,
             message: this.modifyForm.message,
             title: this.modifyForm.title,
@@ -286,8 +286,8 @@ export default {
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -305,7 +305,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tableData: "materialInfo",
+      tableData: 'materialInfo',
     }), //后端返回的数据
     keyword: {
       get() {

@@ -95,13 +95,13 @@
 </template>
 
 <script>
-import Pagination from "../../components/Pagination";
-import { mapGetters } from "vuex";
-import rules from "../../utils/validator";
-import { provinceAndCityData } from "element-china-area-data";
+import Pagination from '../../components/Pagination';
+import { mapGetters } from 'vuex';
+import rules from '../../utils/validator';
+import { provinceAndCityData } from 'element-china-area-data';
 
 export default {
-  name: "CityManage",
+  name: 'CityManage',
   components: {
     Pagination,
   },
@@ -109,19 +109,19 @@ export default {
     return {
       currentPage: 1,
       pageSize: 5, // 每页的数据条数
-      keywordDefault: "",
+      keywordDefault: '',
       addFormVisible: false, // 控制新增城市页面的显示
       addForm: {
         cityNumber: [],
       },
-      formLabelWidth: "110px", //表单 label 的宽度
+      formLabelWidth: '110px', //表单 label 的宽度
       rules, // 封装好的表单验证
       options: provinceAndCityData, //element-china-area-data组件
     };
   },
   methods: {
     getCityInfo() {
-      this.$store.dispatch("cityInfoManage/getCityInfo", {
+      this.$store.dispatch('cityInfoManage/getCityInfo', {
         pn: this.currentPage,
         size: this.pageSize,
       });
@@ -137,7 +137,7 @@ export default {
     },
     // 通过关键字查询数据
     handelQuery(keyword) {
-      this.$store.dispatch("cityInfoManage/getCityInfo", {
+      this.$store.dispatch('cityInfoManage/getCityInfo', {
         pn: this.currentPage,
         size: this.pageSize,
         keyword,
@@ -148,14 +148,14 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
-          this.$store.dispatch("cityInfoManage/addCity", {
+          this.$store.dispatch('cityInfoManage/addCity', {
             cityNumber: this.addForm.cityNumber[1],
             size: this.pageSize,
           });
         } else {
           this.$message({
-            message: "请检查输入的内容是否合规",
-            type: "warning",
+            message: '请检查输入的内容是否合规',
+            type: 'warning',
           });
         }
       });
@@ -164,15 +164,15 @@ export default {
     handleDeletecity(cityId, cityName) {
       this.$confirm(
         `确定要删除“${cityName}”的相关信息吗？该操作会同时删除该城市相关的医保政策`,
-        "提示",
+        '提示',
         {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
         }
       )
         .then(() => {
-          this.$store.dispatch("cityInfoManage/deleteCity", {
+          this.$store.dispatch('cityInfoManage/deleteCity', {
             cityId,
             pn: this.currentPage,
             size: this.pageSize,
@@ -181,8 +181,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
+            type: 'info',
+            message: '已取消删除',
           });
         });
     },
@@ -196,7 +196,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tableData: "cityInfo",
+      tableData: 'cityInfo',
     }), //后端返回的数据
     keyword: {
       get() {

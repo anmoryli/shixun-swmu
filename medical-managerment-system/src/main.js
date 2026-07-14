@@ -9,12 +9,12 @@ import store from './store' // 引入vuex
 import { getUserInfo } from './utils/authStore'
 
 import _ from 'lodash' // js库
-import "./style/reset.css"; // 引入样式
-import Fragment from "vue-fragment"; // 处理Dom插件
-import "animate.css"; // 引入样式
-import Element from "element-ui";
-import "element-ui/lib/theme-chalk/index.css";
-import "./style/ios26-theme.css";
+import './style/reset.css'; // 引入样式
+import Fragment from 'vue-fragment'; // 处理Dom插件
+import 'animate.css'; // 引入样式
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import './style/ios26-theme.css';
 
 Vue.config.productionTip = false;
 Vue.use(Fragment.Plugin);

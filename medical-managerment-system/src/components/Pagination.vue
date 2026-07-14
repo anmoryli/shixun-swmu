@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "Pagination",
+  name: 'Pagination',
   props: {
     total: {
       required: true,
@@ -23,7 +23,7 @@ export default {
     },
     layout: {
       type: String,
-      default: "total, sizes, prev, pager, next, jumper",
+      default: 'total, sizes, prev, pager, next, jumper',
     },
     pageSize: {
       type: Number,
@@ -36,13 +36,13 @@ export default {
         return this.page;
       },
       set(val) {
-        this.$emit("update:page", val);
+        this.$emit('update:page', val);
       },
     },
   },
   methods: {
     handleCurrentChange(val) {
-      this.$emit("currentChange", { page: val, limit: this.pageSize });
+      this.$emit('currentChange', { page: val, limit: this.pageSize });
     },
   },
 };

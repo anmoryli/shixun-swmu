@@ -3,14 +3,14 @@ import {
     judgeAddResult,
     judgeQueryResult,
     judgeModifyResult,
-} from "../../utils/app";
-import request from "../../utils/request";
+} from '../../utils/app';
+import request from '../../utils/request';
 
 // 查询医药公司政策管理信息api
-export function getCompanyPolicyInfo(pn, size, keyword = "") {
+export function getCompanyPolicyInfo(pn, size, keyword = '') {
     return request({
         url: `/company_policys`,
-        method: "GET",
+        method: 'GET',
         params: {
             pn,
             size,
@@ -21,8 +21,8 @@ export function getCompanyPolicyInfo(pn, size, keyword = "") {
 // 新增
 export function addCompanyPolicy(companyId, message, title) {
     return request({
-        url: "/company_policys",
-        method: "POST",
+        url: '/company_policys',
+        method: 'POST',
         data: {
             companyId,
             message,
@@ -34,7 +34,7 @@ export function addCompanyPolicy(companyId, message, title) {
 export function deleteCompanyPolicy(id) {
     return request({
         url: `/company_policys/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
     }).then((res) => {
         judgeDeleteResult(res);
     });
@@ -43,7 +43,7 @@ export function deleteCompanyPolicy(id) {
 export function modifyCompanyPolicyInfo(id, companyId, title, message) {
     return request({
         url: `/company_policys/${id}`,
-        method: "PUT",
+        method: 'PUT',
         data: {
             companyId,
             title,

@@ -4,7 +4,7 @@ import {
     addDoctor,
     deleteDoctor,
     modifyDoctor,
-} from "../../api/admin/doctorInfoManage.js";
+} from '../../api/admin/doctorInfoManage.js';
 
 const initialState = {
     doctorInfo: {},
@@ -23,14 +23,14 @@ const actions = {
     getDoctorInfo({ commit }, { pn, size, keyword }) {
         getDoctorInfo(pn, size, keyword).then((res) => {
             if (res) {
-                commit("GET_DOCTOR_INFO", res.data.data.doctorInfo);
+                commit('GET_DOCTOR_INFO', res.data.data.doctorInfo);
             }
         });
     },
     // 查询医生级别及诊治部位
     getDoctorLevelAndType({ commit }) {
         getDoctorLevelAndType().then((res) => {
-            commit("GET_DOCTOR_LEVEL_AND_TYPE", res.data.data);
+            commit('GET_DOCTOR_LEVEL_AND_TYPE', res.data.data);
         });
     },
     // 新增
@@ -44,7 +44,7 @@ const actions = {
                     return false;
                 } else {
                     // 新增之后跳转到最后一页
-                    dispatch("getDoctorInfo", { pn: res.data.data.pages, size });
+                    dispatch('getDoctorInfo', { pn: res.data.data.pages, size });
                     return true;
                 }
             }
@@ -53,7 +53,7 @@ const actions = {
     // 删除
     deleteDoctor({ dispatch }, { id, pn, size, keyword }) {
         deleteDoctor(id).then(() => {
-            dispatch("getDoctorInfo", { pn, size, keyword });
+            dispatch('getDoctorInfo', { pn, size, keyword });
         });
     },
     // 修改
@@ -88,7 +88,7 @@ const actions = {
             if (res.data.code === 10001) {
                 return false;
             } else {
-                dispatch("getDoctorInfo", { pn, size, keyword });
+                dispatch('getDoctorInfo', { pn, size, keyword });
                 return true;
             }
         });
