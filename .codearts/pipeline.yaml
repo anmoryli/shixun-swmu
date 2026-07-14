@@ -1,0 +1,161 @@
+# =========================================================================
+# 慧医数字医疗应用系统 -- 华为云 CodeArts 流水线配置 (yaml-pipeline 模式)
+# 用途：CI/CD 构建后端 JAR、前端 dist、可选构建并推送 Docker 镜像。
+# 触发：master 分支 push 触发，PR 触发构建校验。
+# 修复记录：原流水线 Maven 步骤在仓库根目录执行找不到 pom.xml（pom.xml
+#   位于 medical-backend/ 子目录），下面把 Maven 步骤的 workdir / 命令
+#   显式切到 medical-backend 子目录。
+# =========================================================================
+version: 2.0          # CodeArts Repo yaml-pipeline 模式
+agent: linux          # 构建机环境:Linux + Maven + Node + Docker
+agent_selector:       # 缺省走默认构建机，按需指定自定义集群
+  type: default
+  label: default
+
+# ---------- 全局环境 ----------
+env:
+  IMAGE_TAG: ${MEDICINE_IMAGE_TAG:-1.0.0}
+  NODE_VERSION: 20
+
+# ---------- 阶段 ----------
+stages:
+  # ------------------------------------------------------------------
+  # 1. 准备：检出代码 + 基础工具检查
+  # ------------------------------------------------------------------
+  - name: checkout
+    displayName: 检出代码
+    jobs:
+      - job: checkout_job
+        displayName: 拉取 master 源码
+        steps:
+          - checkout:
+              name: 拉取仓库
+              with:
+                scm: git_repo
+                # 流水线的 source/git 引用已在 CodeArts 界面配好，这里只是声明步骤存在
+                branch: master
+
+  # ------------------------------------------------------------------
+  # 2. 后端：Maven 编译/测试/打包（关键修复点）
+  # ------------------------------------------------------------------
+  - name: backend
+    displayName: 后端构建
+    jobs:
+      - job: backend_build
+        displayName: maven package
+        steps:
+          # 关键修复：Maven 工作目录必须切到 medical-backend，
+          # 否则会报 "no POM in this directory"。
+          - shell:
+              name: Maven 构建后端
+              with:
+                # CodeArts shell 步骤的工作目录优先用 workdir；命令里再
+                # 加一道 `cd` 兜底，避免某些 runner 忽略 workdir 设置。
+                workdir: medical-backend
+                command: |
+                  set -euo pipefail
+                  cd medical-backend
+                  echo "== 当前目录 ==" && pwd
+                  echo "== POM 内容 ==" && ls -la pom.xml
+                  mvn -B -e -X \
+                    -Dmaven.test.skip=true \
+                    -Dmaven.repo.local="${MAVEN_REPO_LOCAL:-${HOME}/.m2/repository}" \
+                    clean package
+                # 环境:CodeArts 提供 mvn，可选自带 settings.xml
+                # ignore_fail: false  # 失败立即中断流水线
+          - shell:
+              name: 校验产物
+              with:
+                workdir: medical-backend
+                command: |
+                  set -euo pipefail
+                  echo "== target/ =="
+                  ls -lh target/*.jar
+                  # 后端 jar 名固定 (pom.xml 中 finalName 可改)
+                  test -f target/medical-backend-*.jar || \
+                    { echo "后端 jar 未生成"; exit 1; }
+          # 产物归档(可选):把 jar 上传到 SWR 私仓或工作目录产物
+          - archive:
+              name: 后端归档
+              with:
+                workspace: medical-backend/target
+                paths:
+                  - "*.jar"
+
+  # ------------------------------------------------------------------
+  # 3. 前端：npm install + build
+  # ------------------------------------------------------------------
+  - name: frontend
+    displayName: 前端构建
+    jobs:
+      - job: web_build
+        displayName: npm build
+        steps:
+          - shell:
+              name: npm 构建前端
+              with:
+                workdir: medical-managerment-system
+                command: |
+                  set -euo pipefail
+                  cd medical-managerment-system
+                  echo "== Node 版本 ==" && node -v && npm -v
+                  # 优先用项目自身 .npmrc（如有），缺省走 taobao 镜像加速
+                  npm config set registry https://registry.npmmirror.com || true
+                  npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+                  npm run build
+                ignore_fail: false
+          - shell:
+              name: 校验产物
+              with:
+                workdir: medical-managerment-system
+                command: |
+                  set -euo pipefail
+                  test -d dist || { echo "前端 dist/ 未生成"; exit 1; }
+                  ls -lh dist/ | head
+
+  # ------------------------------------------------------------------
+  # 4. (可选) Docker 镜像构建 -- 实际部署通常用本地 compose，
+  #    CI 里默认关闭。开启把 when: branches 改 main/master 即可。
+  # ------------------------------------------------------------------
+  - name: docker_build
+    displayName: Docker 镜像构建(可选)
+    when:
+      branches:
+        include:
+          - master
+        trigger: push
+    jobs:
+      - job: backend_image
+        displayName: 后端镜像
+        steps:
+          - shell:
+              name: 构建并打标签(本地)
+              with:
+                command: |
+                  set -euo pipefail
+                  docker build \
+                    -t medicine-backend:${IMAGE_TAG} \
+                    ./medical-backend
+              ignore_fail: true
+      - job: web_image
+        displayName: 前端镜像
+        steps:
+          - shell:
+              name: 构建并打标签(本地)
+              with:
+                command: |
+                  set -euo pipefail
+                  # 默认把 PUBLIC_BASE_URL 指到 /api 走同源
+                  docker build \
+                    --build-arg MEDICINE_API_BASE_URL=/api \
+                    -t medicine-web:${IMAGE_TAG} \
+                    ./medical-managerment-system
+              ignore_fail: true
+
+# ---------- 通知 ----------
+notification:
+  emails:
+    - "${PIPELINE_NOTIFY_EMAIL}"
+  triggers:
+    - on_failure
+    - on_success
