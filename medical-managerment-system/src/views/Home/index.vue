@@ -66,6 +66,15 @@
 
 <script>
 import { getDashboard } from '../../api/dashboard';
+// Vite 用 ESM，浏览器没有 require。图片资源必须改为静态 import，
+// 否则组件 data() 执行时抛 ReferenceError: require is not defined。
+import healthcareTeam from '../../assets/medical-samples/healthcare-team.jpg';
+import medicalLab from '../../assets/medical-samples/medical-lab.jpg';
+import stethoscope from '../../assets/medical-samples/stethoscope.jpg';
+import medicineBlister from '../../assets/medical-samples/medicine-blister.jpg';
+import medicineCapsule from '../../assets/medical-samples/medicine-capsule.jpg';
+import medicineHand from '../../assets/medical-samples/medicine-hand.jpg';
+import medicineAssorted from '../../assets/medical-samples/medicine-assorted.jpg';
 
 const metricDefinitions = [
   {
@@ -111,49 +120,49 @@ export default {
       dashboardData: {},
       picList: [
         {
-          image: require('../../assets/medical-samples/healthcare-team.jpg'),
+          image: healthcareTeam,
           alt: '医疗团队协作示例图',
         },
         {
-          image: require('../../assets/medical-samples/medical-lab.jpg'),
+          image: medicalLab,
           alt: '医学检验实验室示例图',
         },
         {
-          image: require('../../assets/medical-samples/stethoscope.jpg'),
+          image: stethoscope,
           alt: '听诊器与医疗器械示例图',
         },
         {
-          image: require('../../assets/medical-samples/medicine-blister.jpg'),
+          image: medicineBlister,
           alt: '药品板装示例图',
         },
         {
-          image: require('../../assets/medical-samples/medicine-capsule.jpg'),
+          image: medicineCapsule,
           alt: '胶囊药品示例图',
         },
       ],
       cardList: [
         {
-          pic: require('../../assets/medical-samples/stethoscope.jpg'),
+          pic: stethoscope,
           content: '基础信息管理',
         },
         {
-          pic: require('../../assets/medical-samples/medicine-blister.jpg'),
+          pic: medicineBlister,
           content: '药品信息管理',
         },
         {
-          pic: require('../../assets/medical-samples/healthcare-team.jpg'),
+          pic: healthcareTeam,
           content: '医保政策管理',
         },
         {
-          pic: require('../../assets/medical-samples/medical-lab.jpg'),
+          pic: medicalLab,
           content: '企业政策管理',
         },
         {
-          pic: require('../../assets/medical-samples/medicine-hand.jpg'),
+          pic: medicineHand,
           content: '医生信息管理',
         },
         {
-          pic: require('../../assets/medical-samples/medicine-assorted.jpg'),
+          pic: medicineAssorted,
           content: '必备材料管理',
         },
       ],
