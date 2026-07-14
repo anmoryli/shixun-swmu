@@ -26,7 +26,7 @@ const mutations = {
     state.token = '';
     state.menuList = constantRoutes.slice();
     state.routesLoaded = false;
-  }
+  },
 };
 const actions = {
   // 登录接口

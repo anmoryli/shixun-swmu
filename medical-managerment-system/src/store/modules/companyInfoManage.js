@@ -50,7 +50,7 @@ const actions = {
         getAllCompanyInfo().then((res) => {
             commit('GET_COMPANY_INFO', res.data.data.pageInfo);
         });
-    }
+    },
 };
 export default {
     namespaced: true,

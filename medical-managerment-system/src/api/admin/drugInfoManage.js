@@ -30,7 +30,7 @@ export function addDrug(drugName, drugInfo, drugEffect, drugImg, saleIds, drugPu
             drugEffect,
             drugImg,
             saleIds, // 售卖该药品的药店id（数组）
-            drugPublisher
+            drugPublisher,
         },
     }).then((res) => judgeAddResult(res));
 }

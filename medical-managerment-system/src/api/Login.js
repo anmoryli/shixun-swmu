@@ -17,7 +17,7 @@ export function getMenuList(roleName) {
         url: '/permissions',
         method: 'GET',
         params: {
-            roleName
-        }
+            roleName,
+        },
     });
 }

@@ -26,7 +26,7 @@ export const constantRoutes = [
   
   const router = new VueRouter({
     mode: 'hash',
-    routes: constantRoutes
+    routes: constantRoutes,
   });
   // 判断登录状态
 router.beforeEach((to, from, next) => {
