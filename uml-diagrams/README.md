@@ -11,7 +11,7 @@
 | 项 | 内容 |
 |---|---|
 | 系统名称 | 慧医数字医疗应用系统 |
-| 技术栈 | Vue 2 + Spring Boot 2.5.3 + Spring Security + MyBatis + MySQL 8 + Redis 7 |
+| 技术栈 | Vue 3 + Vite + Spring Boot 2.7.18 + Spring Security + MyBatis + MySQL 8 + Redis 7 |
 | 架构 | 前后端分离，Nginx 同源发布并代理 `/api` |
 | 角色 | 管理员（ROLE_1，全量维护）、医生（ROLE_2，业务信息只读） |
 | 数据来源 | `sql/medical.sql`(17表) + 迁移(3表) + `process-docs/01~02` 需求与设计文档 |
