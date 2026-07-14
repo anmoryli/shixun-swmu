@@ -10,6 +10,8 @@ spring:
     name: medical-backend
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
+    # 安全警示：生产应走内网/隧道，启用 useSSL=true&verifyServerCertificate=true 并移除 allowPublicKeyRetrieval。
+    # 当前默认远程公网+useSSL=false，SQL 流量（含口令与 PII）明文传输，仅为实训便捷默认，切勿用于生产。
     url: ${DB_URL:jdbc:mysql://106.54.210.109:3306/medicine?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:}
@@ -17,6 +19,7 @@ spring:
       connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:10000}
       maximum-pool-size: ${DB_POOL_SIZE:10}
   redis:
+    # 安全警示：生产应内网监听并设强口令；当前默认公网 host+空口令仅为实训便捷默认，若 6379 对公网开放将会话全部泄露。
     host: ${REDIS_HOST:106.54.210.109}
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
