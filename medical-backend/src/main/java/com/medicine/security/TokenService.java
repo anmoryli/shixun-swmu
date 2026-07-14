@@ -13,7 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.HexFormat;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +37,20 @@ public class TokenService {
         this.objectMapper = objectMapper;
         this.tokenPrefix = tokenPrefix;
         this.tokenTtl = tokenTtl;
+    }
+
+    /**
+     * 计算 token 的 SHA-256 摘要，作为 Redis 存储 key 的后缀。
+     * 原始 token 仅下发给客户端 cookie，Redis 侧不可还原，降低会话泄露风险。
+     */
+    private String digest(String token) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(token.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException exception) {
+            throw new BusinessException(ErrorCode.INTERNAL_ERROR, "登录会话初始化失败");
+        }
     }
 
     public String create(AuthSession session) {
