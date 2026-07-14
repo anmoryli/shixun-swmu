@@ -101,6 +101,6 @@ networks:
 
 secrets:
   mysql_password:
-    file: ./deploy/docker/secrets/mysql-password.txt
+    file: "${MEDICINE_MYSQL_PASSWORD_FILE:-./.work/private/docker/mysql-password.txt}"
   redis_password:
-    file: ./deploy/docker/secrets/redis-password.txt
+    file: "${MEDICINE_REDIS_PASSWORD_FILE:-./.work/private/docker/redis-password.txt}"

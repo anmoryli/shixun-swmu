@@ -15,6 +15,8 @@ MySQL 与 Redis 密码使用 Docker Secrets 文件，不写入 `compose.yaml`、
 .\deploy\docker\init-secrets.ps1
 ```
 
+如果旧版本曾把 `deploy/docker/secrets/*-password.txt` 推送到远端，请在数据库和 Redis 服务端轮换对应密码；仅从最新提交删除文件不能清除 Git 历史中的旧值。
+
 脚本会安全提示输入密码，并创建两个被 Git 忽略的本机文件：
 
 - `.work/private/docker/mysql-password.txt`

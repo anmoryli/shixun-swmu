@@ -25,8 +25,6 @@ function Read-SecretText([string]$Prompt) {
     }
 }
 
-$defaultPasswords = @{ MySQL = 'root123456'; Redis = 'redis123456' }
-
 New-Item -ItemType Directory -Force -Path $privateDirectory | Out-Null
 $utf8NoBom = [Text.UTF8Encoding]::new($false)
 $selected = switch ($Target) {
@@ -47,8 +45,13 @@ foreach ($item in $selected) {
 }
 
 foreach ($item in $selected) {
-    $password = $defaultPasswords[$item.Name]
-    [IO.File]::WriteAllText($item.File, $password, $utf8NoBom)
+    $password = Read-SecretText "$($item.Name) password"
+    try {
+        [IO.File]::WriteAllText($item.File, $password, $utf8NoBom)
+    }
+    finally {
+        $password = $null
+    }
 }
 
 if ($IsWindows -or $env:OS -eq 'Windows_NT') {

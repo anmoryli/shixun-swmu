@@ -39,3 +39,7 @@ npm run build
 ```
 
 远程数据库和 Redis 密码必须通过本机私有环境文件或 Docker Secrets 传入，不要写入仓库。完整启动、测试和部署方法见 `process-docs/` 与 `deploy/README.md`。
+
+## CodeArts CI/CD
+
+CodeArts 的“构建、代码检查、部署、接口测试”任务参数与仓库内脚本见 [`ci/codearts/README.md`](ci/codearts/README.md)。
