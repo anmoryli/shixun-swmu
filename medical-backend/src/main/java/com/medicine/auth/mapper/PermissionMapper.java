@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.auth.mapper;
+
+import com.medicine.auth.model.PermissionRecord;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-
-import com.medicine.auth.model.PermissionRecord;
 
 import java.util.List;
 

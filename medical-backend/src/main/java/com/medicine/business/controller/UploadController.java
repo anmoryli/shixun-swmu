@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.controller;
+
+import com.medicine.business.service.FileStorageService;
+import com.medicine.common.ApiResponse;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import com.medicine.business.service.FileStorageService;
-import com.medicine.common.ApiResponse;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

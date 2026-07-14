@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
+
+import com.medicine.business.mapper.MaterialMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.medicine.business.mapper.MaterialMapper;
 
 import java.util.Map;
 
@@ -26,15 +30,15 @@ public class MaterialService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
-        mapper.insert(PageSupport.stringValue(request.get("title")),
-                PageSupport.stringValue(request.get("message")));
+        mapper.insert(PageSupport.stringValue(request.get("title")).orElse(null),
+                PageSupport.stringValue(request.get("message")).orElse(null));
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
 
     @Transactional
     public void update(Long id, Map<String, Object> request) {
-        mapper.update(id, PageSupport.stringValue(request.get("title")),
-                PageSupport.stringValue(request.get("message")));
+        mapper.update(id, PageSupport.stringValue(request.get("title")).orElse(null),
+                PageSupport.stringValue(request.get("message")).orElse(null));
     }
 
     @Transactional

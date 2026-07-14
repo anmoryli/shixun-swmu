@@ -1,17 +1,20 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medicine.common.ApiResponse;
+import com.medicine.common.ErrorCode;
+
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.medicine.common.ApiResponse;
-import com.medicine.common.ErrorCode;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

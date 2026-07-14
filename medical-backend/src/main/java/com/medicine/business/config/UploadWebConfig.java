@@ -1,10 +1,14 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.config;
+
+import com.medicine.business.service.FileStorageService;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.medicine.business.service.FileStorageService;
 
 @Configuration
 public class UploadWebConfig implements WebMvcConfigurer {

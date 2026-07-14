@@ -1,12 +1,16 @@
-package com.medicine.business.service;
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+package com.medicine.business.service;
 
 import com.medicine.business.mapper.DoctorMapper;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -42,16 +46,16 @@ public class DoctorService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
-        String phone = PageSupport.stringValue(request.get("phoneNumber"));
+        String phone = PageSupport.stringValue(request.get("phoneNumber")).orElse(null);
         if (phone != null && mapper.countPhone(phone) > 0) {
             return -1;
         }
-        String name = PageSupport.stringValue(request.get("name"));
+        String name = PageSupport.stringValue(request.get("name")).orElse(null);
         String username = uniqueUsername(name, phone);
         Map<String, Object> account = new LinkedHashMap<>();
         account.put("realname", name);
         account.put("uname", username);
-        account.put("pwd", passwordEncoder.encode(PageSupport.stringValue(request.get("pwd"))));
+        account.put("pwd", passwordEncoder.encode(PageSupport.stringValue(request.get("pwd")).orElse(null)));
         account.put("phoneNumber", phone);
         mapper.insertAccount(account);
 
@@ -69,7 +73,7 @@ public class DoctorService {
         if (accountId == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "医生信息不存在");
         }
-        String phone = PageSupport.stringValue(request.get("phoneNumber"));
+        String phone = PageSupport.stringValue(request.get("phoneNumber")).orElse(null);
         if (phone != null && mapper.countPhoneExcept(phone, accountId) > 0) {
             return false;
         }
@@ -77,7 +81,7 @@ public class DoctorService {
         values.put("id", id);
         values.put("accountId", accountId);
         values.put("phoneNumber", phone);
-        values.put("name", PageSupport.stringValue(request.get("name")));
+        values.put("name", PageSupport.stringValue(request.get("name")).orElse(null));
         mapper.updateDoctor(values);
         mapper.updateAccount(values);
         return true;

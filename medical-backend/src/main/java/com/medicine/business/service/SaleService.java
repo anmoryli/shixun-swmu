@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
+
+import com.medicine.business.mapper.SaleMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.medicine.business.mapper.SaleMapper;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,11 +54,11 @@ public class SaleService {
     private Map<String, Object> values(Long id, Map<String, Object> request) {
         Map<String, Object> values = new LinkedHashMap<>();
         values.put("saleId", id);
-        values.put("saleName", PageSupport.stringValue(request.get("saleName")));
-        values.put("salePhone", PageSupport.stringValue(request.get("salePhone")));
-        values.put("address", PageSupport.stringValue(request.get("address")));
-        values.put("longitude", PageSupport.decimalValue(request.get("longitude")));
-        values.put("latitude", PageSupport.decimalValue(request.get("latitude")));
+        values.put("saleName", PageSupport.stringValue(request.get("saleName")).orElse(null));
+        values.put("salePhone", PageSupport.stringValue(request.get("salePhone")).orElse(null));
+        values.put("address", PageSupport.stringValue(request.get("address")).orElse(null));
+        values.put("longitude", PageSupport.decimalValue(request.get("longitude")).orElse(null));
+        values.put("latitude", PageSupport.decimalValue(request.get("latitude")).orElse(null));
         return values;
     }
 }

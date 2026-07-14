@@ -1,4 +1,12 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.config;
+
+import com.medicine.security.RestAccessDeniedHandler;
+import com.medicine.security.RestAuthenticationEntryPoint;
+import com.medicine.security.TokenAuthenticationFilter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,10 +23,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import com.medicine.security.RestAccessDeniedHandler;
-import com.medicine.security.RestAuthenticationEntryPoint;
-import com.medicine.security.TokenAuthenticationFilter;
 
 import java.util.Arrays;
 import java.util.Collections;

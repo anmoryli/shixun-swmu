@@ -1,12 +1,16 @@
-package com.medicine.dashboard.controller;
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+package com.medicine.dashboard.controller;
 
 import com.medicine.common.ApiResponse;
 import com.medicine.dashboard.dto.DashboardView;
 import com.medicine.dashboard.service.DashboardService;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/dashboard")

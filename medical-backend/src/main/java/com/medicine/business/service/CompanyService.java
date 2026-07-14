@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
+
+import com.medicine.business.mapper.CompanyMapper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.medicine.business.mapper.CompanyMapper;
 
 import java.util.Map;
 
@@ -31,15 +35,15 @@ public class CompanyService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
-        mapper.insert(PageSupport.stringValue(request.get("companyName")),
-                PageSupport.stringValue(request.get("companyPhone")));
+        mapper.insert(PageSupport.stringValue(request.get("companyName")).orElse(null),
+                PageSupport.stringValue(request.get("companyPhone")).orElse(null));
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
 
     @Transactional
     public void update(Long id, Map<String, Object> request) {
-        mapper.update(id, PageSupport.stringValue(request.get("companyName")),
-                PageSupport.stringValue(request.get("companyPhone")));
+        mapper.update(id, PageSupport.stringValue(request.get("companyName")).orElse(null),
+                PageSupport.stringValue(request.get("companyPhone")).orElse(null));
     }
 
     @Transactional

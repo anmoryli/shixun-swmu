@@ -1,9 +1,13 @@
-package com.medicine.dashboard.service;
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
 
-import org.springframework.stereotype.Service;
+package com.medicine.dashboard.service;
 
 import com.medicine.dashboard.dto.DashboardView;
 import com.medicine.dashboard.mapper.DashboardMapper;
+
+import org.springframework.stereotype.Service;
 
 @Service
 public class DashboardService {

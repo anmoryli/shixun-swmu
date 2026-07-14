@@ -1,11 +1,15 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 package com.medicine.business.service;
+
+import com.medicine.common.BusinessException;
+import com.medicine.common.ErrorCode;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.medicine.common.BusinessException;
-import com.medicine.common.ErrorCode;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -15,7 +19,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-
 import javax.imageio.ImageIO;
 
 @Service

@@ -1,10 +1,14 @@
-package com.medicine.dashboard.mapper;
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
 
-import org.apache.ibatis.annotations.Select;
+package com.medicine.dashboard.mapper;
 
 import com.medicine.dashboard.dto.DashboardCounts;
 import com.medicine.dashboard.dto.DashboardNews;
 import com.medicine.dashboard.dto.NameValue;
+
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
