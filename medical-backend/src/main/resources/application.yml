@@ -43,7 +43,17 @@ management:
 app:
   auth:
     token-prefix: 'medicine:auth:token:'
-    token-ttl: ${TOKEN_TTL:8h}
+    # 持久登录：会话 TTL 与 cookie Max-Age 对齐为 7 天，滑动续期由 TokenService 触发。
+    token-ttl: ${TOKEN_TTL:7d}
+    cookie:
+      # httpOnly cookie：前端 JS 读不到 token，由浏览器自动携带，实现持久登录。
+      name: ${COOKIE_NAME:medicine_token}
+      domain: ${COOKIE_DOMAIN:}
+      path: ${COOKIE_PATH:/}
+      # 本地 http 部署需关闭，生产 https 经环境变量 COOKIE_SECURE=true 开启。
+      secure: ${COOKIE_SECURE:false}
+      same-site: ${COOKIE_SAME_SITE:lax}
+      max-age: ${COOKIE_MAX_AGE:7d}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:9092,http://127.0.0.1:9092}
 
