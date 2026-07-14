@@ -25,6 +25,8 @@ services:
       # httpOnly cookie 安全标志：本地 http 部署需 false，生产 https 经 MEDICINE_COOKIE_SECURE=true 开启。
       COOKIE_SECURE: "${MEDICINE_COOKIE_SECURE:-false}"
       CORS_ALLOWED_ORIGINS: "${MEDICINE_CORS_ALLOWED_ORIGINS:-http://localhost:9092,http://127.0.0.1:9092}"
+      # 高德 Web 服务 Key：仅后端持有，用于 /api/regeo 逆地理编码代理（前端不再持有此 Key）。
+      AMAP_WEB_KEY: "${MEDICINE_AMAP_WEB_KEY:-}"
       APP_UPLOAD_DIRECTORY: /app/uploads
       SERVER_FORWARD_HEADERS_STRATEGY: framework
       MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: never
