@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Collections;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,16 +22,18 @@ import javax.servlet.http.HttpServletResponse;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
+    private final CookieProperties cookieProperties;
 
-    public TokenAuthenticationFilter(TokenService tokenService) {
+    public TokenAuthenticationFilter(TokenService tokenService, CookieProperties cookieProperties) {
         this.tokenService = tokenService;
+        this.cookieProperties = cookieProperties;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = TokenService.normalizeAuthorization(request.getHeader("Authorization")).orElse(null);
+        String token = extractToken(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             tokenService.find(token).ifPresent(session -> {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -43,5 +46,24 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             });
         }
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * 优先从 httpOnly cookie 取 token，回退到 Authorization 头（兼容期）。
+     */
+    private String extractToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            String cookieName = cookieProperties.getName();
+            for (Cookie cookie : cookies) {
+                if (cookieName.equals(cookie.getName())) {
+                    String value = cookie.getValue();
+                    if (value != null && !value.isEmpty()) {
+                        return value;
+                    }
+                }
+            }
+        }
+        return TokenService.normalizeAuthorization(request.getHeader("Authorization")).orElse(null);
     }
 }
