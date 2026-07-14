@@ -49,12 +49,11 @@ stages:
           - shell:
               name: Maven 构建后端
               with:
-                # CodeArts shell 步骤的工作目录优先用 workdir；命令里再
-                # 加一道 `cd` 兜底，避免某些 runner 忽略 workdir 设置。
+                # workdir 已切到 medical-backend，命令体不再 cd，否则 workdir
+                # 生效时会 cd 到不存在的 medical-backend/medical-backend 而失败。
                 workdir: medical-backend
                 command: |
                   set -euo pipefail
-                  cd medical-backend
                   echo "== 当前目录 ==" && pwd
                   echo "== POM 内容 ==" && ls -la pom.xml
                   mvn -B -e -X \
@@ -97,7 +96,6 @@ stages:
                 workdir: medical-managerment-system
                 command: |
                   set -euo pipefail
-                  cd medical-managerment-system
                   echo "== Node 版本 ==" && node -v && npm -v
                   # 优先用项目自身 .npmrc（如有），缺省走 taobao 镜像加速
                   npm config set registry https://registry.npmmirror.com || true
