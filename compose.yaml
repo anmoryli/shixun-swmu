@@ -64,7 +64,11 @@ services:
       context: ./medical-managerment-system
       dockerfile: Dockerfile
       args:
-        MEDICINE_API_BASE_URL: "${MEDICINE_API_BASE_URL:-http://localhost:8082/api}"
+        # Default to same-origin /api so the browser talks to the nginx
+        # layer, which reverse-proxies to medicine-backend:8082. Using
+        # http://localhost:8082/api instead would make the browser hit the
+        # backend directly across origins and break CORS / mixed content.
+        MEDICINE_API_BASE_URL: "${MEDICINE_API_BASE_URL:-/api}"
     restart: unless-stopped
     stop_grace_period: 15s
     mem_limit: "${MEDICINE_WEB_MEMORY:-128m}"
