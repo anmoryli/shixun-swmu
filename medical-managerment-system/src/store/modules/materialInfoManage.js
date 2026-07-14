@@ -5,7 +5,7 @@ import {
     modifyMaterial,
 } from "../../api/admin/materialInfoManage.js";
 
-const state = {
+const initialState = {
     materialInfo: {}, //必备材料信息
 };
 const mutations = {
@@ -44,7 +44,7 @@ const actions = {
 }
 export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
 };

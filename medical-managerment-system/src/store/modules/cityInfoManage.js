@@ -5,7 +5,7 @@ import {
     getAllCityInfo,
 } from "../../api/admin/cityInfoManage.js";
 
-const state = {
+const initialState = {
     cityInfo: {}, //城市管理信息
 };
 const mutations = {
@@ -47,7 +47,7 @@ const actions = {
 }
 export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
 };

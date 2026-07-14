@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 import {
     getCompanyPolicyInfo,
     addCompanyPolicy,
@@ -5,7 +9,7 @@ import {
     modifyCompanyPolicyInfo,
   } from "../../api/admin/companyPolicyInfoManage";
   
-  const state = {
+  const initialState = {
     companyPolicyInfo: {}, //医药公司政策管理信息
   };
   const mutations = {
@@ -47,7 +51,7 @@ import {
   }
   export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
   };

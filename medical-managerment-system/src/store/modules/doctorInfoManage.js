@@ -6,7 +6,7 @@ import {
     modifyDoctor,
 } from "../../api/admin/doctorInfoManage.js";
 
-const state = {
+const initialState = {
     doctorInfo: {},
     doctorLevelAndType: {},
 };
@@ -56,47 +56,47 @@ const actions = {
             dispatch("getDoctorInfo", { pn, size, keyword });
         });
     },
-       // 修改
-       modifyDoctor(
+    // 修改
+    modifyDoctor(
         { dispatch },
         {
-          accountId,
-          age,
-          levelId,
-          name,
-          phoneNumber,
-          pwd,
-          sex,
-          typeId,
-          id,
-          pn,
-          size,
-          keyword,
+            accountId,
+            age,
+            levelId,
+            name,
+            phoneNumber,
+            pwd,
+            sex,
+            typeId,
+            id,
+            pn,
+            size,
+            keyword,
         }
-      ) {
+    ) {
         return modifyDoctor(
-          accountId,
-          age,
-          levelId,
-          name,
-          phoneNumber,
-          pwd,
-          sex,
-          typeId,
-          id
+            accountId,
+            age,
+            levelId,
+            name,
+            phoneNumber,
+            pwd,
+            sex,
+            typeId,
+            id
         ).then((res) => {
-          if (res.data.code === 10001) {
-            return false;
-          } else {
-            dispatch("getDoctorInfo", { pn, size, keyword });
-            return true;
-          }
+            if (res.data.code === 10001) {
+                return false;
+            } else {
+                dispatch("getDoctorInfo", { pn, size, keyword });
+                return true;
+            }
         });
-      },
+    },
 }
 export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
 };

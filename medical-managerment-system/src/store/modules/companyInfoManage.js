@@ -6,7 +6,7 @@ import {
     getAllCompanyInfo,
 } from "../../api/admin/companyInfoManage";
 
-const state = {
+const initialState = {
     companyInfo: {}, //公司信息
 };
 const mutations = {
@@ -54,7 +54,7 @@ const actions = {
 }
 export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
   };

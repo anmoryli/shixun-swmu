@@ -5,7 +5,7 @@ import {
     modifyDrugInfo,
 } from "../../api/admin/drugInfoManage";
 
-const state = {
+const initialState = {
     drugInfo: {}, //药品信息
 };
 const mutations = {
@@ -67,7 +67,7 @@ const actions = {
 };
 export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
 };

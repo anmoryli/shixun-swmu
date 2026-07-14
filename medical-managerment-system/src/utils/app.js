@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 import { Message } from "element-ui";
 // 判断删除结果
 export function judgeDeleteResult(res) {
@@ -21,7 +25,7 @@ export function judgeAddResult(res) {
       type: "success",
       message: "新增成功!",
     });
-  }else if (res.data.code === 10001) {
+  } else if (res.data.code === 10001) {
     Message({
       type: "error",
       message: "该手机号已被注册",

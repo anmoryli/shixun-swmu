@@ -5,7 +5,7 @@ import {
     deleteMedicalPolicy,
 } from "../../api/admin/medicalPolicyInfoManage";
 
-const state = {
+const initialState = {
     medicalPolicyInfo: {}, //医保政策信息
 };
 
@@ -48,7 +48,7 @@ const actions = {
 };
 export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
 };

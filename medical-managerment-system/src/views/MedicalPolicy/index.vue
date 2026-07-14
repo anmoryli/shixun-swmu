@@ -295,7 +295,6 @@ export default {
           this.getMedicalPolicyInfo();
         } else {
           this.$message.warning("请检查输入的内容是否合规");
-          return false;
         }
       });
     },
@@ -314,7 +313,6 @@ export default {
           this.$refs.searchLimit.resetFields();
         } else {
           this.$message.warning("请检查输入的内容是否合规");
-          return false;
         }
       });
     },
@@ -369,7 +367,6 @@ export default {
             message: "请检查输入的内容是否合规",
             type: "warning",
           });
-          return false;
         }
       });
     },

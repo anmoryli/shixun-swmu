@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 import {
     getSalePlaceInfo,
     addSalePlace,
@@ -6,7 +10,7 @@ import {
     getAllSalePlaceInfo,
 } from "../../api/admin/saleInfoManage";
 
-const state = {
+const initialState = {
     salePlaceInfo: {}, //销售地点信息
 };
 const mutations = {
@@ -63,7 +67,7 @@ const actions = {
 };
 export default {
     namespaced: true,
-    state,
+    state: initialState,
     mutations,
     actions,
 };

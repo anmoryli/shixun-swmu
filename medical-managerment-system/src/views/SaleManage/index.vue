@@ -333,7 +333,6 @@ export default {
             message: "请检查输入的内容是否合规",
             type: "warning",
           });
-          return false;
         }
       });
     },
@@ -392,7 +391,6 @@ export default {
             message: "请检查输入的内容是否合规",
             type: "warning",
           });
-          return false;
         }
       });
     },

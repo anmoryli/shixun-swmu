@@ -1,8 +1,12 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2026-2026. All rights reserved.
+ */
+
 // 手机号验证器
 function validatorPhone(rule, value, callback) {
     if (value === "") {
       callback(new Error(" 手机号不能为空 "));
-    } else if (!/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(value)) {
+    } else if (!/^(?<prefix>13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(value)) {
       callback(new Error(" 手机号格式错误 "));
     } else {
       callback();
@@ -24,15 +28,13 @@ function validatorPhone(rule, value, callback) {
       return callback(new Error("年龄不能为空"));
     }
     if (!Number.isInteger(value)) {
-      callback(new Error("请输入数字值"));
-    } else {
-      if (value > 100 || value < 18) {
-        callback(new Error("请检查年龄大小是否合理"));
-      } else {
-        callback();
-      }
+      return callback(new Error("请输入数字值"));
     }
-  } 
+    if (value > 100 || value < 18) {
+      return callback(new Error("请检查年龄大小是否合理"));
+    }
+    return callback();
+  }
   // 搜索栏数字验证
   function validatorInt(rule, value, callback) {
     if (/\D/g.test(value)) {
@@ -96,7 +98,7 @@ function validatorPhone(rule, value, callback) {
       },
     ],
     nameRules: [
-      { required: true,validator: validatorName, trigger: "change" },
+      { required: true, validator: validatorName, trigger: "change" },
     ],
     requiredRules: [
       { required: true, message: "此内容不可为空", trigger: "change" },
