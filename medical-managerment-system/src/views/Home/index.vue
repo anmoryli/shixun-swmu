@@ -66,6 +66,13 @@
 
 <script>
 import { getDashboard } from '../../api/dashboard';
+import healthcareTeamImage from '../../assets/medical-samples/healthcare-team.jpg';
+import medicalLabImage from '../../assets/medical-samples/medical-lab.jpg';
+import stethoscopeImage from '../../assets/medical-samples/stethoscope.jpg';
+import medicineBlisterImage from '../../assets/medical-samples/medicine-blister.jpg';
+import medicineCapsuleImage from '../../assets/medical-samples/medicine-capsule.jpg';
+import medicineHandImage from '../../assets/medical-samples/medicine-hand.jpg';
+import medicineAssortedImage from '../../assets/medical-samples/medicine-assorted.jpg';
 
 const metricDefinitions = [
   {
@@ -111,49 +118,49 @@ export default {
       dashboardData: {},
       picList: [
         {
-          image: require('../../assets/medical-samples/healthcare-team.jpg'),
+          image: healthcareTeamImage,
           alt: '医疗团队协作示例图',
         },
         {
-          image: require('../../assets/medical-samples/medical-lab.jpg'),
+          image: medicalLabImage,
           alt: '医学检验实验室示例图',
         },
         {
-          image: require('../../assets/medical-samples/stethoscope.jpg'),
+          image: stethoscopeImage,
           alt: '听诊器与医疗器械示例图',
         },
         {
-          image: require('../../assets/medical-samples/medicine-blister.jpg'),
+          image: medicineBlisterImage,
           alt: '药品板装示例图',
         },
         {
-          image: require('../../assets/medical-samples/medicine-capsule.jpg'),
+          image: medicineCapsuleImage,
           alt: '胶囊药品示例图',
         },
       ],
       cardList: [
         {
-          pic: require('../../assets/medical-samples/stethoscope.jpg'),
+          pic: stethoscopeImage,
           content: '基础信息管理',
         },
         {
-          pic: require('../../assets/medical-samples/medicine-blister.jpg'),
+          pic: medicineBlisterImage,
           content: '药品信息管理',
         },
         {
-          pic: require('../../assets/medical-samples/healthcare-team.jpg'),
+          pic: healthcareTeamImage,
           content: '医保政策管理',
         },
         {
-          pic: require('../../assets/medical-samples/medical-lab.jpg'),
+          pic: medicalLabImage,
           content: '企业政策管理',
         },
         {
-          pic: require('../../assets/medical-samples/medicine-hand.jpg'),
+          pic: medicineHandImage,
           content: '医生信息管理',
         },
         {
-          pic: require('../../assets/medical-samples/medicine-assorted.jpg'),
+          pic: medicineAssortedImage,
           content: '必备材料管理',
         },
       ],
