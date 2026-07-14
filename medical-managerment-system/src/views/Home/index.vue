@@ -25,6 +25,23 @@
       </article>
     </section>
 
+    <section class="charts-grid">
+      <el-card class="chart-card" shadow="never">
+        <div slot="header" class="section-title">
+          <span>医生职称分布</span>
+          <small>按职称级别统计</small>
+        </div>
+        <div ref="doctorLevelChart" class="chart-canvas"></div>
+      </el-card>
+      <el-card class="chart-card" shadow="never">
+        <div slot="header" class="section-title">
+          <span>医院科室构成</span>
+          <small>按治疗类型统计</small>
+        </div>
+        <div ref="treatTypeChart" class="chart-canvas"></div>
+      </el-card>
+    </section>
+
     <section class="content-grid">
       <el-card class="carousel-card" shadow="never">
         <div slot="header" class="section-title">
@@ -74,6 +91,7 @@
 
 <script>
 import { getDashboard } from '../../api/dashboard';
+import * as echarts from 'echarts';
 // Vite 用 ESM，浏览器没有 require。图片资源必须改为静态 import，
 // 否则组件 data() 执行时抛 ReferenceError: require is not defined。
 import healthcareTeam from '../../assets/medical-samples/healthcare-team.jpg';
@@ -126,6 +144,8 @@ export default {
       dashboardLoading: false,
       dashboardDegraded: false,
       dashboardData: {},
+      doctorLevelChart: null,
+      treatTypeChart: null,
       picList: [
         {
           image: healthcareTeam,
@@ -195,8 +215,98 @@ export default {
   },
   mounted() {
     this.loadDashboard();
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+    if (this.doctorLevelChart) {
+      this.doctorLevelChart.dispose();
+      this.doctorLevelChart = null;
+    }
+    if (this.treatTypeChart) {
+      this.treatTypeChart.dispose();
+      this.treatTypeChart = null;
+    }
   },
   methods: {
+    handleResize() {
+      if (this.doctorLevelChart) {
+        this.doctorLevelChart.resize();
+      }
+      if (this.treatTypeChart) {
+        this.treatTypeChart.resize();
+      }
+    },
+    renderCharts() {
+      this.renderDoctorLevelChart();
+      this.renderTreatTypeChart();
+    },
+    renderDoctorLevelChart() {
+      if (!this.$refs.doctorLevelChart) {
+        return;
+      }
+      if (!this.doctorLevelChart) {
+        this.doctorLevelChart = echarts.init(this.$refs.doctorLevelChart);
+      }
+      const levels = this.dashboardData.doctorLevels || [];
+      this.doctorLevelChart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+        xAxis: {
+          type: 'category',
+          data: levels.map((item) => item.name),
+          axisLabel: { interval: 0, rotate: levels.length > 4 ? 20 : 0 },
+        },
+        yAxis: { type: 'value', minInterval: 1 },
+        series: [
+          {
+            name: '医生人数',
+            type: 'bar',
+            data: levels.map((item) => item.value),
+            barMaxWidth: 36,
+            itemStyle: {
+              borderRadius: [6, 6, 0, 0],
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  { offset: 0, color: '#69b7ff' },
+                  { offset: 1, color: '#3f8efc' },
+                ],
+              },
+            },
+          },
+        ],
+      });
+    },
+    renderTreatTypeChart() {
+      if (!this.$refs.treatTypeChart) {
+        return;
+      }
+      if (!this.treatTypeChart) {
+        this.treatTypeChart = echarts.init(this.$refs.treatTypeChart);
+      }
+      const types = this.dashboardData.treatTypes || [];
+      this.treatTypeChart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+        legend: { bottom: 0, type: 'scroll' },
+        series: [
+          {
+            name: '治疗类型',
+            type: 'pie',
+            radius: ['38%', '62%'],
+            center: ['50%', '46%'],
+            avoidLabelOverlap: true,
+            itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+            label: { show: true, formatter: '{b}\n{d}%' },
+            data: types.map((item) => ({ name: item.name, value: item.value })),
+          },
+        ],
+      });
+    },
     goTo(route) {
       if (!route) {
         return;
@@ -233,6 +343,7 @@ export default {
         }
         this.dashboardData = res.data.data || {};
         this.dashboardDegraded = false;
+        this.$nextTick(() => this.renderCharts());
       } catch (error) {
         // 仪表盘是增强功能，失败不阻塞首页和其他业务模块。
         this.dashboardData = {};
@@ -330,6 +441,21 @@ h1 {
   color: #93a09f;
   font-size: 12px;
 }
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+.chart-card {
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(41, 91, 87, 0.07);
+}
+.chart-canvas {
+  width: 100%;
+  height: 300px;
+}
 .content-grid {
   display: grid;
   grid-template-columns: minmax(480px, 1.45fr) minmax(330px, 1fr);
@@ -396,6 +522,9 @@ h1 {
 @media (max-width: 1200px) {
   .metric-grid {
     grid-template-columns: repeat(2, minmax(170px, 1fr));
+  }
+  .charts-grid {
+    grid-template-columns: 1fr;
   }
   .content-grid {
     grid-template-columns: 1fr;
