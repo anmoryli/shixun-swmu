@@ -84,15 +84,21 @@ services:
       backend:
         condition: service_healthy
     ports:
-      - "${MEDICINE_BIND_ADDRESS:-127.0.0.1}:${MEDICINE_WEB_PORT:-9092}:80"
+      - "${MEDICINE_BIND_ADDRESS:-127.0.0.1}:${MEDICINE_WEB_PORT:-9092}:8080"
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/index.html"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/index.html"]
       interval: 10s
       timeout: 3s
       start_period: 10s
       retries: 3
     security_opt:
       - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:rw,noexec,nosuid,size=32m
+      - /var/run:rw,noexec,nosuid,size=8m
     logging:
       driver: json-file
       options:
