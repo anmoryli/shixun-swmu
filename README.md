@@ -40,7 +40,7 @@
 - 📦 **文件上传安全**：MIME 类型 + 真实图片头校验、UUID 文件名、路径穿越防护，单文件 2 MB 上限。
 - 💾 **Redis 双用**：登录会话存储 + dashboard 聚合缓存，业务数据变更自动触发相关缓存失效。
 - 🔄 **双仓库同步**：GitHub `main` 与华为云 CodeArts `master` 自动同步，小粒度提交双向推送。
-- 🗄️ **数据库迁移版本化**：`medical.sql` 基线 + V2~V5 增量迁移，V5 建立规范化 RBAC 表结构，可追溯、可回滚审查。
+- 🗄️ **数据库迁移版本化**：`medical.sql` 基线 + V2~V6 增量迁移，V5 建立规范化 RBAC 表结构，V6 统一字符集与审计列，可追溯、可回滚审查。
 
 ## 🚀 快速开始
 
@@ -57,12 +57,13 @@ printf '%s' '你的MySQL密码' > .work/private/docker/mysql-password.txt
 printf '%s' '你的Redis密码' > .work/private/docker/redis-password.txt
 chmod 600 .work/private/docker/*-password.txt
 
-# 3. 初始化数据库（仅首次；顺序固定：medical.sql -> V2 -> V3 -> V4 -> V5）
+# 3. 初始化数据库（仅首次；顺序固定：medical.sql -> V2 -> V3 -> V4 -> V5 -> V6）
 mysql -h <DB_HOST> -u root -p medicine < sql/medical.sql
 mysql -h <DB_HOST> -u root -p medicine < sql/migrations/V2__requirements_alignment.sql
 mysql -h <DB_HOST> -u root -p medicine < sql/migrations/V3__password_audit_delete_policy.sql
 mysql -h <DB_HOST> -u root -p medicine < sql/migrations/V4__sale_map_menu.sql
 mysql -h <DB_HOST> -u root -p medicine < sql/migrations/V5__normalized_rbac.sql
+mysql -h <DB_HOST> -u root -p medicine < sql/migrations/V6__charset_unify_and_audit_columns.sql
 
 # 4. 启动
 docker compose up -d --build
@@ -102,7 +103,7 @@ powershell -ExecutionPolicy Bypass -File .\deploy\docker\init-secrets.ps1
 ```
 medical-managerment-system/  🖥 前端 Vue 3 + Vite
 medical-backend/             ⚙️ 后端 Spring Boot + MyBatis
-sql/                         🗄 medical.sql 基线 + V2~V5 迁移
+sql/                         🗄 medical.sql 基线 + V2~V6 迁移
 compose.yaml                 🐳 Docker Compose 入口
 deploy/                      🔐 Secret / systemd / Nginx / 启动脚本
 ci/codearts/                 🔄 CodeArts CI/CD
@@ -198,6 +199,15 @@ mvn -B -ntp clean verify      # 含测试 + 覆盖率门禁
 - HTTPS 生产设 `COOKIE_SECURE=true`，CORS 只列实际前端来源。
 - 高德 JS Key 会进浏览器 bundle，须在控制台限制域名；Web 服务 Key 只放后端 `AMAP_WEB_KEY`。
 - 任何线上数据库操作前先备份；`docker compose down -v` 会删除上传卷，勿当普通重启。
+
+**已落地的运行时加固**：
+
+- 登录限流：连续失败 5 次锁定 15 分钟，并对不存在用户执行假 BCrypt 比对防用户名枚举。
+- 会话生命周期：重置密码 / 删除账号即按 `accountId` 失效其全部现有会话。
+- web 容器以非 root `nginx` 用户运行（监听 8080），backend `cap_drop ALL` + 只读根文件系统。
+- nginx 全站下发 `X-Frame-Options` / `X-Content-Type-Options` / `Referrer-Policy` 安全响应头。
+- `/image/**` 与 `/actuator/info` 需认证，`health` 的 show-details=when-authorized。
+- 历史泄露的高德 Key（commit `453d0c2`）须在控制台作废重建，详见 [SECURITY.md](SECURITY.md)。
 
 ## 🤝 贡献指南
 
