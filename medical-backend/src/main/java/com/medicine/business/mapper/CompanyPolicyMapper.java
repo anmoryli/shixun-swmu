@@ -37,18 +37,20 @@ public interface CompanyPolicyMapper {
                                    @Param("offset") int offset,
                                    @Param("size") int size);
 
-    @Insert("INSERT INTO company_policy(title, message, company_id, create_time, update_time) "
-            + "VALUES(#{title}, #{message}, #{companyId}, NOW(), NOW())")
+    @Insert("INSERT INTO company_policy(title, message, company_id, create_time, update_time, create_by) "
+            + "VALUES(#{title}, #{message}, #{companyId}, NOW(), NOW(), #{createBy})")
     int insert(@Param("companyId") Long companyId,
                @Param("title") String title,
-               @Param("message") String message);
+               @Param("message") String message,
+               @Param("createBy") Long createBy);
 
-    @Update("UPDATE company_policy SET company_id=#{companyId}, title=#{title}, message=#{message}, update_time=NOW() "
-            + "WHERE id=#{id}")
+    @Update("UPDATE company_policy SET company_id=#{companyId}, title=#{title}, message=#{message}, "
+            + "update_time=NOW(), update_by=#{updateBy} WHERE id=#{id}")
     int update(@Param("id") Long id,
                @Param("companyId") Long companyId,
                @Param("title") String title,
-               @Param("message") String message);
+               @Param("message") String message,
+               @Param("updateBy") Long updateBy);
 
     @Update("UPDATE company_policy SET deleted_at=NOW(), deleted_by=#{deletedBy} "
             + "WHERE id=#{id} AND deleted_at IS NULL")

@@ -48,7 +48,8 @@ public class CompanyPolicyService {
         }
         OptionalLong companyId = PageSupport.longValue(request.get("companyId"));
         mapper.insert(companyId.isPresent() ? companyId.getAsLong() : null,
-                title, PageSupport.stringValue(request.get("message")).orElse(null));
+                title, PageSupport.stringValue(request.get("message")).orElse(null),
+                AuditSupport.currentAccountId());
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
 
@@ -56,7 +57,8 @@ public class CompanyPolicyService {
     public void update(Long id, Map<String, Object> request) {
         OptionalLong companyId = PageSupport.longValue(request.get("companyId"));
         mapper.update(id, companyId.isPresent() ? companyId.getAsLong() : null,
-                PageSupport.stringValue(request.get("title")).orElse(null), PageSupport.stringValue(request.get("message")).orElse(null));
+                PageSupport.stringValue(request.get("title")).orElse(null), PageSupport.stringValue(request.get("message")).orElse(null),
+                AuditSupport.currentAccountId());
     }
 
     @Transactional
