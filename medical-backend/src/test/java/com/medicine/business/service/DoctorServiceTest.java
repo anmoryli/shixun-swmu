@@ -208,6 +208,24 @@ class DoctorServiceTest {
         verify(mapper, never()).insertPasswordResetAudit(20L, 1L);
     }
 
+    @Test
+    void resetPasswordReturnsEightCharTempPasswordFromSafeAlphabet() {
+        // G.OTH.01:临时密码须由密码学安全随机数生成,长度 8 且取自去除易混淆字符的安全字母表
+        DoctorMapper mapper = mock(DoctorMapper.class);
+        PasswordEncoder encoder = mock(PasswordEncoder.class);
+        when(encoder.encode(anyString())).thenReturn("reset-hash");
+        when(mapper.resetPassword(20L, "reset-hash")).thenReturn(1);
+        DoctorService service = new DoctorService(mapper, encoder, mock(TokenService.class));
+
+        String tempPassword = service.resetPassword(20L, 1L);
+
+        String alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+        assertThat(tempPassword).hasSize(8);
+        for (char c : tempPassword.toCharArray()) {
+            assertThat(alphabet.indexOf(c)).isGreaterThan(-1);
+        }
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     private ArgumentCaptor<Map<String, Object>> mapCaptor() {
         return (ArgumentCaptor) ArgumentCaptor.forClass(Map.class);
