@@ -1795,3 +1795,11 @@ body.medical-ui .el-descriptions__content {
 body.medical-ui .el-descriptions__cell {
   border-color: var(--app-line);
 }
+
+/* ===== 空状态夜间适配 ===== */
+body.medical-ui .el-empty__description {
+  color: var(--app-ink-faint);
+}
+body.medical-ui .el-empty__description p {
+  color: var(--app-ink-faint);
+}
