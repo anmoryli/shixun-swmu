@@ -6,6 +6,7 @@ package com.medicine.business.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -156,26 +157,28 @@ class DoctorServiceTest {
     }
 
     @Test
-    void deleteRemovesDoctorAndAccountInOneTransaction() {
+    void deleteSoftDeletesDoctorAndDisablesAccount() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
-        DoctorService service = new DoctorService(mapper, encoder, mock(TokenService.class));
+        TokenService tokenService = mock(TokenService.class);
+        DoctorService service = new DoctorService(mapper, encoder, tokenService);
         when(mapper.findAccountId(51L)).thenReturn(91L);
 
         service.delete(51L);
 
-        verify(mapper).deleteDoctor(51L);
-        verify(mapper).deleteAccount(91L);
+        verify(mapper).softDeleteDoctor(eq(51L), any());
+        verify(tokenService).invalidateByAccountId(91L);
+        verify(mapper).disableAccount(91L);
     }
 
     @Test
-    void deleteToleratesDoctorWithoutAccount() {
+    void deleteSoftDeletesDoctorWithoutAccount() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         when(mapper.findAccountId(51L)).thenReturn((Long) null);
         new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class)).delete(51L);
 
-        verify(mapper).deleteDoctor(51L);
-        verify(mapper, never()).deleteAccount(org.mockito.ArgumentMatchers.anyLong());
+        verify(mapper).softDeleteDoctor(eq(51L), any());
+        verify(mapper, never()).disableAccount(anyLong());
     }
 
     @Test

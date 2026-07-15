@@ -4,7 +4,6 @@
 
 package com.medicine.business.mapper;
 
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -18,6 +17,7 @@ import java.util.Map;
 @Mapper
 public interface DoctorMapper {
     String FROM_SQL = " FROM doctor d JOIN account a ON a.id=d.account_id AND a.status=1 "
+            + "AND d.deleted_at IS NULL "
             + "LEFT JOIN doctor_level dl ON dl.id=d.level_id "
             + "LEFT JOIN treat_type tt ON tt.id=d.type_id ";
 
@@ -93,11 +93,12 @@ public interface DoctorMapper {
     @Select("SELECT account_id FROM doctor WHERE id=#{id}")
     Long findAccountId(@Param("id") Long id);
 
-    @Delete("DELETE FROM doctor WHERE id=#{id}")
-    int deleteDoctor(@Param("id") Long id);
+    @Update("UPDATE doctor SET deleted_at=NOW(), deleted_by=#{deletedBy}, updatetime=NOW() "
+            + "WHERE id=#{id} AND deleted_at IS NULL")
+    int softDeleteDoctor(@Param("id") Long id, @Param("deletedBy") Long deletedBy);
 
-    @Delete("DELETE FROM account WHERE id=#{accountId}")
-    int deleteAccount(@Param("accountId") Long accountId);
+    @Update("UPDATE account SET status=0, updatetime=NOW() WHERE id=#{accountId}")
+    int disableAccount(@Param("accountId") Long accountId);
 
     @Update("UPDATE account a JOIN account_role ar ON ar.account_id=a.id "
             + "JOIN rbac_role r ON r.id=ar.role_id AND r.code='DOCTOR' AND r.enabled=1 "

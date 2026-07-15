@@ -7,6 +7,7 @@ package com.medicine.business.service;
 import com.medicine.business.mapper.DoctorMapper;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
+import com.medicine.security.AuditSupport;
 import com.medicine.security.TokenService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -104,11 +105,12 @@ public class DoctorService {
     @Transactional
     public void delete(Long id) {
         Long accountId = mapper.findAccountId(id);
-        mapper.deleteDoctor(id);
+        // 软删除医生业务数据(误删可恢复);账号改禁用而非硬删,避免 FK RESTRICT 冲突,
+        // 同时失效其所有会话防止旧 token 在 TTL 内继续访问。
+        mapper.softDeleteDoctor(id, AuditSupport.currentAccountId());
         if (accountId != null) {
-            // 账号删除前先失效其所有会话,防止旧 token 在 TTL 内继续访问
             tokenService.invalidateByAccountId(accountId);
-            mapper.deleteAccount(accountId);
+            mapper.disableAccount(accountId);
         }
     }
 
