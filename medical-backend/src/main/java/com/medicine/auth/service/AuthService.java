@@ -68,11 +68,13 @@ public class AuthService {
             throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号或密码错误");
         }
         int userType = toNumericUserType(account.getUtype());
-        if (permissionService != null) {
-            List<String> roles = permissionService.findRoleCodes(account.getId());
-            if (roles == null || roles.isEmpty()) {
-                throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号或密码错误");
-            }
+        // 登录时预计算 authorities 并随会话持久化,认证过滤器直接读取,免去每请求多表 JOIN。
+        // permissionService 为 null(测试/兼容构造)时跳过,过滤器将回退到按请求查询。
+        List<String> authorities = permissionService != null
+                ? permissionService.findAuthorities(account.getId())
+                : null;
+        if (permissionService != null && (authorities == null || authorities.isEmpty())) {
+            throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号或密码错误");
         }
         if (loginAttemptService != null) {
             loginAttemptService.clear(trimmed);
@@ -81,6 +83,7 @@ public class AuthService {
                 account.getId(), account.getUname(), account.getRealname(), account.getUtype(), userType,
                 account.getPhonenumber()
         );
+        session.setAuthorities(authorities);
         String token = tokenService.create(session);
         UserInfo userInfo = new UserInfo(
                 account.getId(), account.getRealname(), account.getUname(), account.getPhonenumber(), userType
