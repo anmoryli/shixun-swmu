@@ -4,6 +4,8 @@
 
 package com.medicine.security;
 
+import java.util.List;
+
 public class AuthSession {
 
     private Long userId;
@@ -12,6 +14,11 @@ public class AuthSession {
     private String roleName;
     private int userType;
     private String phonenumber;
+    /**
+     * 登录时预计算的 Spring authorities(ROLE_xxx + 权限码),序列化进 Redis 会话,
+     * 认证过滤器直接读取,避免每个请求都做多表 JOIN 查权限。
+     */
+    private List<String> authorities;
 
     public AuthSession() {
     }
@@ -72,5 +79,13 @@ public class AuthSession {
 
     public void setPhonenumber(String phonenumber) {
         this.phonenumber = phonenumber;
+    }
+
+    public List<String> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(List<String> authorities) {
+        this.authorities = authorities;
     }
 }
