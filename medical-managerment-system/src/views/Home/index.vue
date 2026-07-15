@@ -429,7 +429,7 @@ export default {
   min-height: 100%;
   padding: 28px;
   box-sizing: border-box;
-  color: #263b3a;
+  color: var(--app-ink);
   background: linear-gradient(160deg, #f5fbfa 0%, #f5f8fb 65%, #eef8f6 100%);
   overflow-y: auto;
 }
@@ -441,7 +441,7 @@ export default {
 }
 .eyebrow {
   margin: 0 0 5px;
-  color: #20a99d;
+  color: var(--app-accent);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.8px;
@@ -453,21 +453,21 @@ h1 {
 }
 .subtitle {
   margin: 8px 0 0;
-  color: #718281;
+  color: var(--app-ink-soft);
 }
 .status-chip {
   margin-top: 7px;
   padding: 9px 14px;
-  border: 1px solid #c8ebe5;
+  border: 1px solid var(--app-line);
   border-radius: 20px;
-  color: #168f84;
-  background: #edfaf7;
+  color: var(--app-accent-strong);
+  background: var(--app-accent-soft);
   font-size: 13px;
 }
 .status-chip.degraded {
-  color: #a16a19;
-  border-color: #f1dab7;
-  background: #fff8ed;
+  color: var(--app-warm);
+  border-color: var(--app-line);
+  background: var(--app-warm-soft);
 }
 .metric-grid {
   display: grid;
@@ -480,9 +480,9 @@ h1 {
   align-items: center;
   gap: 15px;
   padding: 20px;
-  border: 1px solid #e5eeee;
+  border: 1px solid var(--app-line);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--app-surface);
   box-shadow: 0 8px 22px rgba(41, 91, 87, 0.07);
 }
 .metric-icon {
@@ -497,7 +497,7 @@ h1 {
 }
 .metric-card p {
   margin: 0 0 4px;
-  color: #718281;
+  color: var(--app-ink-soft);
   font-size: 13px;
 }
 .metric-card strong {
@@ -506,7 +506,7 @@ h1 {
 }
 .metric-card span {
   margin-left: 5px;
-  color: #93a09f;
+  color: var(--app-ink-faint);
   font-size: 12px;
 }
 .charts-grid {
@@ -543,7 +543,7 @@ h1 {
   font-weight: 700;
 }
 .section-title small {
-  color: #8a9998;
+  color: var(--app-ink-faint);
   font-weight: 400;
 }
 .carousel-image {
@@ -605,7 +605,7 @@ h1 {
   align-items: flex-start;
   gap: 14px;
   padding: 14px 4px;
-  border-bottom: 1px solid #eef3f3;
+  border-bottom: 1px solid var(--app-surface-muted);
 }
 .news-item:last-child {
   border-bottom: 0;
@@ -619,7 +619,7 @@ h1 {
   white-space: nowrap;
 }
 .news-tag.tag-medical {
-  color: #168f84;
+  color: var(--app-accent-strong);
   background: #e3f6f2;
 }
 .news-tag.tag-company {
@@ -627,12 +627,12 @@ h1 {
   background: #ece9fb;
 }
 .news-tag.tag-material {
-  color: #b5641a;
-  background: #fdf0df;
+  color: var(--app-warm);
+  background: var(--app-warm-soft);
 }
 .news-tag.tag-default {
-  color: #5a6b6a;
-  background: #eef3f3;
+  color: var(--app-ink-soft);
+  background: var(--app-surface-muted);
 }
 .news-body {
   flex: 1 1 auto;
@@ -642,7 +642,7 @@ h1 {
   margin: 0 0 4px;
   font-size: 14px;
   font-weight: 600;
-  color: #263b3a;
+  color: var(--app-ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -650,7 +650,7 @@ h1 {
 .news-summary {
   margin: 0;
   font-size: 12px;
-  color: #8a9998;
+  color: var(--app-ink-faint);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -658,14 +658,14 @@ h1 {
 }
 .news-time {
   flex: 0 0 auto;
-  color: #93a09f;
+  color: var(--app-ink-faint);
   font-size: 12px;
   white-space: nowrap;
 }
 .news-empty {
   padding: 24px;
   text-align: center;
-  color: #93a09f;
+  color: var(--app-ink-faint);
   font-size: 13px;
 }
 @media (max-width: 1200px) {
