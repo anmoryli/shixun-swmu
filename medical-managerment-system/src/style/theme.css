@@ -1708,3 +1708,21 @@ body.medical-ui .el-dialog__headerbtn:hover .el-dialog__close {
 body.medical-ui .el-dialog__footer {
   border-top-color: var(--app-line);
 }
+
+/* ===== 抽屉夜间适配 ===== */
+body.medical-ui .el-drawer {
+  background: var(--app-surface-solid);
+}
+body.medical-ui .el-drawer__header {
+  color: var(--app-ink);
+  margin-bottom: 0;
+}
+body.medical-ui .el-drawer__close-btn {
+  color: var(--app-ink-faint);
+}
+body.medical-ui .el-drawer__close-btn:hover {
+  color: var(--app-accent-strong);
+}
+body.medical-ui .el-drawer__body {
+  color: var(--app-ink-soft);
+}
