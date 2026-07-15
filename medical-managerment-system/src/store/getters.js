@@ -5,6 +5,11 @@
 const getters = {
   token: (state) => state.app.token,
   menuList: (state) => state.app.menuList,
+  userInfo: (state) => state.app.userInfo,
+  permissionCodes: (state) => state.app.permissionCodes,
+  roles: (state) => state.app.roles,
+  allowedRoutePaths: (state) => state.app.allowedRoutePaths,
+  allowedRouteNames: (state) => state.app.allowedRouteNames,
   companyInfo: (state) => state.companyInfoManage.companyInfo,
   salePlaceInfo: (state) => state.saleInfoManage.salePlaceInfo,
   cityInfo: (state) => state.cityInfoManage.cityInfo,

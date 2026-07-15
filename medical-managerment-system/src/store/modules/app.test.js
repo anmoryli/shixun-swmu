@@ -28,6 +28,11 @@ import appModule from './app';
 function freshState() {
   return {
     token: '',
+    userInfo: null,
+    permissionCodes: [],
+    roles: [],
+    allowedRoutePaths: [],
+    allowedRouteNames: [],
     menuList: [{ path: '/user/login' }, { path: '/' }],
     routesLoaded: false,
   };
@@ -105,6 +110,31 @@ describe('app store module', () => {
     expect(apiMocks.getMenu).toHaveBeenCalledTimes(1);
     expect(apiMocks.addRoute).toHaveBeenCalledWith(route);
     expect(state.routesLoaded).toBe(true);
+  });
+
+  it('stores access metadata and disposes old dynamic routes on reset', () => {
+    const state = freshState();
+    const dispose = vi.fn();
+    apiMocks.addRoute.mockReturnValue(dispose);
+    const route = { path: '/home', name: 'Home', children: [] };
+    appModule.mutations.SET_ROUTER_MENULIST(state, {
+      routes: [route],
+      permissionCodes: ['drug:write'],
+      permissionCodesProvided: true,
+      roles: ['ROLE_2'],
+      rolesProvided: true,
+      allowedRoutePaths: ['/home'],
+      allowedRouteNames: ['Home'],
+    });
+    expect(state).toMatchObject({
+      permissionCodes: ['drug:write'],
+      roles: ['ROLE_2'],
+      allowedRoutePaths: ['/home'],
+      allowedRouteNames: ['Home'],
+    });
+    appModule.mutations.RESET_AUTH(state);
+    expect(dispose).toHaveBeenCalledTimes(1);
+    expect(state.permissionCodes).toEqual([]);
   });
 
   it('clears local authentication even when the logout API fails', async () => {

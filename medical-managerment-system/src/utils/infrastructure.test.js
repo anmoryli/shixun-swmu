@@ -102,7 +102,28 @@ describe('dynamic menu parsing', () => {
     });
     const routes = await getMenu();
     expect(routes).toHaveLength(1);
+    expect(loginHarness.getMenuList).toHaveBeenCalledWith();
     expect(routes[0]).toMatchObject({ path: '/', name: '/', meta: { title: 'Root' } });
     expect(routes[0].children[0]).toMatchObject({ path: '/city', meta: { title: 'City' } });
+  });
+
+  it('preserves explicit access metadata and accepts role-only identities', async () => {
+    authHarness.user = { roles: ['DOCTOR'] };
+    loginHarness.getMenuList.mockResolvedValueOnce({
+      data: {
+        code: 20000,
+        data: {
+          permissions: [{ path: '/home', component: 'Home', hidden: false }],
+          permissionCodes: ['dashboard:read'],
+          roles: ['doctor'],
+        },
+      },
+    });
+    const routes = await getMenu();
+    expect(routes.permissionCodes).toEqual(['dashboard:read']);
+    expect(routes.permissionCodesProvided).toBe(true);
+    expect(routes.roles).toEqual(['DOCTOR']);
+    expect(routes.rolesProvided).toBe(true);
+    expect(routes.allowedRoutePaths).toEqual(['/home']);
   });
 });

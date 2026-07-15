@@ -33,7 +33,7 @@ describe('public API request contracts', () => {
   it('uses the expected menu, logout, and dashboard contracts', async () => {
     await getMenuList('ROLE_1');
     expect(mocks.request).toHaveBeenLastCalledWith({
-      url: '/permissions', method: 'GET', params: { roleName: 'ROLE_1' },
+      url: '/permissions', method: 'GET',
     });
 
     await logoutApi();

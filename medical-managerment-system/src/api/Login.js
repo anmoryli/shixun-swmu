@@ -12,13 +12,13 @@ export function login(username, password) {
         data: Qs.stringify({ username, password }),
     });
 }
-export function getMenuList(roleName) {
+// The server derives the role from the authenticated httpOnly-cookie session.
+// Keep an ignored argument for source compatibility with older callers, but
+// never send a client-selected role to the authorization endpoint.
+export function getMenuList(_legacyRoleName) {
     return request({
         url: '/permissions',
         method: 'GET',
-        params: {
-            roleName,
-        },
     });
 }
 export function logoutApi() {

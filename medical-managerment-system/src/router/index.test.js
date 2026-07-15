@@ -62,7 +62,10 @@ describe('router guard', () => {
   it('continues with loaded routes and reloads newly added routes', async () => {
     harness.loggedIn = true;
     const next = vi.fn();
-    harness.router.appStore = { state: { app: { routesLoaded: true } }, dispatch: vi.fn() };
+    harness.router.appStore = {
+      state: { app: { routesLoaded: true, allowedRoutePaths: ['/home'] } },
+      dispatch: vi.fn(),
+    };
     await harness.guard({ path: '/home', meta: {}, fullPath: '/home?a=1' }, {}, next);
     expect(next).toHaveBeenCalledWith();
 
