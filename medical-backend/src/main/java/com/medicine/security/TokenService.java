@@ -94,6 +94,9 @@ public class TokenService {
             return Optional.empty();
         }
         String token = authorization.trim();
+        if (token.equalsIgnoreCase("Bearer")) {
+            return Optional.empty();
+        }
         if (token.regionMatches(true, 0, "Bearer ", 0, 7)) {
             token = token.substring(7).trim();
         }
