@@ -1746,3 +1746,20 @@ body.medical-ui .el-notification__title {
 body.medical-ui .el-notification__content {
   color: var(--app-ink-soft);
 }
+
+/* ===== 消息框夜间适配 ===== */
+body.medical-ui .el-message-box {
+  background: var(--app-surface-solid);
+  color: var(--app-ink);
+  border-color: var(--app-line);
+}
+body.medical-ui .el-message-box__title {
+  color: var(--app-ink);
+}
+body.medical-ui .el-message-box__content,
+body.medical-ui .el-message-box__message p {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-message-box__headerbtn .el-message-box__close {
+  color: var(--app-ink-faint);
+}
