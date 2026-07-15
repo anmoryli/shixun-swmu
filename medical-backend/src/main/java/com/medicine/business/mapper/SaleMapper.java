@@ -35,12 +35,12 @@ public interface SaleMapper {
             + "address, longitude, latitude FROM sale WHERE deleted_at IS NULL ORDER BY sale_id")
     List<Map<String, Object>> findAll();
 
-    @Insert("INSERT INTO sale(sale_name, sale_phone, address, longitude, latitude, createtime, updatetime) "
-            + "VALUES(#{saleName}, #{salePhone}, #{address}, #{longitude}, #{latitude}, NOW(), NOW())")
+    @Insert("INSERT INTO sale(sale_name, sale_phone, address, longitude, latitude, createtime, updatetime, create_by) "
+            + "VALUES(#{saleName}, #{salePhone}, #{address}, #{longitude}, #{latitude}, NOW(), NOW(), #{createBy})")
     int insert(Map<String, Object> sale);
 
     @Update("UPDATE sale SET sale_name=#{saleName}, sale_phone=#{salePhone}, address=#{address}, "
-            + "longitude=#{longitude}, latitude=#{latitude}, updatetime=NOW() WHERE sale_id=#{saleId}")
+            + "longitude=#{longitude}, latitude=#{latitude}, updatetime=NOW(), update_by=#{updateBy} WHERE sale_id=#{saleId}")
     int update(Map<String, Object> sale);
 
     @Update("UPDATE sale SET deleted_at=NOW(), deleted_by=#{deletedBy}, updatetime=NOW() "

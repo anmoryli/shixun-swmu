@@ -66,6 +66,12 @@ public class SaleService {
         values.put("address", PageSupport.stringValue(request.get("address")).orElse(null));
         values.put("longitude", PageSupport.decimalValue(request.get("longitude")).orElse(null));
         values.put("latitude", PageSupport.decimalValue(request.get("latitude")).orElse(null));
+        Long operator = AuditSupport.currentAccountId();
+        if (id == null) {
+            values.put("createBy", operator);
+        } else {
+            values.put("updateBy", operator);
+        }
         return values;
     }
 }
