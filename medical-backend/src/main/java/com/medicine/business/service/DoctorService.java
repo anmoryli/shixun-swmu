@@ -99,6 +99,8 @@ public class DoctorService {
         Long accountId = mapper.findAccountId(id);
         mapper.deleteDoctor(id);
         if (accountId != null) {
+            // 账号删除前先失效其所有会话,防止旧 token 在 TTL 内继续访问
+            tokenService.invalidateByAccountId(accountId);
             mapper.deleteAccount(accountId);
         }
     }
