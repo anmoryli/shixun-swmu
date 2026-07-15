@@ -50,8 +50,8 @@ export default {
 .system-name {
   width: 200px;
   height: 100%;
-  background-color: #f3f3f4;
-  color: #82879b;
+  background-color: var(--app-surface-muted);
+  color: var(--app-ink-soft);
   font-size: 20px;
   display: flex;
   justify-content: center;
@@ -65,7 +65,7 @@ export default {
 }
 .main-head {
   height: 60px;
-  color: #82879b;
+  color: var(--app-ink-soft);
   padding: 0 20px;
   .main-head-right {
     margin-top: 15px;
@@ -88,7 +88,7 @@ export default {
     .logout {
       font-weight: 700;
       font-size: 18px;
-      color: #949697;
+      color: var(--app-ink-faint);
       cursor: pointer;
     }
     span {
