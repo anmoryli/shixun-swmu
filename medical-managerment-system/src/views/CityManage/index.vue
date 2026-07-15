@@ -85,12 +85,14 @@
           </el-cascader>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleAddcity('addForm')"
-          >确 定</el-button
-        >
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="addFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleAddcity('addForm')"
+            >确 定</el-button
+          >
+        </div>
+      </template>
     </el-dialog>
   </el-container>
 </template>
