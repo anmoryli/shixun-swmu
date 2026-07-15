@@ -223,17 +223,18 @@ export default {
         size: this.pageSize,
       });
     },
-    // 当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页(保留当前页码,若处于搜索则带 keyword 翻页)
     handleCurrentChange(event) {
       this.currentPage = event.page;
-      if (this.keyword.length) {
-        this.handelQuery(this.keyword);
-      } else {
-        this.getCompanyInfo();
+      const params = { pn: this.currentPage, size: this.pageSize };
+      if (this.keyword && this.keyword.length) {
+        params.keyword = this.keyword;
       }
+      this.$store.dispatch('companyInfoManage/getCompanyInfo', params);
     },
-    // 通过关键字查询数据
+    // 通过关键字查询数据:新关键字从第一页查起,避免停在旧页码导致空表
     handelQuery(keyword) {
+      this.currentPage = 1;
       this.$store.dispatch('companyInfoManage/getCompanyInfo', {
         pn: this.currentPage,
         size: this.pageSize,
