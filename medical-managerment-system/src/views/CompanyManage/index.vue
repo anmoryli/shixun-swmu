@@ -29,7 +29,7 @@
               placeholder="查询（输入要查询的公司名称）"
               size="small"
               v-model="keyword"
-              @input="handelQuery"
+              @input="debouncedQuery"
             >
             </el-input>
           </keep-alive>
@@ -187,6 +187,7 @@
 import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
+import debounce from '../../utils/debounce';
 
 export default {
   name: 'CompanyManage',
@@ -331,6 +332,10 @@ export default {
   //   当挂载时渲染默认数据，代码如下。
   mounted() {
     this.getCompanyInfo(); // 首次渲染
+  },
+  created() {
+    // 搜索输入防抖:停止输入 300ms 后再查询,避免每次按键都发请求
+    this.debouncedQuery = debounce((keyword) => this.handelQuery(keyword), 300);
   },
   computed: {
     ...mapGetters({
