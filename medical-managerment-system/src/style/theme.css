@@ -1634,3 +1634,17 @@ body.medical-ui .el-radio__inner {
   border-color: var(--app-line-strong);
   background: var(--app-surface);
 }
+
+/* ===== 输入框禁用与只读夜间适配 ===== */
+body.medical-ui .el-input.is-disabled .el-input__inner,
+body.medical-ui .el-textarea.is-disabled .el-textarea__inner {
+  background: var(--app-surface-muted);
+  border-color: var(--app-line);
+  color: var(--app-ink-faint);
+  -webkit-text-fill-color: var(--app-ink-faint);
+}
+body.medical-ui .el-input__inner[readonly],
+body.medical-ui .el-textarea__inner[readonly] {
+  background: var(--app-surface-muted);
+  color: var(--app-ink-soft);
+}
