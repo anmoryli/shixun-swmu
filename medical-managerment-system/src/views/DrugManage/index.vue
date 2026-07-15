@@ -543,7 +543,7 @@ export default {
 .drugimg-uploader {
   width: 178px;
   height: 178px;
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed var(--app-line);
   border-radius: 6px;
   cursor: pointer;
   position: relative;
@@ -551,7 +551,7 @@ export default {
 }
 .drugimg-uploader-icon {
   font-size: 28px;
-  color: #8c939d;
+  color: var(--app-ink-faint);
   width: 178px;
   height: 178px;
   line-height: 178px;
