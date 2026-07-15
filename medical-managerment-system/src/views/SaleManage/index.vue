@@ -31,7 +31,7 @@
                 placeholder="查询（输入要查询的药店名称）"
                 size="small"
                 v-model="keyword"
-                @input="handelQuery"
+                @input="debouncedQuery"
               >
               </el-input>
             </keep-alive>
@@ -263,6 +263,7 @@
 import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
+import debounce from '../../utils/debounce';
 import AMapLoader from '@amap/amap-jsapi-loader';
 import service from '../../utils/request';
 
@@ -346,17 +347,18 @@ export default {
     getAllSalePlaceInfo() {
       return this.$store.dispatch('saleInfoManage/getAllSalePlaceInfo');
     },
-    // 当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页(保留当前页码,若处于搜索则带 keyword 翻页)
     handleCurrentChange(event) {
       this.currentPage = event.page;
-      if (this.keyword.length) {
-        this.handelQuery(this.keyword);
-      } else {
-        this.getSalePlaceInfo();
+      const params = { pn: this.currentPage, size: this.pageSize };
+      if (this.keyword && this.keyword.length) {
+        params.keyword = this.keyword;
       }
+      this.$store.dispatch('saleInfoManage/getSalePlaceInfo', params);
     },
-    // 通过关键字查询数据
+    // 通过关键字查询数据:新关键字从第一页查起,避免停在旧页码导致空表
     handelQuery(keyword) {
+      this.currentPage = 1;
       this.$store.dispatch('saleInfoManage/getSalePlaceInfo', {
         pn: this.currentPage,
         size: this.pageSize,
@@ -602,6 +604,10 @@ export default {
   mounted() {
     this.getSalePlaceInfo(); // 首次渲染列表
     this.getAllSalePlaceInfo(); // 预加载全量数据，地图打开即可标点
+  },
+  created() {
+    // 搜索输入防抖:停止输入 300ms 后再查询,避免每次按键都发请求
+    this.debouncedQuery = debounce((keyword) => this.handelQuery(keyword), 300);
   },
   beforeUnmount() {
     // 组件卸载时销毁地图实例与标记,避免 AMap 内部事件监听/DOM 残留导致内存泄漏
