@@ -12,6 +12,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.util.Map;
 
 /**
@@ -27,7 +28,10 @@ public class AmapService {
     public AmapService(@Value("${app.amap.web-key:}") String webKey,
                        RestTemplateBuilder restTemplateBuilder) {
         this.webKey = webKey;
-        this.restTemplate = restTemplateBuilder.build();
+        this.restTemplate = restTemplateBuilder
+                .setConnectTimeout(Duration.ofSeconds(5))
+                .setReadTimeout(Duration.ofSeconds(5))
+                .build();
     }
 
     /**
