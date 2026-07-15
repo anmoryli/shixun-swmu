@@ -41,6 +41,51 @@ docker compose up -d --build
 
 完整命令、验证证据和回滚方法见 `process-docs/05-build-and-deployment.md`。
 
+## 数据库备份
+
+`scripts/backup-mysql.sh` 对 `medicine` 库做 `--single-transaction` 一致性逻辑备份,产出带时间戳的 gzip 并按保留天数轮转。数据库密码从 0600 权限的私有 env 文件读取,写入临时 `.my.cnf`,不落命令行参数(避免 `ps`/历史泄露)。
+
+```bash
+# 手动执行一次(读取 /etc/medicine/medicine-backend.env)
+sudo deploy/scripts/backup-mysql.sh
+
+# 自定义保留天数与目录
+sudo KEEP_DAYS=14 BACKUP_DIR=/data/backup deploy/scripts/backup-mysql.sh
+```
+
+推荐用 systemd timer 每日凌晨备份(比 cron 更易观测与重试):
+
+```ini
+# /etc/systemd/system/medicine-backup.service
+[Service]
+Type=oneshot
+ExecStart=/opt/medicine/app/deploy/scripts/backup-mysql.sh
+User=root
+```
+
+```ini
+# /etc/systemd/system/medicine-backup.timer
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+[Install]
+WantedBy=timers.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now medicine-backup.timer
+systemctl list-timers medicine-backup.timer   # 确认下次触发
+journalctl -u medicine-backup.service         # 查看备份日志
+```
+
+备份文件落在 `/opt/medicine/backup/`(默认),保留 7 天。恢复示例:
+
+```bash
+gunzip < /opt/medicine/backup/medicine_20260715_033000.sql.gz | \
+  mysql --defaults-file=/etc/medicine/my.cnf medicine
+```
+
 ## Windows 本地私有环境变量
 
 本机私有配置默认放在 `.work/private/medicine-backend.env.ps1`。`.work/` 已被 Git 忽略，真实密码不会进入版本库。`deploy/scripts/start-local.ps1` 会自动加载该文件；也可以通过 `-EnvFile` 指定其他私有文件。
