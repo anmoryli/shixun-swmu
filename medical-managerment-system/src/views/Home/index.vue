@@ -67,7 +67,7 @@
         </div>
         <div class="quick-list">
           <div
-            v-for="card in cardList"
+            v-for="card in availableCardList"
             :key="card.content"
             class="quick-item"
             role="button"
@@ -127,6 +127,7 @@ import medicineBlister from '../../assets/medical-samples/medicine-blister.jpg';
 import medicineCapsule from '../../assets/medical-samples/medicine-capsule.jpg';
 import medicineHand from '../../assets/medical-samples/medicine-hand.jpg';
 import medicineAssorted from '../../assets/medical-samples/medicine-assorted.jpg';
+import { allowedPath } from '../../utils/permissions';
 
 const metricDefinitions = [
   {
@@ -241,6 +242,14 @@ export default {
     newsList() {
       return (this.dashboardData.news || []).slice(0, 5);
     },
+    availableCardList() {
+      const appState = this.$store && this.$store.state && this.$store.state.app;
+      const allowed = appState && appState.allowedRoutePaths;
+      if (!Array.isArray(allowed) || !allowed.length) {
+        return this.cardList;
+      }
+      return this.cardList.filter((card) => allowedPath(card.route, allowed));
+    },
   },
   mounted() {
     this.loadDashboard();
@@ -338,6 +347,11 @@ export default {
     },
     goTo(route) {
       if (!route) {
+        return;
+      }
+      const appState = this.$store && this.$store.state && this.$store.state.app;
+      const allowed = appState && appState.allowedRoutePaths;
+      if (Array.isArray(allowed) && allowed.length && !allowedPath(route, allowed)) {
         return;
       }
       // 仅在路由不同时跳转，避免重复点击产生多余的 history 记录。

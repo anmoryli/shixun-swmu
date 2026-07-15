@@ -2,12 +2,12 @@
 <template>
   <el-container>
     <el-header height="76px">
-      <h2 v-if="hasRole">医保政策管理</h2>
+      <h2 v-if="$can('medical-policy:write')">医保政策管理</h2>
       <h2 v-else>医保政策查询</h2>
       <!-- 面包屑导航区域 -->
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item v-if="hasRole">医保政策管理</el-breadcrumb-item>
+        <el-breadcrumb-item v-if="$can('medical-policy:write')">医保政策管理</el-breadcrumb-item>
         <el-breadcrumb-item v-else>医保政策查询</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
@@ -78,7 +78,7 @@
             type="primary"
             size="small"
             @click="addFormVisible = true"
-            v-if="hasRole"
+            v-if="$can('medical-policy:write')"
             >新增</el-button
           >
         </div>
@@ -108,7 +108,7 @@
           <el-table-column
             prop="medical_policy_operation"
             label="操作"
-            v-if="hasRole"
+            v-if="$can('medical-policy:write')"
           >
             <template #default="scope">
               <button
@@ -277,6 +277,9 @@ export default {
     };
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('medical-policy:write');
+    },
     // 当前页改变时触发,跳转其他页
     handleCurrentChange(event) {
       this.currentPage = event.page;
@@ -301,6 +304,7 @@ export default {
     },
     // 新增医保政策
     handleAddMedicalPolicy(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
@@ -319,6 +323,7 @@ export default {
     },
     // 删除医保政策
     handleDeletMedicalPolicy(id, title) {
+      if (!this.canWrite()) return;
       this.$confirm(`确定要删除“${title}”的相关信息吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -339,6 +344,7 @@ export default {
     },
     // 控制修改医保政策信息的表单弹出
     handleModifyFormVisible(id, title, message, city) {
+      if (!this.canWrite()) return;
       this.modifyForm = {
         id,
         title,
@@ -349,6 +355,7 @@ export default {
     },
     // 修改医保政策信息
     handleModifyMedicalPolicy(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;

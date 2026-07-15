@@ -31,8 +31,10 @@ export default {
   },
   computed: {
     userName() {
-      const userInfo = getUserInfo();
-      return (userInfo && (userInfo.realname || userInfo.username)) || '用户';
+      const storeUser = this.$store && this.$store.state && this.$store.state.app
+        && this.$store.state.app.userInfo;
+      const userInfo = storeUser || getUserInfo();
+      return (userInfo && (userInfo.realname || userInfo.uname || userInfo.username)) || '用户';
     },
   },
 };

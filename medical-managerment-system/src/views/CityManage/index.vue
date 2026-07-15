@@ -14,7 +14,7 @@
         <button
           class="new-add"
           @click="addFormVisible = true"
-          v-if="hasRole"
+          v-if="$can('city:write')"
         ></button>
       </div>
       <!-- 搜索 -->
@@ -41,7 +41,7 @@
         <el-table-column prop="cityNumber" label="城市编号" sortable />
         <el-table-column prop="province" label="所属省" />
         <el-table-column prop="city" label="城市名称" />
-        <el-table-column prop="cityOperation" label="操作" v-if="hasRole">
+        <el-table-column prop="cityOperation" label="操作" v-if="$can('city:write')">
           <!-- 通过slot-scope拿到对应行的数据 -->
           <template #default="scope">
             <button
@@ -121,6 +121,9 @@ export default {
     };
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('city:write');
+    },
     getCityInfo() {
       this.$store.dispatch('cityInfoManage/getCityInfo', {
         pn: this.currentPage,
@@ -146,6 +149,7 @@ export default {
     },
     // 新增城市
     handleAddcity(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
@@ -163,6 +167,7 @@ export default {
     },
     // 删除城市
     handleDeletecity(cityId, cityName) {
+      if (!this.canWrite()) return;
       this.$confirm(
         `确定要删除“${cityName}”的相关信息吗？该操作会同时删除该城市相关的医保政策`,
         '提示',

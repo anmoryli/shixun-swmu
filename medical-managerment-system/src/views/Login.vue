@@ -84,10 +84,9 @@ export default {
               const isNetworkError = Boolean(
                 error && (error.isAxiosError || error.request) && !error.response
               );
-              if (
-                this.$store.state.app.token &&
-                !this.$store.state.app.routesLoaded
-              ) {
+              // Cookie authentication has no client-readable token. Always
+              // clear the provisional session when menu loading/login fails.
+              if (this.$store.state.app && !this.$store.state.app.routesLoaded) {
                 this.$store.dispatch('app/logout');
               }
               this.$message.error(

@@ -3,12 +3,12 @@
   <el-container>
     <!-- 头部区域 -->
     <el-header height="76px">
-      <h2 v-if="hasRole">医药公司政策管理</h2>
+      <h2 v-if="$can('company-policy:write')">医药公司政策管理</h2>
       <h2 v-else>医药公司政策查询</h2>
       <!-- 面包屑导航区域 -->
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item v-if="hasRole">医药公司政策管理</el-breadcrumb-item>
+        <el-breadcrumb-item v-if="$can('company-policy:write')">医药公司政策管理</el-breadcrumb-item>
         <el-breadcrumb-item v-else>医药公司政策查询</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
@@ -20,7 +20,7 @@
         <button
           class="new-add"
           @click="addFormVisible = true"
-          v-if="hasRole"
+          v-if="$can('company-policy:write')"
         ></button>
       </div>
       <!-- 搜索 -->
@@ -58,7 +58,7 @@
         <el-table-column prop="id" label="政策编号" sortable />
         <el-table-column prop="title" label="政策名称" />
         <el-table-column prop="updateTime" label="发布时间" sortable />
-        <el-table-column label="操作" v-if="hasRole">
+        <el-table-column label="操作" v-if="$can('company-policy:write')">
           <template #default="scope">
             <button
               class="table-btn-delete"
@@ -234,6 +234,9 @@ export default {
     };
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('company-policy:write');
+    },
     // 切换分页及首次进入获取数据
     getCompanyPolicyInfo() {
       this.$store.dispatch('companyPolicyInfoManage/getCompanyPolicyInfo', {
@@ -260,6 +263,7 @@ export default {
     },
     // 新增公司
     handleAddCompanyPolicy(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
@@ -279,6 +283,7 @@ export default {
     },
     // 删除
     handleDeleteCompanyPolicy(id, title) {
+      if (!this.canWrite()) return;
       this.$confirm(`确定要删除“${title}”的相关信息吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -300,6 +305,7 @@ export default {
     },
     // 控制修改表单弹出
     handleModifyFormVisible(id, title, message, companyId) {
+      if (!this.canWrite()) return;
       this.modifyForm = {
         id,
         title,
@@ -310,6 +316,7 @@ export default {
     },
     // 修改
     handleModifyMedicalPolicy(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;

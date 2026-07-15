@@ -9,7 +9,7 @@
       :default-active="$route.path"
     >
       <div class="MenuBackground">
-        <fragment v-for="(item, index) in submenuList" :key="index">
+        <fragment v-for="item in submenuList" :key="item.name || item.path">
           <!-- 一级菜单（没有任何子级菜单）-->
           <el-menu-item :index="item.path" v-if="!item.children || !item.children.length">
             <i :class="item.icon"></i>
@@ -24,7 +24,7 @@
               <span>{{ item.title }}</span>
             </template>
             <!-- 遍历二级菜单容器 -->
-            <fragment v-for="(i, index) in item.children" :key="index">
+            <fragment v-for="i in item.children" :key="i.name || i.path">
               <!-- 判断二级菜单（没有三级菜单）-->
               <el-menu-item :index="i.path" v-if="!i.children || !i.children.length">
                 <i :class="i.icon"></i>
@@ -38,8 +38,8 @@
                 </template>
                 <el-menu-item
                         :index="j.path"
-                        v-for="(j, index) in i.children"
-                        :key="index"
+                        v-for="j in i.children"
+                        :key="j.name || j.path"
                 >
                   <i :class="j.icon"></i>
                   <span>{{ j.title }}</span>
@@ -63,11 +63,13 @@ export default {
   methods: {
     handleMenuListData(data, arr) {
       (Array.isArray(data) ? data : []).forEach((route) => {
-        if (!route || !route.path || route.path === '/user/login') {
+        if (!route || !route.path || route.path === '/user/login'
+          || (route.meta && route.meta.hidden)) {
           return;
         }
         arr.push({
           path: route.path,
+          name: route.name || route.path,
           title: (route.meta && route.meta.title) || route.name || '未命名菜单',
           icon: 'el-icon-menu',
           children: this.handleMenuListData(route.children, []),
@@ -78,6 +80,7 @@ export default {
     refreshMenuList(routes) {
       const availableRoutes = (Array.isArray(routes) ? routes : []).filter(
         (route) => route && route.path !== '/user/login' && !route.redirect
+          && !(route.meta && route.meta.hidden)
       );
       const layoutRoute = availableRoutes.find(
         (route) => Array.isArray(route.children) && route.children.length

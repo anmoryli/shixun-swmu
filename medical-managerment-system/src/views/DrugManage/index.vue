@@ -1,19 +1,19 @@
 <template>
   <el-container>
     <el-header height="76px">
-      <h2 v-if="hasRole">药品信息管理</h2>
+      <h2 v-if="$can('drug:write')">药品信息管理</h2>
       <h2 v-else>药品信息查询</h2>
       <!-- 面包屑导航区域 -->
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item v-if="hasRole">药品信息管理</el-breadcrumb-item>
+        <el-breadcrumb-item v-if="$can('drug:write')">药品信息管理</el-breadcrumb-item>
         <el-breadcrumb-item v-else>药品信息查询</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
     <el-main>
       <div class="main-title">
         <h3>药品信息列表</h3>
-        <button class="new-add" @click="addFormVisible = true" v-if="hasRole" />
+        <button class="new-add" @click="addFormVisible = true" v-if="$can('drug:write')" />
       </div>
       <!-- 搜索 -->
       <el-row :gutter="20">
@@ -68,7 +68,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="drugPublisher" label="发布者" sortable />
-        <el-table-column label="操作" v-if="hasRole">
+        <el-table-column label="操作" v-if="$can('drug:write')">
           <template #default="scope">
             <button
               class="table-btn-delete"
@@ -338,8 +338,12 @@ export default {
     };
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('drug:write');
+    },
     // 显示进度条
     handleUploading() {
+      if (!this.canWrite()) return;
       this.uploading = true;
       let num = 0;
       let t = setInterval(() => {
@@ -354,6 +358,7 @@ export default {
     },
     // 选择完图片后自动上传，并拿到服务器返回的图片url地址
     handleUploadSuccess(res) {
+      if (!this.canWrite() || !res || !res.data || !res.data.url) return;
       this.$message.success('上传成功');
       setTimeout(() => {
         this.uploading = false;
@@ -367,6 +372,7 @@ export default {
       }, 800);
     },
     handleUploadError(err) {
+      if (!this.canWrite()) return;
       this.$message.error('上传失败，请重试');
       this.uploading = false;
       this.percentage = 0;
@@ -377,6 +383,7 @@ export default {
     },
     // 对上传的文件类型及大小进行限制
     beforeImgUpload(file) {
+      if (!this.canWrite()) return false;
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
@@ -413,6 +420,7 @@ export default {
     },
     // 新增药品
     handleAddDrug(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
@@ -432,6 +440,7 @@ export default {
     },
     // 删除药品
     handleDeleteDrug(drugId, drugName) {
+      if (!this.canWrite()) return;
       this.$confirm(`确定要删除“${drugName}”的相关信息吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -461,6 +470,7 @@ export default {
       drugImg,
       drugSales
     ) {
+      if (!this.canWrite()) return;
       let saleIds = drugSales.map((item) => {
         return item.saleId;
       });
@@ -476,6 +486,7 @@ export default {
     },
     // 修改药品信息
     handleModifyDrug(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;

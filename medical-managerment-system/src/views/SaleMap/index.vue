@@ -9,7 +9,7 @@
     </el-header>
     <el-main>
       <div class="map-toolbar">
-        <el-button type="primary" v-if="hasRole" @click="handleAdd">
+        <el-button type="primary" v-if="$can('sale:write')" @click="handleAdd">
           新增地点
         </el-button>
         <span v-if="addStatus === 1" class="map-hint">
@@ -232,10 +232,14 @@ export default {
     },
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('sale:write');
+    },
     getAllSalePlaceInfo() {
       return this.$store.dispatch('saleInfoManage/getAllSalePlaceInfo');
     },
     handleAdd() {
+      if (!this.canWrite()) return;
       this.addStatus = 1;
       this.$message({ message: '请点击地图上的位置', type: 'warning' });
     },
@@ -285,7 +289,9 @@ export default {
           position: [lng, lat],
         });
         marker.on('click', () => {
-          this.handleModifyFormVisible(element);
+          if (this.canWrite()) {
+            this.handleModifyFormVisible(element);
+          }
         });
         this.markers.push(marker);
         this.map.add(marker);
@@ -321,6 +327,7 @@ export default {
         });
     },
     handleAddSalePlace(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
@@ -338,6 +345,7 @@ export default {
       });
     },
     handleModifyFormVisible(saleInfo) {
+      if (!this.canWrite()) return;
       this.modifyForm = {
         saleId: saleInfo.saleId,
         saleName: saleInfo.saleName,
@@ -349,6 +357,7 @@ export default {
       this.modifyFormVisible = true;
     },
     handleModifySalePlace(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;

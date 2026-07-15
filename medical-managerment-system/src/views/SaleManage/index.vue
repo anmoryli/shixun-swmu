@@ -21,7 +21,7 @@
       <div v-show="!visualization">
         <div class="main-title">
           <h3>销售地点列表</h3>
-          <button class="new-add" @click="addFormVisible = true" v-if="hasRole" />
+          <button class="new-add" @click="addFormVisible = true" v-if="$can('sale:write')" />
         </div>
         <!-- 搜索 -->
         <el-row :gutter="20">
@@ -61,7 +61,7 @@
               <span v-else class="coordinate-empty">暂未标注</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" v-if="hasRole">
+          <el-table-column label="操作" v-if="$can('sale:write')">
             <!-- 通过slot-scope拿到对应行的数据 -->
             <template #default="scope">
               <button
@@ -96,7 +96,7 @@
         <div class="map-toolbar">
           <el-button
             type="primary"
-            v-if="hasRole"
+            v-if="$can('sale:write')"
             @click="handleAdd"
           >新增地点</el-button>
           <span v-if="addStatus === 1" class="map-hint">
@@ -328,6 +328,9 @@ export default {
     };
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('sale:write');
+    },
     // 切换分页及首次进入获取数据
     getSalePlaceInfo() {
       this.$store.dispatch('saleInfoManage/getSalePlaceInfo', {
@@ -358,6 +361,7 @@ export default {
     },
     // 新增销售地点
     handleAddSalePlace(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
@@ -379,6 +383,7 @@ export default {
     },
     // 删除销售地点
     handleDeleteSalePlace(saleId, saleName) {
+      if (!this.canWrite()) return;
       this.$confirm(`确定要删除“${saleName}”的相关信息吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -401,6 +406,7 @@ export default {
     },
     // 控制修改销售地点信息的表单弹出
     handleModifyFormVisible(saleInfo) {
+      if (!this.canWrite()) return;
       this.modifyForm = {
         saleId: saleInfo.saleId,
         saleName: saleInfo.saleName,
@@ -413,6 +419,7 @@ export default {
     },
     // 修改销售地点信息
     handleModifySalePlace(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;
@@ -480,6 +487,7 @@ export default {
     },
     // 点击「新增地点」按钮，进入等待地图点击状态
     handleAdd() {
+      if (!this.canWrite()) return;
       this.addStatus = 1;
       this.$message({
         message: '请点击地图上的位置',
@@ -533,7 +541,9 @@ export default {
         });
         // 点击标记点 -> 打开修改弹窗
         marker.on('click', () => {
-          this.handleModifyFormVisible(element);
+          if (this.canWrite()) {
+            this.handleModifyFormVisible(element);
+          }
         });
         this.markers.push(marker);
         this.map.add(marker);

@@ -18,7 +18,7 @@
         <button
           class="new-add"
           @click="addFormVisible = true"
-          v-if="hasRole"
+          v-if="$can('company:write')"
           />
       </div>
       <!-- 搜索 -->
@@ -48,7 +48,7 @@
         </el-table-column>
         <el-table-column prop="companyPhone" label="公司电话">
         </el-table-column>
-        <el-table-column prop="companyOperation" label="操作" v-if="hasRole">
+        <el-table-column prop="companyOperation" label="操作" v-if="$can('company:write')">
           <!-- 通过slot-scope拿到对应行的数据 -->
           <template #default="scope">
             <button
@@ -209,6 +209,9 @@ export default {
     };
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('company:write');
+    },
     // 切换分页及首次进入获取数据
     getCompanyInfo() {
       this.$store.dispatch('companyInfoManage/getCompanyInfo', {
@@ -235,6 +238,7 @@ export default {
     },
     // 新增公司
     handleAddCompany(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.addFormVisible = false;
@@ -253,6 +257,7 @@ export default {
     },
     // 删除公司
     handleDeleteCompany(companyId, companyName) {
+      if (!this.canWrite()) return;
       this.$confirm(
         `确定要删除“${companyName}”的相关信息吗？该操作会同时删除对应的公司政策`,
         '提示',
@@ -279,6 +284,7 @@ export default {
     },
     // 控制修改公司信息的表单弹出
     handleModifyFormVisible(companyId, companyName, companyPhone) {
+      if (!this.canWrite()) return;
       this.modifyForm = {
         companyId,
         companyName,
@@ -288,6 +294,7 @@ export default {
     },
     // 修改公司信息
     handleModifyCompany(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.modifyFormVisible = false;

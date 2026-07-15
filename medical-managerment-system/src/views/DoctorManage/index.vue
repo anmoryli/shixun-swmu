@@ -15,7 +15,7 @@
       <!--header -->
       <div class="main-title">
         <h3>医生信息列表</h3>
-        <button class="new-add" @click="addFormVisible = true" v-if="hasRole" />
+        <button class="new-add" @click="addFormVisible = true" v-if="$can('doctor:write')" />
       </div>
       <!-- 搜索 -->
       <el-row :gutter="20">
@@ -48,7 +48,7 @@
         <el-table-column prop="doctorLevel" label="级别" sortable />
         <el-table-column prop="phoneNumber" label="手机号" />
         <el-table-column prop="treatType" label="诊治类别" sortable />
-        <el-table-column label="操作" width="210px" v-if="hasRole">
+        <el-table-column label="操作" width="210px" v-if="$can('doctor:write')">
           <template #default="scope">
             <button
               class="table-btn-delete"
@@ -351,6 +351,9 @@ export default {
     };
   },
   methods: {
+    canWrite() {
+      return typeof this.$can === 'function' && this.$can('doctor:write');
+    },
     // 切换分页及首次进入获取数据
     getDoctorInfo() {
       this.$store.dispatch('doctorInfoManage/getDoctorInfo', {
@@ -377,6 +380,7 @@ export default {
     },
     // 新增
     handleAddDoctor(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$store
@@ -405,6 +409,7 @@ export default {
     },
     // 删除
     handleDeleteDoctor(id, name) {
+      if (!this.canWrite()) return;
       this.$confirm(`确定要删除“${name}”的相关信息吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -436,6 +441,7 @@ export default {
       accountId,
       id
     ) {
+      if (!this.canWrite()) return;
       this.modifyForm = {
         name,
         age,
@@ -450,6 +456,7 @@ export default {
     },
     // 修改
     handleModifyDoctor(formName) {
+      if (!this.canWrite()) return;
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$store
@@ -482,6 +489,7 @@ export default {
     },
     // 重置医生密码
     resetPassword(id, name) {
+      if (!this.canWrite()) return;
       this.$confirm(`确定要重置“${name}”的密码吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
