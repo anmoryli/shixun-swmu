@@ -23,6 +23,12 @@ import java.util.List;
 @Service
 public class AuthService {
 
+    /**
+     * 用于对不存在用户名执行一次恒定时间 BCrypt 比对，消除登录响应时延差异，防止用户名枚举。
+     */
+    private static final String DUMMY_PASSWORD_HASH =
+            "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
+
     private final AccountMapper accountMapper;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
@@ -49,8 +55,13 @@ public class AuthService {
             throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号已锁定，请稍后再试");
         }
         Account account = accountMapper.findByUsername(trimmed);
-        if (account == null || !isActive(account) || account.getPwd() == null
-                || !passwordEncoder.matches(password, account.getPwd())) {
+        boolean matched = account != null && isActive(account) && account.getPwd() != null
+                && passwordEncoder.matches(password, account.getPwd());
+        if (!matched) {
+            // 恒定时间防用户名枚举：对不存在用户也执行一次 BCrypt 比对，抹平响应时延。
+            if (account == null) {
+                passwordEncoder.matches(password, DUMMY_PASSWORD_HASH);
+            }
             if (loginAttemptService != null) {
                 loginAttemptService.recordFailure(trimmed);
             }
