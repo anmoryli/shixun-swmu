@@ -136,6 +136,26 @@ class DoctorServiceTest {
     }
 
     @Test
+    void updateKeepsOnlyProvidedFieldsSoMissingOnesAreNotNulled() {
+        DoctorMapper mapper = mock(DoctorMapper.class);
+        when(mapper.findAccountId(10L)).thenReturn(20L);
+        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class));
+
+        // 仅改手机号,未携带 age/sex/levelId/typeId:动态 <set> 应跳过这些字段,不清空原值
+        assertThat(service.update(10L, Map.of("phoneNumber", "13900000000"))).isTrue();
+
+        ArgumentCaptor<Map<String, Object>> values = mapCaptor();
+        verify(mapper).updateDoctor(values.capture());
+        assertThat(values.getValue()).containsEntry("id", 10L)
+                .containsEntry("accountId", 20L)
+                .containsEntry("phoneNumber", "13900000000")
+                .doesNotContainKey("age")
+                .doesNotContainKey("sex")
+                .doesNotContainKey("levelId")
+                .doesNotContainKey("typeId");
+    }
+
+    @Test
     void deleteRemovesDoctorAndAccountInOneTransaction() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
