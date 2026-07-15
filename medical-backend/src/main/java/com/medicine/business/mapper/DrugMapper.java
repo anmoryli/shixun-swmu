@@ -18,14 +18,16 @@ import java.util.Map;
 @Mapper
 public interface DrugMapper {
     @Select("<script>SELECT COUNT(*) FROM drug <where>"
-            + "<if test='name != null and name != \"\"'>drug_name LIKE CONCAT('%', #{name}, '%')</if>"
+            + "deleted_at IS NULL "
+            + "<if test='name != null and name != \"\"'>AND drug_name LIKE CONCAT('%', #{name}, '%')</if>"
             + "</where></script>")
     long count(@Param("name") String name);
 
     @Select("<script>SELECT drug_id AS drugId, drug_name AS drugName, drug_info AS drugInfo, "
             + "drug_effect AS drugEffect, drug_img AS drugImg, publisher AS drugPublisher "
             + "FROM drug <where>"
-            + "<if test='name != null and name != \"\"'>drug_name LIKE CONCAT('%', #{name}, '%')</if>"
+            + "deleted_at IS NULL "
+            + "<if test='name != null and name != \"\"'>AND drug_name LIKE CONCAT('%', #{name}, '%')</if>"
             + "</where> ORDER BY drug_id LIMIT #{offset}, #{size}</script>")
     List<Map<String, Object>> page(@Param("name") String name,
                                    @Param("offset") int offset,
@@ -57,6 +59,7 @@ public interface DrugMapper {
     @Delete("DELETE FROM drug_sale WHERE drug_id=#{drugId}")
     int deleteSaleRelations(@Param("drugId") Long drugId);
 
-    @Delete("DELETE FROM drug WHERE drug_id=#{drugId}")
-    int deleteDrug(@Param("drugId") Long drugId);
+    @Update("UPDATE drug SET deleted_at=NOW(), deleted_by=#{deletedBy}, updatetime=NOW() "
+            + "WHERE drug_id=#{drugId} AND deleted_at IS NULL")
+    int softDeleteDrug(@Param("drugId") Long drugId, @Param("deletedBy") Long deletedBy);
 }

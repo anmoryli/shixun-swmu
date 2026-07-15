@@ -177,7 +177,7 @@ class BusinessServicesTest {
         service.update(8L, Map.of("saleIds", "not-an-iterable"));
         service.delete(7L);
         verify(mapper, atLeastOnce()).insertSaleRelation(7L, 9L);
-        verify(mapper).deleteDrug(7L);
+        verify(mapper).softDeleteDrug(eq(7L), any());
     }
 
     @Test
