@@ -1697,3 +1697,14 @@ body.medical-ui .el-cascader-menu__item.focus {
   background: var(--app-accent-soft);
   color: var(--app-accent-strong);
 }
+
+/* ===== 对话框夜间适配补充 ===== */
+body.medical-ui .el-dialog__body {
+  color: var(--app-ink);
+}
+body.medical-ui .el-dialog__headerbtn:hover .el-dialog__close {
+  color: var(--app-accent-strong);
+}
+body.medical-ui .el-dialog__footer {
+  border-top-color: var(--app-line);
+}
