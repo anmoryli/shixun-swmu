@@ -85,11 +85,12 @@
       <div class="pagination">
         <pagination
           :page="currentPage"
-          :layout="'total,prev,pager,next,jumper'"
+          :layout="'total,sizes,prev,pager,next,jumper'"
           :total="tableData.total"
           :page-size="pageSize"
           @currentChange="handleCurrentChange($event)"
           @update:page="currentPage = $event"
+          @update:page-size="pageSize = $event"
         ></pagination>
       </div>
     </el-main>
@@ -317,7 +318,7 @@ export default {
     };
     return {
       currentPage: 1,
-      pageSize: 5, // 每页的数据条数
+      pageSize: 10, // 每页的数据条数
       keywordDefault: '',
       addFormVisible: false, // 控制新增页面的显示
       resetPwdDialogVisible: false, // 控制重置密码对话框显示
