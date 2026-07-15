@@ -4,7 +4,6 @@
 
 package com.medicine.business.mapper;
 
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,6 +18,7 @@ public interface MedicalPolicyMapper {
     String FROM_SQL = " FROM medical_policy mp LEFT JOIN city c ON c.city_id=mp.city_id "
             + "LEFT JOIN sysregion r ON r.id=c.city_number LEFT JOIN sysregion p ON p.id=r.parent_id ";
     String FILTER_SQL = "<where>"
+            + "mp.deleted_at IS NULL "
             + "<if test='id != null'>AND mp.id=#{id}</if>"
             + "<if test='cityId != null'>AND mp.city_id=#{cityId}</if>"
             + "<if test='title != null and title != \"\"'>AND mp.title LIKE CONCAT('%', #{title}, '%')</if>"
@@ -58,6 +58,7 @@ public interface MedicalPolicyMapper {
                @Param("updateTime") String updateTime,
                @Param("message") String message);
 
-    @Delete("DELETE FROM medical_policy WHERE id=#{id}")
-    int delete(@Param("id") Long id);
+    @Update("UPDATE medical_policy SET deleted_at=NOW(), deleted_by=#{deletedBy} "
+            + "WHERE id=#{id} AND deleted_at IS NULL")
+    int softDelete(@Param("id") Long id, @Param("deletedBy") Long deletedBy);
 }

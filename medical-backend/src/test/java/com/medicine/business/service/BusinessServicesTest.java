@@ -118,7 +118,7 @@ class BusinessServicesTest {
         assertThrows(BusinessException.class, () -> service.add(Map.of(), 5));
         service.update(2L, Map.of("updateTime", ""));
         service.delete(1L);
-        verify(mapper).delete(1L);
+        verify(mapper).softDelete(eq(1L), any());
     }
 
     @Test
