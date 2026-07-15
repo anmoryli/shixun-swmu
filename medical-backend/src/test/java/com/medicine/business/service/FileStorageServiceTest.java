@@ -104,6 +104,14 @@ class FileStorageServiceTest {
                 .containsExactly(ErrorCode.INTERNAL_ERROR, "图片保存失败");
     }
 
+    @Test
+    void rejectsTraversalWhenResolvingGeneratedTargets() {
+        FileStorageService service = new FileStorageService(tempDirectory.toString());
+        assertThatThrownBy(() -> service.resolveTarget("../outside.png"))
+                .isInstanceOf(BusinessException.class)
+                .extracting("code").isEqualTo(ErrorCode.INVALID_ARGUMENT);
+    }
+
     private void assertInvalid(Runnable operation, String messageFragment) {
         assertThatThrownBy(operation::run)
                 .isInstanceOf(BusinessException.class)
