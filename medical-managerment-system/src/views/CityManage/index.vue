@@ -25,7 +25,7 @@
               placeholder="查询（输入要查询的城市或省份）"
               size="small"
               v-model="keyword"
-              @input="handelQuery"
+              @input="debouncedQuery"
             >
             </el-input>
           </keep-alive>
@@ -101,6 +101,7 @@
 import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import rules from '../../utils/validator';
+import debounce from '../../utils/debounce';
 import { provinceAndCityData } from 'element-china-area-data';
 
 export default {
@@ -202,6 +203,10 @@ export default {
   },
   mounted() {
     this.getCityInfo(); // 首次渲染
+  },
+  created() {
+    // 搜索输入防抖:停止输入 300ms 后再查询,避免每次按键都发请求
+    this.debouncedQuery = debounce((keyword) => this.handelQuery(keyword), 300);
   },
   computed: {
     ...mapGetters({
