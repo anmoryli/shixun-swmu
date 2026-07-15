@@ -64,6 +64,7 @@ public class DrugService {
         values.put("drugEffect", PageSupport.stringValue(request.get("drugEffect")).orElse(null));
         values.put("drugImg", PageSupport.stringValue(request.get("drugImg")).orElse(null));
         values.put("drugPublisher", PageSupport.stringValue(request.get("drugPublisher")).orElse(null));
+        values.put("createBy", AuditSupport.currentAccountId());
         mapper.insertDrug(values);
         OptionalLong drugIdOpt = PageSupport.longValue(values.get("drugId"));
         Long drugId = drugIdOpt.isPresent() ? drugIdOpt.getAsLong() : null;
@@ -75,6 +76,7 @@ public class DrugService {
     public void update(Long id, Map<String, Object> request) {
         Map<String, Object> values = new LinkedHashMap<>(request);
         values.put("drugId", id);
+        values.put("updateBy", AuditSupport.currentAccountId());
         mapper.updateDrug(values);
         // 仅当请求显式携带 saleIds 字段时才重建销售关联,避免仅修改药品信息时误清空关联
         if (request.containsKey("saleIds")) {

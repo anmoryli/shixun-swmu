@@ -39,8 +39,8 @@ public interface DrugMapper {
             + "ORDER BY ds.id</script>")
     List<Map<String, Object>> findSales(@Param("drugIds") List<Long> drugIds);
 
-    @Insert("INSERT INTO drug(drug_name, drug_info, drug_effect, drug_img, createtime, updatetime, publisher) "
-            + "VALUES(#{drugName}, #{drugInfo}, #{drugEffect}, #{drugImg}, NOW(), NOW(), #{drugPublisher})")
+    @Insert("INSERT INTO drug(drug_name, drug_info, drug_effect, drug_img, createtime, updatetime, publisher, create_by) "
+            + "VALUES(#{drugName}, #{drugInfo}, #{drugEffect}, #{drugImg}, NOW(), NOW(), #{drugPublisher}, #{createBy})")
     @Options(useGeneratedKeys = true, keyProperty = "drugId", keyColumn = "drug_id")
     int insertDrug(Map<String, Object> drug);
 
@@ -52,6 +52,7 @@ public interface DrugMapper {
             + "<if test='drugInfo != null'>drug_info=#{drugInfo},</if>"
             + "<if test='drugEffect != null'>drug_effect=#{drugEffect},</if>"
             + "<if test='drugImg != null'>drug_img=#{drugImg},</if>"
+            + "<if test='updateBy != null'>update_by=#{updateBy},</if>"
             + "updatetime=NOW()"
             + "</set> WHERE drug_id=#{drugId}</script>")
     int updateDrug(Map<String, Object> drug);
