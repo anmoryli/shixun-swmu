@@ -1516,3 +1516,12 @@ body.medical-ui .el-table__row .el-table__cell {
 body.medical-ui .el-table--striped .el-table__body tr.el-table__row--striped .el-table__cell {
   background: var(--app-surface-muted) !important;
 }
+
+/* ===== 表格夜间适配：悬停与当前行 ===== */
+body.medical-ui .el-table__body tr:hover > .el-table__cell,
+body.medical-ui .el-table__body tr.hover-row > .el-table__cell {
+  background: var(--app-accent-soft) !important;
+}
+body.medical-ui .el-table__body tr.current-row > .el-table__cell {
+  background: var(--app-accent-wash) !important;
+}
