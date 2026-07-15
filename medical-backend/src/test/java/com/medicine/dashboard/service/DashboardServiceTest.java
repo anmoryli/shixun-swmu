@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.cache.annotation.AnnotationCacheOperationSource;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.interceptor.BeanFactoryCacheOperationSourceAdvisor;
 import org.springframework.cache.interceptor.CacheInterceptor;
 
 import java.util.Collections;
@@ -53,12 +54,16 @@ class DashboardServiceTest {
         when(mapper.findTreatTypes()).thenReturn(Collections.emptyList());
         when(mapper.findNews()).thenReturn(Collections.emptyList());
 
+        AnnotationCacheOperationSource cacheOperationSource = new AnnotationCacheOperationSource();
         CacheInterceptor cacheInterceptor = new CacheInterceptor();
         cacheInterceptor.setCacheManager(new ConcurrentMapCacheManager(DashboardCacheNames.DASHBOARD));
-        cacheInterceptor.setCacheOperationSources(new AnnotationCacheOperationSource());
+        cacheInterceptor.setCacheOperationSources(cacheOperationSource);
         cacheInterceptor.afterPropertiesSet();
+        BeanFactoryCacheOperationSourceAdvisor advisor = new BeanFactoryCacheOperationSourceAdvisor();
+        advisor.setCacheOperationSource(cacheOperationSource);
+        advisor.setAdvice(cacheInterceptor);
         ProxyFactory proxyFactory = new ProxyFactory(new DashboardService(mapper));
-        proxyFactory.addAdvice(cacheInterceptor);
+        proxyFactory.addAdvisor(advisor);
         DashboardService cachedService = (DashboardService) proxyFactory.getProxy();
 
         cachedService.getDashboard();
