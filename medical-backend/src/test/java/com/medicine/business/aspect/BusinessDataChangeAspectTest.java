@@ -28,7 +28,7 @@ class BusinessDataChangeAspectTest {
 
         new BusinessDataChangeAspect(publisher).publishDataChangedEvent(joinPoint);
 
-        verify(publisher).publishEvent(argThat(event -> event instanceof BusinessDataChangedEvent
+        verify(publisher).publishEvent(argThat((Object event) -> event instanceof BusinessDataChangedEvent
                 && "DoctorService.add(..)".equals(((BusinessDataChangedEvent) event).operation())));
     }
 }
