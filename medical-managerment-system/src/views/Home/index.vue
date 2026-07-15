@@ -27,27 +27,33 @@
 
     <section class="charts-grid">
       <el-card class="chart-card" shadow="never">
-        <div slot="header" class="section-title">
-          <span>医生职称分布</span>
-          <small>按职称级别统计</small>
-        </div>
+        <template #header>
+          <div class="section-title">
+            <span>医生职称分布</span>
+            <small>按职称级别统计</small>
+          </div>
+        </template>
         <div ref="doctorLevelChart" class="chart-canvas"></div>
       </el-card>
       <el-card class="chart-card" shadow="never">
-        <div slot="header" class="section-title">
-          <span>医院科室构成</span>
-          <small>按治疗类型统计</small>
-        </div>
+        <template #header>
+          <div class="section-title">
+            <span>医院科室构成</span>
+            <small>按治疗类型统计</small>
+          </div>
+        </template>
         <div ref="treatTypeChart" class="chart-canvas"></div>
       </el-card>
     </section>
 
     <section class="content-grid">
       <el-card class="carousel-card" shadow="never">
-        <div slot="header" class="section-title">
-          <span>医疗资讯</span>
-          <small>健康服务与用药管理</small>
-        </div>
+        <template #header>
+          <div class="section-title">
+            <span>医疗资讯</span>
+            <small>健康服务与用药管理</small>
+          </div>
+        </template>
         <el-carousel :interval="4000" height="300px" trigger="click" arrow="hover">
           <el-carousel-item v-for="(item, index) in picList" :key="index">
             <el-image
@@ -61,10 +67,12 @@
       </el-card>
 
       <el-card class="quick-card" shadow="never">
-        <div slot="header" class="section-title">
-          <span>功能导航</span>
-          <small>常用业务入口</small>
-        </div>
+        <template #header>
+          <div class="section-title">
+            <span>功能导航</span>
+            <small>常用业务入口</small>
+          </div>
+        </template>
         <div class="quick-list">
           <div
             v-for="card in availableCardList"
@@ -89,10 +97,12 @@
 
     <section class="news-section">
       <el-card class="news-card" shadow="never">
-        <div slot="header" class="section-title">
-          <span>最新政策资讯</span>
-          <small>医疗政策 / 企业政策 / 必备材料</small>
-        </div>
+        <template #header>
+          <div class="section-title">
+            <span>最新政策资讯</span>
+            <small>医疗政策 / 企业政策 / 必备材料</small>
+          </div>
+        </template>
         <ul class="news-list" v-loading="dashboardLoading">
           <li
             v-for="item in newsList"
