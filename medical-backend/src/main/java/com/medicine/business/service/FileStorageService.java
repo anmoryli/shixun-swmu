@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -43,8 +44,8 @@ public class FileStorageService {
         if (file.getSize() > MAX_IMAGE_SIZE) {
             throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "图片大小不能超过 2MB");
         }
-        try {
-            BufferedImage image = ImageIO.read(file.getInputStream());
+        try (InputStream input = file.getInputStream()) {
+            BufferedImage image = ImageIO.read(input);
             if (image == null || image.getWidth() < 1 || image.getHeight() < 1
                     || image.getWidth() > 8000 || image.getHeight() > 8000) {
                 throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "图片内容无效或尺寸过大");
@@ -54,10 +55,10 @@ public class FileStorageService {
         }
         String extension = "image/png".equals(contentType) ? ".png" : ".jpg";
         String fileName = UUID.randomUUID() + extension;
-        try {
+        try (InputStream input = file.getInputStream()) {
             Files.createDirectories(directory);
             Path target = resolveTarget(fileName);
-            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(input, target, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException exception) {
             throw new BusinessException(ErrorCode.INTERNAL_ERROR, "图片保存失败");
