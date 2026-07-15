@@ -179,11 +179,13 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleAddMedicalPolicy('addForm')"
-          >确 定</el-button>
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="addFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleAddMedicalPolicy('addForm')"
+            >确 定</el-button>
+        </div>
+      </template>
     </el-dialog>
     <!-- 点击修改后的弹窗 -->
     <el-dialog
@@ -225,14 +227,16 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="modifyFormVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="handleModifyMedicalPolicy('modifyForm')"
-          >确 定</el-button
-        >
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="modifyFormVisible = false">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="handleModifyMedicalPolicy('modifyForm')"
+            >确 定</el-button
+          >
+        </div>
+      </template>
     </el-dialog>
   </el-container>
 </template>
