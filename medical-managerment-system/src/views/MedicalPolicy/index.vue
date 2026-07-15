@@ -414,7 +414,7 @@ export default {
 @import "../../style/infoManage.less";
 
 .search-policy {
-  background-color: #fff;
+  background-color: var(--app-surface);
   margin-bottom: 10px;
   .demo-input-suffix {
     width: 700px;
@@ -436,6 +436,6 @@ export default {
   }
 }
 .table-policy {
-  border-top: 3px solid #e8ebed;
+  border-top: 3px solid var(--app-line);
 }
 </style>
