@@ -4,8 +4,11 @@
 
 import { createStore } from 'vuex';
 import getters from './getters';
-// 通过正则表达式获取modules文件夹下的所有js文件
-const modulesFiles = import.meta.glob('./modules/*.js', { eager: true });
+// 只加载生产模块，避免把 Vitest 的 *.test.js / *.spec.js 文件打进生产包。
+const modulesFiles = import.meta.glob(
+  ['./modules/*.js', '!./modules/*.test.js', '!./modules/*.spec.js'],
+  { eager: true },
+);
 // 遍历模块文件,将所有的单个模块,汇总成符合vuex规范的modules.
 // 原版把 reduce 回调内的 result 忽略,直接写 modules[moduleName]=...,在 const
 // modules 声明前访问该标识符会被 strict mode 抛 ReferenceError;webpack 把
