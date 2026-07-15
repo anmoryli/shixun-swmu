@@ -7,6 +7,7 @@ package com.medicine.business.service;
 import com.medicine.business.mapper.DoctorMapper;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
+import com.medicine.security.TokenService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,12 @@ import java.util.Map;
 public class DoctorService {
     private final DoctorMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
-    public DoctorService(DoctorMapper mapper, PasswordEncoder passwordEncoder) {
+    public DoctorService(DoctorMapper mapper, PasswordEncoder passwordEncoder, TokenService tokenService) {
         this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
     }
 
     @Transactional(readOnly = true)
@@ -101,11 +104,15 @@ public class DoctorService {
     }
 
     @Transactional
-    public void resetPassword(Long accountId, Long operatorAccountId) {
-        if (mapper.resetPassword(accountId, passwordEncoder.encode(generateTempPassword())) == 0) {
+    public String resetPassword(Long accountId, Long operatorAccountId) {
+        String tempPassword = generateTempPassword();
+        if (mapper.resetPassword(accountId, passwordEncoder.encode(tempPassword)) == 0) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "医生账号不存在");
         }
         mapper.insertPasswordResetAudit(accountId, operatorAccountId);
+        // 密码已变更,失效该账号所有现有会话,强制重新登录
+        tokenService.invalidateByAccountId(accountId);
+        return tempPassword;
     }
 
     /**
