@@ -1471,3 +1471,31 @@ body.medical-ui {
   --el-fill-color-dark: var(--app-surface-muted);
   --el-mask-color: rgba(31, 58, 71, 0.5);
 }
+
+/* ===== element-plus 变量调和：夜间模式覆盖 ===== */
+html.dark body.medical-ui {
+  --el-bg-color: var(--app-surface);
+  --el-bg-color-page: var(--app-canvas);
+  --el-bg-color-overlay: var(--app-surface-solid);
+  --el-color-primary: var(--app-accent);
+  --el-color-primary-light-9: var(--app-accent-soft);
+  --el-color-primary-light-7: var(--app-accent-soft);
+  --el-color-primary-light-5: var(--app-accent-wash);
+  --el-color-primary-light-3: var(--app-accent-wash);
+  --el-color-primary-dark-2: var(--app-accent-strong);
+  --el-text-color-primary: var(--app-ink);
+  --el-text-color-regular: var(--app-ink-soft);
+  --el-text-color-secondary: var(--app-ink-faint);
+  --el-text-color-placeholder: var(--app-ink-faint);
+  --el-text-color-disabled: var(--app-ink-faint);
+  --el-border-color: var(--app-line-strong);
+  --el-border-color-light: var(--app-line);
+  --el-border-color-lighter: var(--app-line);
+  --el-border-color-extra-light: var(--app-line);
+  --el-fill-color: var(--app-surface-muted);
+  --el-fill-color-light: var(--app-surface-muted);
+  --el-fill-color-lighter: var(--app-surface-muted);
+  --el-fill-color-extra-light: var(--app-surface-muted);
+  --el-fill-color-blank: var(--app-surface);
+  --el-mask-color: rgba(0, 0, 0, 0.5);
+}
