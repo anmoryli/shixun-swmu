@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -73,9 +74,11 @@ public class DoctorController {
 
     @PutMapping("/reset/{accountId}")
     @PreAuthorize("hasAuthority('doctor:reset-password')")
-    public ApiResponse<Void> reset(@PathVariable Long accountId,
-                                   @AuthenticationPrincipal AuthSession operator) {
-        service.resetPassword(accountId, operator.getUserId());
-        return ApiResponse.success();
+    public ApiResponse<Map<String, Object>> reset(@PathVariable Long accountId,
+                                                   @AuthenticationPrincipal AuthSession operator) {
+        String tempPassword = service.resetPassword(accountId, operator.getUserId());
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("tempPassword", tempPassword);
+        return ApiResponse.success(data);
     }
 }
