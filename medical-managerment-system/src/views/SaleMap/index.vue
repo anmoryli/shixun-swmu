@@ -80,12 +80,14 @@
             <span class="coordinate-hint">范围 -90 ～ 90</span>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="addFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleAddSalePlace('addForm')">
-            确 定
-          </el-button>
-        </div>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="addFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleAddSalePlace('addForm')">
+              确 定
+            </el-button>
+          </div>
+        </template>
       </el-dialog>
 
       <!-- 修改弹窗 -->
@@ -148,12 +150,14 @@
             <span class="coordinate-hint">范围 -90 ～ 90</span>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="modifyFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="handleModifySalePlace('modifyForm')">
-            确 定
-          </el-button>
-        </div>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="modifyFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleModifySalePlace('modifyForm')">
+              确 定
+            </el-button>
+          </div>
+        </template>
       </el-dialog>
     </el-main>
   </el-container>
