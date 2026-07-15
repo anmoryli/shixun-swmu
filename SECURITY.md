@@ -28,6 +28,13 @@
 - Actuator:`/actuator/health` 的 `show-details=when-authorized`,`/actuator/info` 需认证。
 - 业务图片 `/image/**` 需认证(同源 httpOnly cookie 自动携带,UUID 不再可无鉴权下载)。
 - nginx 全站下发 `X-Frame-Options`、`X-Content-Type-Options`、`Referrer-Policy` 安全响应头。
+- **内容安全策略(CSP)**:nginx 全站(静态资源、`/image/`、根路由)下发 `Content-Security-Policy`,仅放行同源与高德地图域名(`webapi.amap.com`/`restapi.amap.com`),`object-src 'none'`、`base-uri 'self'`、`frame-ancestors 'self'`,阻断注入脚本与内嵌框架(见 `medical-managerment-system/nginx/default.conf` 与 `deploy/nginx/medicine.conf`)。
+- **HTTP 状态码语义**:`GlobalExceptionHandler` 按业务错误码映射到正确的 HTTP 状态(参数错误 400、未认证 401、禁止 403、不存在 404、重复 409、服务端错误 500);`RestAuthenticationEntryPoint` 返回 401、`RestAccessDeniedHandler` 返回 403(原先均误返 200)。前端 axios `validateStatus` 放行 `< 500`,使 4xx 仍走业务分支处理跳转,不被拦截器吞掉。
+
+### 数据生命周期与审计
+- **软删除**:doctor/drug/medical_policy/company_policy/material/sale 六张核心业务表的删除改为 `UPDATE ... SET deleted_at=NOW(), deleted_by=?`(V8 迁移),误删可恢复;所有列表/分页/详情查询均过滤 `deleted_at IS NULL`,drug 查询侧同步过滤已删销售点。doctor 软删除后账号改禁用(`status=0`)而非硬删,规避 `account` 外键 RESTRICT,同时失效其会话。
+- **操作者审计**:上述六张表新增 `create_by`/`update_by`(V9 迁移),由 `AuditSupport.currentAccountId()` 从 SecurityContext 取登录账号 id,在新增/修改时写入,数据改动可追溯责任人;`deleted_by` 同理记录删除者。
+- **账号生命周期**见下节。
 
 ### 账号生命周期
 - 重置密码生成 8 位随机临时密码(移除硬编码弱口令 `123456`),接口返回供管理员转交。
