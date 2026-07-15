@@ -1803,3 +1803,21 @@ body.medical-ui .el-empty__description {
 body.medical-ui .el-empty__description p {
   color: var(--app-ink-faint);
 }
+
+/* ===== 折叠面板夜间适配 ===== */
+body.medical-ui .el-collapse-item__header {
+  background: var(--app-surface);
+  color: var(--app-ink);
+  border-bottom-color: var(--app-line);
+}
+body.medical-ui .el-collapse-item__header:hover {
+  color: var(--app-accent-strong);
+}
+body.medical-ui .el-collapse-item__content {
+  background: var(--app-surface);
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-collapse-item__wrap {
+  border-bottom-color: var(--app-line);
+  background: var(--app-surface);
+}
