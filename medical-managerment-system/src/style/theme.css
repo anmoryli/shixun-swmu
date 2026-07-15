@@ -1648,3 +1648,16 @@ body.medical-ui .el-textarea__inner[readonly] {
   background: var(--app-surface-muted);
   color: var(--app-ink-soft);
 }
+
+/* ===== 下拉选择夜间适配 ===== */
+body.medical-ui .el-select-dropdown__item {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-select-dropdown__item.is-disabled {
+  color: var(--app-ink-faint);
+}
+body.medical-ui .el-select .el-tag {
+  background: var(--app-accent-soft);
+  border-color: var(--app-line);
+  color: var(--app-accent-strong);
+}
