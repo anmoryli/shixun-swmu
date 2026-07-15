@@ -71,11 +71,12 @@
         <div class="pagination">
           <pagination
             :page="currentPage"
-            :layout="'total,prev,pager,next,jumper'"
+            :layout="'total,sizes,prev,pager,next,jumper'"
             :total="tableData.total"
             :page-size="pageSize"
             @currentChange="handleCurrentChange($event)"
             @update:page="currentPage = $event"
+            @update:page-size="pageSize = $event"
           ></pagination>
         </div>
       </el-main>
@@ -180,7 +181,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 10,
       keywordDefault: '',
       addFormVisible: false,
       addForm: {

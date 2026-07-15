@@ -3,8 +3,10 @@
     <el-pagination
       v-model:current-page="currentPage"
       v-model:page-size="currentPageSize"
+      :page-sizes="pageSizes"
       :layout="layout"
       :total="total"
+      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
   </div>
@@ -27,7 +29,11 @@ export default {
     },
     pageSize: {
       type: Number,
-      default: 1,
+      default: 10,
+    },
+    pageSizes: {
+      type: Array,
+      default: () => [10, 20, 50],
     },
   },
   computed: {
@@ -49,6 +55,9 @@ export default {
     },
   },
   methods: {
+    handleSizeChange(val) {
+      this.$emit('currentChange', { page: this.currentPage, limit: val });
+    },
     handleCurrentChange(val) {
       this.$emit('currentChange', { page: val, limit: this.pageSize });
     },
