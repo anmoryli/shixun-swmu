@@ -2,8 +2,8 @@
   height: 100%;
 }
 .el-container .el-header {
-  background-color: #fff;
-  border-bottom: 1px solid #e6e9eb;
+  background-color: var(--app-surface);
+  border-bottom: 1px solid var(--app-line);
   padding: 15px 20px 0 20px;
 }
 .el-container .el-header h2 {
@@ -13,15 +13,15 @@
 .el-container .el-main {
   box-sizing: border-box;
   margin: 20px 15px 10px 20px;
-  background-color: #fff;
-  border-top: 3px solid #e8ebed;
+  background-color: var(--app-surface);
+  border-top: 3px solid var(--app-line);
   padding: 0;
   overflow: hidden;
 }
 .el-container .el-main .main-title {
   height: 35px;
   padding: 10px;
-  border-bottom: 1px solid #e6e9eb;
+  border-bottom: 1px solid var(--app-line);
   margin-bottom: 10px;
 }
 .el-container .el-main .main-title h3 {
