@@ -22,6 +22,9 @@ import com.medicine.security.TokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Collections;
+import java.util.List;
+
 class AuthServiceTest {
 
     @Test
@@ -62,6 +65,26 @@ class AuthServiceTest {
                 .extracting("code").isEqualTo(ErrorCode.FORBIDDEN);
         assertThatThrownBy(() -> AuthService.toNumericUserType(null))
                 .isInstanceOf(BusinessException.class);
+    }
+
+    @Test
+    void databaseRolesAreRequiredWhenPermissionServiceIsConfigured() {
+        AccountMapper accountMapper = mock(AccountMapper.class);
+        TokenService tokenService = mock(TokenService.class);
+        PermissionService permissionService = mock(PermissionService.class);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Account account = account(encoder.encode("secret"), "ROLE_1");
+        when(accountMapper.findByUsername("admin_1")).thenReturn(account);
+        when(permissionService.findRoleCodes(1L)).thenReturn(Collections.emptyList());
+
+        AuthService service = new AuthService(accountMapper, encoder, tokenService, permissionService);
+        assertThatThrownBy(() -> service.login("admin_1", "secret"))
+                .isInstanceOf(BusinessException.class)
+                .extracting("code").isEqualTo(ErrorCode.LOGIN_FAILED);
+
+        when(permissionService.findRoleCodes(1L)).thenReturn(List.of("ADMIN"));
+        when(tokenService.create(any(AuthSession.class))).thenReturn("raw-token");
+        assertThat(service.login("admin_1", "secret").getToken()).isEqualTo("raw-token");
     }
 
     private Account account(String password, String roleName) {

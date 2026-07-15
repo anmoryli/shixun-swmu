@@ -69,15 +69,8 @@ public class AuthService {
     }
 
     static int toNumericUserType(String roleName) {
-        if (roleName != null && roleName.startsWith("ROLE_")) {
-            try {
-                int value = Integer.parseInt(roleName.substring("ROLE_".length()));
-                if (value >= 1 && value <= 3) {
-                    return value;
-                }
-            } catch (NumberFormatException ignored) {
-                // handled below
-            }
+        if (roleName != null && roleName.matches("ROLE_[1-3]")) {
+            return roleName.charAt(roleName.length() - 1) - '0';
         }
         throw new BusinessException(ErrorCode.FORBIDDEN, "账号角色配置错误");
     }

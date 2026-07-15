@@ -99,6 +99,21 @@ class DoctorServiceTest {
     }
 
     @Test
+    void addRollsBackWhenDoctorRoleCannotBeInitialized() {
+        DoctorMapper mapper = mock(DoctorMapper.class);
+        doAnswer(invocation -> {
+            ((Map<String, Object>) invocation.getArgument(0)).put("id", 10L);
+            return 1;
+        }).when(mapper).insertAccount(anyMap());
+        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class));
+
+        assertThatThrownBy(() -> service.add(Map.of("name", "李医生"), 5))
+                .isInstanceOf(BusinessException.class)
+                .extracting("code").isEqualTo(ErrorCode.INTERNAL_ERROR);
+        verify(mapper, never()).insertDoctor(anyMap());
+    }
+
+    @Test
     void updateRejectsMissingDoctorAndDuplicatePhone() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class));

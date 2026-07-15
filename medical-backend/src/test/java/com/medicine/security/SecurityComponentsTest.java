@@ -1,6 +1,7 @@
 package com.medicine.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.medicine.auth.service.PermissionService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
@@ -11,6 +12,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.http.Cookie;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,6 +65,26 @@ class SecurityComponentsTest {
         request.setCookies(new Cookie("medicine_token", "present"));
         filter.doFilterInternal(request, new MockHttpServletResponse(), new MockFilterChain());
         verifyNoInteractions(tokenService);
+    }
+
+    @Test
+    void tokenFilterRejectsSessionsWithoutUsableDatabaseAuthorities() throws Exception {
+        TokenService tokenService = mock(TokenService.class);
+        PermissionService permissionService = mock(PermissionService.class);
+        TokenAuthenticationFilter filter = new TokenAuthenticationFilter(
+                tokenService, new CookieProperties(), permissionService);
+        AuthSession session = new AuthSession(1L, "admin", "Admin", "ROLE_1", 1, "15900000000");
+        when(tokenService.find("token")).thenReturn(Optional.of(session));
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer token");
+        when(permissionService.findAuthorities(1L)).thenReturn(Collections.emptyList());
+        filter.doFilterInternal(request, new MockHttpServletResponse(), new MockFilterChain());
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+
+        when(permissionService.findAuthorities(1L)).thenReturn(Arrays.asList("", null));
+        filter.doFilterInternal(request, new MockHttpServletResponse(), new MockFilterChain());
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
