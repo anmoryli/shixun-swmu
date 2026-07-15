@@ -8,6 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.mock;
@@ -17,6 +19,7 @@ import static org.mockito.Mockito.when;
 import com.medicine.business.mapper.DoctorMapper;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
+import com.medicine.security.TokenService;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -33,7 +36,7 @@ class DoctorServiceTest {
         when(mapper.count("李")).thenReturn(11L);
         when(mapper.page("李", 0, 200)).thenReturn(List.of(Map.of("id", 1)));
 
-        Map<String, Object> result = new DoctorService(mapper, mock(PasswordEncoder.class))
+        Map<String, Object> result = new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class))
                 .page(0, 999, "李");
 
         assertThat(result).containsEntry("total", 11L)
@@ -50,7 +53,7 @@ class DoctorServiceTest {
         when(mapper.findAllLevels()).thenReturn(levels);
         when(mapper.findAllTreatTypes()).thenReturn(types);
 
-        assertThat(new DoctorService(mapper, mock(PasswordEncoder.class)).levelAndType())
+        assertThat(new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class)).levelAndType())
                 .containsEntry("allLevel", levels)
                 .containsEntry("allTreatType", types);
     }
@@ -59,7 +62,7 @@ class DoctorServiceTest {
     void addRejectsDuplicatePhoneWithoutWriting() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         when(mapper.countPhone("15900000000")).thenReturn(1L);
-        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class));
+        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class));
 
         assertThat(service.add(Map.of("phoneNumber", "15900000000"), 5)).isEqualTo(-1);
 
@@ -80,7 +83,7 @@ class DoctorServiceTest {
             return 1;
         }).when(mapper).insertAccount(anyMap());
         when(mapper.bindDoctorRole(anyLong())).thenReturn(1);
-        DoctorService service = new DoctorService(mapper, encoder);
+        DoctorService service = new DoctorService(mapper, encoder, mock(TokenService.class));
         Map<String, Object> request = Map.of(
                 "name", " 李医生 ", "phoneNumber", "15900000000", "pwd", "initial-password");
 
@@ -101,7 +104,7 @@ class DoctorServiceTest {
     @Test
     void updateRejectsMissingDoctorAndDuplicatePhone() {
         DoctorMapper mapper = mock(DoctorMapper.class);
-        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class));
+        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class));
         when(mapper.findAccountId(10L)).thenReturn(null);
 
         assertThatThrownBy(() -> service.update(10L, Map.of()))
@@ -119,7 +122,7 @@ class DoctorServiceTest {
     void updateWritesNormalizedDoctorAndAccountData() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         when(mapper.findAccountId(10L)).thenReturn(20L);
-        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class));
+        DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class));
 
         assertThat(service.update(10L, Map.of("name", " 李医生 ", "phoneNumber", "15900000000")))
                 .isTrue();
@@ -136,7 +139,7 @@ class DoctorServiceTest {
     void deleteRemovesDoctorAndAccountInOneTransaction() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
-        DoctorService service = new DoctorService(mapper, encoder);
+        DoctorService service = new DoctorService(mapper, encoder, mock(TokenService.class));
         when(mapper.findAccountId(51L)).thenReturn(91L);
 
         service.delete(51L);
@@ -149,7 +152,7 @@ class DoctorServiceTest {
     void deleteToleratesDoctorWithoutAccount() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         when(mapper.findAccountId(51L)).thenReturn((Long) null);
-        new DoctorService(mapper, mock(PasswordEncoder.class)).delete(51L);
+        new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class)).delete(51L);
 
         verify(mapper).deleteDoctor(51L);
         verify(mapper, never()).deleteAccount(org.mockito.ArgumentMatchers.anyLong());
@@ -159,9 +162,9 @@ class DoctorServiceTest {
     void resetPasswordWritesAuditOnlyAfterSuccessfulUpdate() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode(DoctorService.RESET_PASSWORD)).thenReturn("reset-hash");
+        when(encoder.encode(anyString())).thenReturn("reset-hash");
         when(mapper.resetPassword(20L, "reset-hash")).thenReturn(1);
-        DoctorService service = new DoctorService(mapper, encoder);
+        DoctorService service = new DoctorService(mapper, encoder, mock(TokenService.class));
 
         service.resetPassword(20L, 1L);
 
@@ -172,8 +175,8 @@ class DoctorServiceTest {
     void resetPasswordRejectsMissingAccountWithoutAudit() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode(DoctorService.RESET_PASSWORD)).thenReturn("reset-hash");
-        DoctorService service = new DoctorService(mapper, encoder);
+        when(encoder.encode(anyString())).thenReturn("reset-hash");
+        DoctorService service = new DoctorService(mapper, encoder, mock(TokenService.class));
 
         assertThatThrownBy(() -> service.resetPassword(20L, 1L))
                 .isInstanceOf(BusinessException.class)
