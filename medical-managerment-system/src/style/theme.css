@@ -1597,3 +1597,15 @@ body.medical-ui .el-tabs__active-bar {
 body.medical-ui .el-tabs__nav-wrap::after {
   background-color: var(--app-line);
 }
+
+/* ===== 标签夜间适配 ===== */
+body.medical-ui .el-tag {
+  background: var(--app-surface-muted);
+  border-color: var(--app-line);
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-tag.el-tag--info {
+  background: var(--app-surface-muted);
+  border-color: var(--app-line);
+  color: var(--app-ink-soft);
+}
