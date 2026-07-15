@@ -1609,3 +1609,13 @@ body.medical-ui .el-tag.el-tag--info {
   border-color: var(--app-line);
   color: var(--app-ink-soft);
 }
+
+/* ===== 开关夜间适配 ===== */
+body.medical-ui .el-switch.is-checked .el-switch__core {
+  background-color: var(--app-accent) !important;
+  border-color: var(--app-accent) !important;
+}
+body.medical-ui .el-switch__core {
+  background-color: var(--app-surface-muted);
+  border-color: var(--app-line-strong);
+}
