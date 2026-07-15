@@ -2,9 +2,6 @@
   <div>
     <el-menu
       class="el-menu-vertical-demo"
-      background-color="#2abeb2"
-      text-color="#000000"
-      active-text-color="#ffffff"
       router
       :default-active="$route.path"
     >
