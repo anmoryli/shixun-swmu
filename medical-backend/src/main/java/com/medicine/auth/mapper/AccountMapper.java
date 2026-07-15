@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Select;
 
 public interface AccountMapper {
 
-    @Select("SELECT id, realname, uname, pwd, phonenumber, utype FROM account WHERE uname = #{username} LIMIT 1")
+    @Select("SELECT id, realname, uname, pwd, phonenumber, utype, status "
+            + "FROM account WHERE uname = #{username} LIMIT 1")
     Account findByUsername(@Param("username") String username);
 }

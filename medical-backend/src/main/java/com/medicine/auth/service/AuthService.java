@@ -14,7 +14,10 @@ import com.medicine.security.AuthSession;
 import com.medicine.security.TokenService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -22,19 +25,34 @@ public class AuthService {
     private final AccountMapper accountMapper;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final PermissionService permissionService;
 
     public AuthService(AccountMapper accountMapper, PasswordEncoder passwordEncoder, TokenService tokenService) {
+        this(accountMapper, passwordEncoder, tokenService, null);
+    }
+
+    @Autowired
+    public AuthService(AccountMapper accountMapper, PasswordEncoder passwordEncoder, TokenService tokenService,
+                       PermissionService permissionService) {
         this.accountMapper = accountMapper;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
+        this.permissionService = permissionService;
     }
 
     public LoginResult login(String username, String password) {
         Account account = accountMapper.findByUsername(username.trim());
-        if (account == null || account.getPwd() == null || !passwordEncoder.matches(password, account.getPwd())) {
+        if (account == null || !isActive(account) || account.getPwd() == null
+                || !passwordEncoder.matches(password, account.getPwd())) {
             throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号或密码错误");
         }
         int userType = toNumericUserType(account.getUtype());
+        if (permissionService != null) {
+            List<String> roles = permissionService.findRoleCodes(account.getId());
+            if (roles == null || roles.isEmpty()) {
+                throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号或密码错误");
+            }
+        }
         AuthSession session = new AuthSession(
                 account.getId(), account.getUname(), account.getRealname(), account.getUtype(), userType,
                 account.getPhonenumber()
@@ -46,10 +64,17 @@ public class AuthService {
         return new LoginResult(token, userInfo);
     }
 
+    private boolean isActive(Account account) {
+        return account != null && Integer.valueOf(1).equals(account.getStatus());
+    }
+
     static int toNumericUserType(String roleName) {
         if (roleName != null && roleName.startsWith("ROLE_")) {
             try {
-                return Integer.parseInt(roleName.substring("ROLE_".length()));
+                int value = Integer.parseInt(roleName.substring("ROLE_".length()));
+                if (value >= 1 && value <= 3) {
+                    return value;
+                }
             } catch (NumberFormatException ignored) {
                 // handled below
             }

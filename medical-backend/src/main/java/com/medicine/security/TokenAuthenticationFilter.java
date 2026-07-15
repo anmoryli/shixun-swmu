@@ -4,14 +4,18 @@
 
 package com.medicine.security;
 
+import com.medicine.auth.service.PermissionService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -23,10 +27,18 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
     private final CookieProperties cookieProperties;
+    private final PermissionService permissionService;
 
     public TokenAuthenticationFilter(TokenService tokenService, CookieProperties cookieProperties) {
+        this(tokenService, cookieProperties, null);
+    }
+
+    @Autowired
+    public TokenAuthenticationFilter(TokenService tokenService, CookieProperties cookieProperties,
+                                     PermissionService permissionService) {
         this.tokenService = tokenService;
         this.cookieProperties = cookieProperties;
+        this.permissionService = permissionService;
     }
 
     @Override
@@ -36,10 +48,25 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String token = extractToken(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             tokenService.find(token).ifPresent(session -> {
+                List<String> authorities = permissionService == null
+                        ? Collections.singletonList(session.getRoleName())
+                        : permissionService.findAuthorities(session.getUserId());
+                if (authorities == null || authorities.isEmpty()) {
+                    return;
+                }
+                List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
+                for (String authority : authorities) {
+                    if (authority != null && !authority.isBlank()) {
+                        grantedAuthorities.add(new SimpleGrantedAuthority(authority));
+                    }
+                }
+                if (grantedAuthorities.isEmpty()) {
+                    return;
+                }
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         session,
                         token,
-                        Collections.singletonList(new SimpleGrantedAuthority(session.getRoleName()))
+                        grantedAuthorities
                 );
                 authentication.setDetails(request.getRemoteAddr());
                 SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -28,7 +28,7 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('file:upload')")
     public ApiResponse<Map<String, Object>> upload(@RequestParam("file") MultipartFile file) {
         String fileName = storageService.saveImage(file);
         String url = ServletUriComponentsBuilder.fromCurrentContextPath()

@@ -33,7 +33,7 @@ public class DoctorController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('doctor:read')")
     public ApiResponse<Map<String, Object>> page(@RequestParam(defaultValue = "1") Integer pn,
                                                  @RequestParam(defaultValue = "5") Integer size,
                                                  @RequestParam(required = false) String keyword) {
@@ -41,13 +41,13 @@ public class DoctorController {
     }
 
     @GetMapping("/info")
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('doctor:read')")
     public ApiResponse<Map<String, Object>> levelAndType() {
         return ApiResponse.success(service.levelAndType());
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('doctor:write')")
     public ApiResponse<Map<String, Object>> add(@RequestBody Map<String, Object> request) {
         int pages = service.add(request, 5);
         return pages < 0
@@ -56,7 +56,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('doctor:write')")
     public ApiResponse<Void> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         if (!service.update(id, request)) {
             return ApiResponse.error(ErrorCode.DUPLICATE_DATA, "该手机号已被注册");
@@ -65,14 +65,14 @@ public class DoctorController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('doctor:write')")
     public ApiResponse<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ApiResponse.success();
     }
 
     @PutMapping("/reset/{accountId}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('doctor:reset-password')")
     public ApiResponse<Void> reset(@PathVariable Long accountId,
                                    @AuthenticationPrincipal AuthSession operator) {
         service.resetPassword(accountId, operator.getUserId());

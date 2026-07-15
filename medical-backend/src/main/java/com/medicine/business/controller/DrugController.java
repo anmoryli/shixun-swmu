@@ -30,7 +30,7 @@ public class DrugController {
     }
 
     @GetMapping("/{pn}/{size}")
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('drug:read')")
     public ApiResponse<Map<String, Object>> page(@PathVariable Integer pn,
                                                  @PathVariable Integer size,
                                                  @RequestParam(required = false) String name) {
@@ -38,20 +38,20 @@ public class DrugController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('drug:write')")
     public ApiResponse<Map<String, Object>> add(@RequestBody Map<String, Object> request) {
         return BusinessResponses.pages(service.add(request, 5));
     }
 
     @PutMapping("/{drugId}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('drug:write')")
     public ApiResponse<Void> update(@PathVariable Long drugId, @RequestBody Map<String, Object> request) {
         service.update(drugId, request);
         return ApiResponse.success();
     }
 
     @DeleteMapping("/{drugId}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('drug:write')")
     public ApiResponse<Void> delete(@PathVariable Long drugId) {
         service.delete(drugId);
         return ApiResponse.success();

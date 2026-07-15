@@ -72,6 +72,7 @@ class AuthServiceTest {
         account.setPwd(password);
         account.setPhonenumber("15900000000");
         account.setUtype(roleName);
+        account.setStatus(1);
         return account;
     }
 }

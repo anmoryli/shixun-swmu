@@ -17,7 +17,8 @@ import java.util.Map;
 
 @Mapper
 public interface DoctorMapper {
-    String FROM_SQL = " FROM doctor d LEFT JOIN doctor_level dl ON dl.id=d.level_id "
+    String FROM_SQL = " FROM doctor d JOIN account a ON a.id=d.account_id AND a.status=1 "
+            + "LEFT JOIN doctor_level dl ON dl.id=d.level_id "
             + "LEFT JOIN treat_type tt ON tt.id=d.type_id ";
 
     @Select("<script>SELECT COUNT(*)" + FROM_SQL + "<where>"
@@ -53,10 +54,17 @@ public interface DoctorMapper {
     @Select("SELECT COUNT(*) FROM account WHERE uname=#{username}")
     long countUsername(@Param("username") String username);
 
-    @Insert("INSERT INTO account(realname, uname, pwd, phonenumber, utype, updatetime, createtime) "
-            + "VALUES(#{realname}, #{uname}, #{pwd}, #{phoneNumber}, 'ROLE_2', NOW(), NOW())")
+    @Insert("INSERT INTO account(realname, uname, pwd, phonenumber, utype, status, updatetime, createtime) "
+            + "VALUES(#{realname}, #{uname}, #{pwd}, #{phoneNumber}, 'ROLE_2', 1, NOW(), NOW())")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertAccount(Map<String, Object> account);
+
+    @Insert("INSERT INTO account_role(account_id, role_id, is_primary) "
+            + "SELECT #{accountId}, r.id, 1 FROM rbac_role r "
+            + "WHERE r.code='DOCTOR' AND r.enabled=1 "
+            + "AND NOT EXISTS (SELECT 1 FROM account_role ar "
+            + "WHERE ar.account_id=#{accountId} AND ar.role_id=r.id)")
+    int bindDoctorRole(@Param("accountId") Long accountId);
 
     @Insert("INSERT INTO doctor(name, age, sex, level_id, phone, type_id, hospital, "
             + "updatetime, createtime, account_id) "
@@ -80,7 +88,10 @@ public interface DoctorMapper {
     @Delete("DELETE FROM account WHERE id=#{accountId}")
     int deleteAccount(@Param("accountId") Long accountId);
 
-    @Update("UPDATE account SET pwd=#{encodedPassword}, updatetime=NOW() WHERE id=#{accountId} AND utype='ROLE_2'")
+    @Update("UPDATE account a JOIN account_role ar ON ar.account_id=a.id "
+            + "JOIN rbac_role r ON r.id=ar.role_id AND r.code='DOCTOR' AND r.enabled=1 "
+            + "SET a.pwd=#{encodedPassword}, a.updatetime=NOW() "
+            + "WHERE a.id=#{accountId} AND a.status=1")
     int resetPassword(@Param("accountId") Long accountId,
                       @Param("encodedPassword") String encodedPassword);
 

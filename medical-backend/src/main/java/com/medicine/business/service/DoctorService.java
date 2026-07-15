@@ -58,11 +58,17 @@ public class DoctorService {
         account.put("pwd", passwordEncoder.encode(PageSupport.stringValue(request.get("pwd")).orElse(null)));
         account.put("phoneNumber", phone);
         mapper.insertAccount(account);
+        Object generatedAccountId = account.get("id");
+        Long accountId = generatedAccountId instanceof Number
+                ? ((Number) generatedAccountId).longValue() : null;
+        if (accountId == null || mapper.bindDoctorRole(accountId) == 0) {
+            throw new BusinessException(ErrorCode.INTERNAL_ERROR, "医生角色初始化失败");
+        }
 
         Map<String, Object> doctor = new LinkedHashMap<>(request);
         doctor.put("name", name);
         doctor.put("phoneNumber", phone);
-        doctor.put("accountId", account.get("id"));
+        doctor.put("accountId", accountId);
         mapper.insertDoctor(doctor);
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }

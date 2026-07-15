@@ -6,6 +6,7 @@ package com.medicine.amap;
 
 import com.medicine.common.ApiResponse;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +28,7 @@ public class AmapController {
     }
 
     @GetMapping("/regeo")
+    @PreAuthorize("hasAuthority('sale-map:read')")
     public ApiResponse<String> reverseGeocode(@RequestParam double lng,
                                               @RequestParam double lat) {
         return ApiResponse.success(amapService.reverseGeocode(lng, lat));

@@ -30,7 +30,7 @@ public class CompanyPolicyController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('company-policy:read')")
     public ApiResponse<Map<String, Object>> page(@RequestParam(defaultValue = "1") Integer pn,
                                                  @RequestParam(defaultValue = "5") Integer size,
                                                  @RequestParam(required = false) String keyword) {
@@ -38,20 +38,20 @@ public class CompanyPolicyController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('company-policy:write')")
     public ApiResponse<Map<String, Object>> add(@RequestBody Map<String, Object> request) {
         return BusinessResponses.pages(service.add(request, 5));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('company-policy:write')")
     public ApiResponse<Void> update(@PathVariable Long id, @RequestBody Map<String, Object> request) {
         service.update(id, request);
         return ApiResponse.success();
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('company-policy:write')")
     public ApiResponse<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ApiResponse.success();

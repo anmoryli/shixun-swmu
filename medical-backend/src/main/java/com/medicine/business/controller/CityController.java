@@ -29,7 +29,7 @@ public class CityController {
     }
 
     @GetMapping("/{pn}/{size}")
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('city:read')")
     public ApiResponse<Map<String, Object>> page(@PathVariable Integer pn,
                                                  @PathVariable Integer size,
                                                  @RequestParam(required = false) String name) {
@@ -37,13 +37,13 @@ public class CityController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('city:read')")
     public ApiResponse<Map<String, Object>> all() {
         return BusinessResponses.wrapped("cityPageInfo", service.all());
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('city:write')")
     public ApiResponse<Map<String, Object>> add(@RequestParam Integer cityNumber) {
         if (service.exists(cityNumber)) {
             return ApiResponse.error(ErrorCode.DUPLICATE_DATA, "该城市已存在");
@@ -52,7 +52,7 @@ public class CityController {
     }
 
     @DeleteMapping("/{cityId}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('city:write')")
     public ApiResponse<Void> delete(@PathVariable Long cityId) {
         service.delete(cityId);
         return ApiResponse.success();

@@ -108,13 +108,13 @@ class AuthControllerTest {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(session, "token");
         PermissionNode node = new PermissionNode();
-        when(permissionService.findPermissionTree("ROLE_1")).thenReturn(List.of(node));
+        when(permissionService.findPermissionTree(1L)).thenReturn(List.of(node));
 
-        ApiResponse<Map<String, List<PermissionNode>>> response =
+        ApiResponse<Map<String, Object>> response =
                 controller.permissions("ROLE_2", authentication);
 
-        assertThat(response.getData().get("permissions")).containsExactly(node);
-        verify(permissionService).findPermissionTree("ROLE_1");
+        assertThat(response.getData().get("permissions")).isEqualTo(List.of(node));
+        verify(permissionService).findPermissionTree(1L);
     }
 
     @Test

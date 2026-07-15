@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
@@ -70,16 +70,21 @@ public class AuthController {
     }
 
     @GetMapping("/permissions")
-    public ApiResponse<Map<String, List<PermissionNode>>> permissions(
+    public ApiResponse<Map<String, Object>> permissions(
             @RequestParam(value = "roleName", required = false) String ignoredRoleName,
             Authentication authentication) {
-        Object principal = authentication.getPrincipal();
+        Object principal = authentication != null ? authentication.getPrincipal() : null;
         if (!(principal instanceof AuthSession)) {
             throw new BusinessException(ErrorCode.FORBIDDEN, "无效的登录会话");
         }
         AuthSession session = (AuthSession) principal;
-        List<PermissionNode> permissions = permissionService.findPermissionTree(session.getRoleName());
-        return ApiResponse.success(Collections.singletonMap("permissions", permissions));
+        Long accountId = session.getUserId();
+        List<PermissionNode> permissions = permissionService.findPermissionTree(accountId);
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("permissions", permissions);
+        result.put("permissionCodes", permissionService.findPermissionCodes(accountId));
+        result.put("roles", permissionService.findRoleCodes(accountId));
+        return ApiResponse.success(result);
     }
 
     @PostMapping("/logout")

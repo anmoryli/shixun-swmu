@@ -7,6 +7,8 @@ package com.medicine.business.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -73,6 +75,11 @@ class DoctorServiceTest {
         when(mapper.countUsername("李医生0000")).thenReturn(1L);
         when(mapper.countUsername("李医生00001")).thenReturn(0L);
         when(mapper.count(null)).thenReturn(6L);
+        doAnswer(invocation -> {
+            ((Map<String, Object>) invocation.getArgument(0)).put("id", 10L);
+            return 1;
+        }).when(mapper).insertAccount(anyMap());
+        when(mapper.bindDoctorRole(anyLong())).thenReturn(1);
         DoctorService service = new DoctorService(mapper, encoder);
         Map<String, Object> request = Map.of(
                 "name", " 李医生 ", "phoneNumber", "15900000000", "pwd", "initial-password");

@@ -12,6 +12,8 @@ public class Account {
     private String pwd;
     private String phonenumber;
     private String utype;
+    /** 0=disabled, 1=active; V2 adds this column to the legacy schema. */
+    private Integer status = 1;
 
     public Long getId() {
         return id;
@@ -59,5 +61,13 @@ public class Account {
 
     public void setUtype(String utype) {
         this.utype = utype;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

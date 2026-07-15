@@ -30,7 +30,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{pn}/{size}")
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('company:read')")
     public ApiResponse<Map<String, Object>> page(@PathVariable Integer pn,
                                                  @PathVariable Integer size,
                                                  @RequestParam(required = false) String name) {
@@ -38,26 +38,26 @@ public class CompanyController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('1','2')")
+    @PreAuthorize("hasAuthority('company:read')")
     public ApiResponse<Map<String, Object>> all() {
         return BusinessResponses.wrapped("pageInfo", service.all());
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('company:write')")
     public ApiResponse<Map<String, Object>> add(@RequestBody Map<String, Object> request) {
         return BusinessResponses.pages(service.add(request, 5));
     }
 
     @PutMapping("/{companyId}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('company:write')")
     public ApiResponse<Void> update(@PathVariable Long companyId, @RequestBody Map<String, Object> request) {
         service.update(companyId, request);
         return ApiResponse.success();
     }
 
     @DeleteMapping("/{companyId}")
-    @PreAuthorize("hasRole('1')")
+    @PreAuthorize("hasAuthority('company:write')")
     public ApiResponse<Void> delete(@PathVariable Long companyId) {
         service.delete(companyId);
         return ApiResponse.success();
