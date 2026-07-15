@@ -1763,3 +1763,19 @@ body.medical-ui .el-message-box__message p {
 body.medical-ui .el-message-box__headerbtn .el-message-box__close {
   color: var(--app-ink-faint);
 }
+
+/* ===== 警告提示夜间适配 ===== */
+body.medical-ui .el-alert {
+  background: var(--app-surface-muted);
+  border-color: var(--app-line);
+}
+body.medical-ui .el-alert__title {
+  color: var(--app-ink);
+}
+body.medical-ui .el-alert__description {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-alert--info {
+  background: var(--app-surface-muted);
+  border-color: var(--app-line);
+}
