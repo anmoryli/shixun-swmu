@@ -65,19 +65,19 @@ class SecurityComponentsTest {
     }
 
     @Test
-    void restSecurityHandlersWriteLegacyHttp200JsonResponses() throws Exception {
+    void restSecurityHandlersWriteJsonResponsesWithProperStatus() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         MockHttpServletResponse denied = new MockHttpServletResponse();
         new RestAccessDeniedHandler(mapper).handle(new MockHttpServletRequest(), denied,
                 new AccessDeniedException("denied"));
-        assertEquals(200, denied.getStatus());
+        assertEquals(403, denied.getStatus());
         assertTrue(denied.getContentType().startsWith("application/json"));
         assertTrue(denied.getContentAsString().contains("10003"));
 
         MockHttpServletResponse unauthenticated = new MockHttpServletResponse();
         new RestAuthenticationEntryPoint(mapper).commence(new MockHttpServletRequest(), unauthenticated,
                 new BadCredentialsException("bad"));
-        assertEquals(200, unauthenticated.getStatus());
+        assertEquals(401, unauthenticated.getStatus());
         assertTrue(unauthenticated.getContentAsString().contains("10006"));
     }
 }

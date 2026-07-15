@@ -31,8 +31,8 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        // 旧前端只在正常响应分支检查 code=10006，因此保持 HTTP 200。
-        response.setStatus(HttpServletResponse.SC_OK);
+        // 未认证访问返回 401,前端拦截器按 res.code=10006 走重新登录分支(validateStatus<500 仍进成功分支)。
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getWriter(), ApiResponse.error(ErrorCode.TOKEN_EXPIRED, "登录已失效，请重新登录"));

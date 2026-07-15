@@ -31,7 +31,8 @@ public class RestAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-        response.setStatus(HttpServletResponse.SC_OK);
+        // 已认证但无权访问返回 403,便于监控与前端按状态分支处理。
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getWriter(), ApiResponse.error(ErrorCode.FORBIDDEN, "无权执行此操作"));
