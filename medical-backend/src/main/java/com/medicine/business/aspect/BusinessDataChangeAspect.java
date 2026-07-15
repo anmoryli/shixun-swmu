@@ -4,7 +4,11 @@
 
 package com.medicine.business.aspect;
 
+import com.medicine.business.event.BusinessDataChangedEvent;
+
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -24,5 +28,10 @@ public class BusinessDataChangeAspect {
             + " || execution(public * com.medicine.business.service.*Service.delete(..))"
             + " || execution(public * com.medicine.business.service.*Service.resetPassword(..))")
     public void businessMutation() {
+    }
+
+    @AfterReturning("businessMutation()")
+    public void publishDataChangedEvent(JoinPoint joinPoint) {
+        eventPublisher.publishEvent(new BusinessDataChangedEvent(joinPoint.getSignature().toShortString()));
     }
 }
