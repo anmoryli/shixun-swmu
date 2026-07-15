@@ -4,9 +4,11 @@
 
 package com.medicine.dashboard.service;
 
+import com.medicine.dashboard.DashboardCacheNames;
 import com.medicine.dashboard.dto.DashboardView;
 import com.medicine.dashboard.mapper.DashboardMapper;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +20,7 @@ public class DashboardService {
         this.dashboardMapper = dashboardMapper;
     }
 
+    @Cacheable(cacheNames = DashboardCacheNames.DASHBOARD, key = "'overview'", sync = true)
     public DashboardView getDashboard() {
         return new DashboardView(
                 dashboardMapper.findCounts(),
