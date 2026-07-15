@@ -27,4 +27,13 @@ class RequestTimingInterceptorTest {
 
         assertNull(request.getAttribute(RequestTimingInterceptor.START_TIME_ATTRIBUTE));
     }
+
+    @Test
+    void shouldIgnoreCompletionWhenStartTimeIsMissing() {
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/api/session");
+
+        interceptor.afterCompletion(request, new MockHttpServletResponse(), new Object(), null);
+
+        assertNull(request.getAttribute(RequestTimingInterceptor.START_TIME_ATTRIBUTE));
+    }
 }
