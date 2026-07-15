@@ -51,11 +51,14 @@ public class DoctorService {
         if (pwd == null || pwd.length() < 6 || !pwd.matches(".*[A-Za-z].*") || !pwd.matches(".*\\d.*")) {
             throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "密码至少 6 位且需同时包含字母与数字");
         }
+        String name = PageSupport.stringValue(request.get("name")).orElse(null);
+        if (name == null || name.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "医生姓名不能为空");
+        }
         String phone = PageSupport.stringValue(request.get("phoneNumber")).orElse(null);
         if (phone != null && mapper.countPhone(phone) > 0) {
             return -1;
         }
-        String name = PageSupport.stringValue(request.get("name")).orElse(null);
         String username = uniqueUsername(name, phone);
         Map<String, Object> account = new LinkedHashMap<>();
         account.put("realname", name);
