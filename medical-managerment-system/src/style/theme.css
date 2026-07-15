@@ -1873,3 +1873,13 @@ body.medical-ui .el-skeleton__paragraph > div,
 body.medical-ui .el-skeleton__paragraph > span {
   background: var(--app-surface-muted);
 }
+
+/* ===== 回到顶部夜间适配 ===== */
+body.medical-ui .el-backtop {
+  background: var(--app-accent);
+  color: #fff;
+  box-shadow: var(--app-shadow-sm);
+}
+body.medical-ui .el-backtop:hover {
+  background: var(--app-accent-strong);
+}
