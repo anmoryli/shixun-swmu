@@ -47,6 +47,10 @@ public class DoctorService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
+        String pwd = PageSupport.stringValue(request.get("pwd")).orElse(null);
+        if (pwd == null || pwd.length() < 6 || !pwd.matches(".*[A-Za-z].*") || !pwd.matches(".*\\d.*")) {
+            throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "密码至少 6 位且需同时包含字母与数字");
+        }
         String phone = PageSupport.stringValue(request.get("phoneNumber")).orElse(null);
         if (phone != null && mapper.countPhone(phone) > 0) {
             return -1;
@@ -56,7 +60,7 @@ public class DoctorService {
         Map<String, Object> account = new LinkedHashMap<>();
         account.put("realname", name);
         account.put("uname", username);
-        account.put("pwd", passwordEncoder.encode(PageSupport.stringValue(request.get("pwd")).orElse(null)));
+        account.put("pwd", passwordEncoder.encode(pwd));
         account.put("phoneNumber", phone);
         mapper.insertAccount(account);
         Object generatedAccountId = account.get("id");
