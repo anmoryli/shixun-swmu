@@ -134,7 +134,7 @@ export default {
   }
   .UserName{
       overflow: hidden;
-      border:2px solid #2abeb2;
+      border:2px solid var(--app-accent);
       border-radius: 20px;
       margin-top: 270px;
       margin-left: -60px;
@@ -143,7 +143,7 @@ export default {
   }
   .PassWord{
       overflow: hidden;
-      border:2px solid #2abeb2;
+      border:2px solid var(--app-accent);
       border-radius: 20px;
       margin-top: 20px;
       margin-left: -60px;
@@ -155,7 +155,7 @@ export default {
       margin-left: 20px;
       height: 80px;
       font-size: 35px;
-      color: #2abeb2;
+      color: var(--app-accent);
 
   }
   .Logo{
@@ -187,9 +187,9 @@ export default {
       margin-left: 200px;
   }
   input::-webkit-input-placeholder {
-      color: #2abeb2;
+      color: var(--app-accent);
   }
   input::-ms-input-placeholder {
-      color: #2abeb2;
+      color: var(--app-accent);
   }
   </style>
