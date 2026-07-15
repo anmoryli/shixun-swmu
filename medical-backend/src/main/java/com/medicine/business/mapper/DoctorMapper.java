@@ -67,9 +67,9 @@ public interface DoctorMapper {
     int bindDoctorRole(@Param("accountId") Long accountId);
 
     @Insert("INSERT INTO doctor(name, age, sex, level_id, phone, type_id, hospital, "
-            + "updatetime, createtime, account_id) "
+            + "updatetime, createtime, account_id, create_by) "
             + "VALUES(#{name}, #{age}, #{sex}, #{levelId}, #{phoneNumber}, #{typeId}, "
-            + "'青岛第一人民医院', NOW(), NOW(), #{accountId})")
+            + "'青岛第一人民医院', NOW(), NOW(), #{accountId}, #{createBy})")
     int insertDoctor(Map<String, Object> doctor);
 
     @Update("<script>UPDATE doctor <set>"
@@ -79,6 +79,7 @@ public interface DoctorMapper {
             + "<if test='levelId != null'>level_id=#{levelId},</if>"
             + "<if test='phoneNumber != null'>phone=#{phoneNumber},</if>"
             + "<if test='typeId != null'>type_id=#{typeId},</if>"
+            + "<if test='updateBy != null'>update_by=#{updateBy},</if>"
             + "updatetime=NOW()"
             + "</set> WHERE id=#{id}</script>")
     int updateDoctor(Map<String, Object> doctor);

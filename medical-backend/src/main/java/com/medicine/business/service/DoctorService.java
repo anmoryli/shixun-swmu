@@ -78,6 +78,7 @@ public class DoctorService {
         doctor.put("name", name);
         doctor.put("phoneNumber", phone);
         doctor.put("accountId", accountId);
+        doctor.put("createBy", AuditSupport.currentAccountId());
         mapper.insertDoctor(doctor);
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
@@ -97,6 +98,7 @@ public class DoctorService {
         values.put("accountId", accountId);
         values.put("phoneNumber", phone);
         values.put("name", PageSupport.stringValue(request.get("name")).orElse(null));
+        values.put("updateBy", AuditSupport.currentAccountId());
         mapper.updateDoctor(values);
         mapper.updateAccount(values);
         return true;
