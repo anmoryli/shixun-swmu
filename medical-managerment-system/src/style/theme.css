@@ -1858,3 +1858,11 @@ body.medical-ui .el-tooltip__popper {
 body.medical-ui .el-tooltip__popper .popper__arrow::after {
   border-bottom-color: var(--app-surface-solid) !important;
 }
+
+/* ===== 进度条夜间适配 ===== */
+body.medical-ui .el-progress-bar__outer {
+  background: var(--app-surface-muted);
+}
+body.medical-ui .el-progress__text {
+  color: var(--app-ink-soft);
+}
