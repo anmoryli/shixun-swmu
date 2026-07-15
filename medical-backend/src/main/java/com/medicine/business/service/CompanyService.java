@@ -5,6 +5,8 @@
 package com.medicine.business.service;
 
 import com.medicine.business.mapper.CompanyMapper;
+import com.medicine.common.BusinessException;
+import com.medicine.common.ErrorCode;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +37,11 @@ public class CompanyService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
-        mapper.insert(PageSupport.stringValue(request.get("companyName")).orElse(null),
-                PageSupport.stringValue(request.get("companyPhone")).orElse(null));
+        String companyName = PageSupport.stringValue(request.get("companyName")).orElse(null);
+        if (companyName == null || companyName.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "公司名称不能为空");
+        }
+        mapper.insert(companyName, PageSupport.stringValue(request.get("companyPhone")).orElse(null));
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
 
