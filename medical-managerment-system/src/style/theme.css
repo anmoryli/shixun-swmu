@@ -1726,3 +1726,23 @@ body.medical-ui .el-drawer__close-btn:hover {
 body.medical-ui .el-drawer__body {
   color: var(--app-ink-soft);
 }
+
+/* ===== 消息与通知夜间适配 ===== */
+body.medical-ui .el-message {
+  background: var(--app-surface-solid) !important;
+  color: var(--app-ink) !important;
+  border-color: var(--app-line) !important;
+}
+body.medical-ui .el-message__content {
+  color: var(--app-ink) !important;
+}
+body.medical-ui .el-notification {
+  background: var(--app-surface-solid) !important;
+  border-color: var(--app-line) !important;
+}
+body.medical-ui .el-notification__title {
+  color: var(--app-ink);
+}
+body.medical-ui .el-notification__content {
+  color: var(--app-ink-soft);
+}
