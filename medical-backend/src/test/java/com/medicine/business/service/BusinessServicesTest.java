@@ -7,6 +7,7 @@ import com.medicine.business.mapper.DrugMapper;
 import com.medicine.business.mapper.MaterialMapper;
 import com.medicine.business.mapper.MedicalPolicyMapper;
 import com.medicine.business.mapper.SaleMapper;
+import com.medicine.common.BusinessException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -75,7 +76,7 @@ class BusinessServicesTest {
         assertEquals(2, service.add(request, 5));
         service.update(1L, request);
         service.delete(1L);
-        service.add(Map.of(), 5);
+        assertThrows(BusinessException.class, () -> service.add(Map.of(), 5));
         service.update(2L, Map.of());
         verify(mapper).delete(1L);
     }
@@ -113,7 +114,7 @@ class BusinessServicesTest {
         assertTrue(((Map<?, ?>) ((List<?>) page.get("list")).get(0)).containsKey("cityModel"));
         assertEquals(1, service.add(request, 5));
         service.update(1L, request);
-        service.add(Map.of(), 5);
+        assertThrows(BusinessException.class, () -> service.add(Map.of(), 5));
         service.update(2L, Map.of("updateTime", ""));
         service.delete(1L);
         verify(mapper).delete(1L);
@@ -135,7 +136,7 @@ class BusinessServicesTest {
         assertEquals(1, service.add(request, 5));
         service.update(1L, request);
         service.delete(1L);
-        service.add(Map.of(), 5);
+        assertThrows(BusinessException.class, () -> service.add(Map.of(), 5));
         verify(mapper).deleteDrugRelations(1L);
         verify(mapper).delete(1L);
     }

@@ -64,7 +64,7 @@ class DoctorServiceTest {
         when(mapper.countPhone("15900000000")).thenReturn(1L);
         DoctorService service = new DoctorService(mapper, mock(PasswordEncoder.class), mock(TokenService.class));
 
-        assertThat(service.add(Map.of("phoneNumber", "15900000000"), 5)).isEqualTo(-1);
+        assertThat(service.add(Map.of("phoneNumber", "15900000000", "pwd", "pass123", "name", "测试"), 5)).isEqualTo(-1);
 
         verify(mapper, never()).insertAccount(anyMap());
         verify(mapper, never()).insertDoctor(anyMap());
@@ -74,7 +74,7 @@ class DoctorServiceTest {
     void addCreatesUniqueAccountAndDoctorThenReturnsPages() {
         DoctorMapper mapper = mock(DoctorMapper.class);
         PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode("initial-password")).thenReturn("encoded-password");
+        when(encoder.encode("initial123")).thenReturn("encoded-password");
         when(mapper.countUsername("李医生0000")).thenReturn(1L);
         when(mapper.countUsername("李医生00001")).thenReturn(0L);
         when(mapper.count(null)).thenReturn(6L);
@@ -85,7 +85,7 @@ class DoctorServiceTest {
         when(mapper.bindDoctorRole(anyLong())).thenReturn(1);
         DoctorService service = new DoctorService(mapper, encoder, mock(TokenService.class));
         Map<String, Object> request = Map.of(
-                "name", " 李医生 ", "phoneNumber", "15900000000", "pwd", "initial-password");
+                "name", " 李医生 ", "phoneNumber", "15900000000", "pwd", "initial123");
 
         assertThat(service.add(request, 5)).isEqualTo(2);
 

@@ -33,6 +33,8 @@ class AmapServiceTest {
     void setUp() {
         restTemplate = mock(RestTemplate.class);
         builder = mock(RestTemplateBuilder.class);
+        when(builder.setConnectTimeout(any(java.time.Duration.class))).thenReturn(builder);
+        when(builder.setReadTimeout(any(java.time.Duration.class))).thenReturn(builder);
         when(builder.build()).thenReturn(restTemplate);
     }
 
