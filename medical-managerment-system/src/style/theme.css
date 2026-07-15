@@ -1,0 +1,1430 @@
+/*
+ * 慧医数字医疗应用系统 - 医疗 Dashboard 主题（日间 / 夜间）
+ *
+ * 通过 CSS 变量实现 light/dark 双主题：
+ *   - light 变量定义在 :root
+ *   - dark  变量覆盖在 html.dark
+ * 组件规则统一 gate by body.medical-ui（由 App.vue 始终启用），
+ * 选择器优先级高于各 .vue 的 scoped 样式，保证全局视觉一致。
+ */
+
+:root {
+  --app-canvas: #f4f7f9;
+  --app-canvas-deep: #eaf0f4;
+  --app-surface: #ffffff;
+  --app-surface-solid: #ffffff;
+  --app-surface-muted: #eef3f6;
+  --app-ink: #1f2d3d;
+  --app-ink-soft: #5a6b7b;
+  --app-ink-faint: #8a99a8;
+  --app-line: rgba(44, 82, 99, 0.12);
+  --app-line-strong: rgba(44, 82, 99, 0.2);
+  --app-accent: #1f9d8f;
+  --app-accent-strong: #167d72;
+  --app-accent-soft: #e3f4f1;
+  --app-accent-wash: rgba(31, 157, 143, 0.12);
+  --app-warm: #e08a3c;
+  --app-warm-soft: #fbeedd;
+  --app-danger: #d97070;
+  --app-danger-soft: #faeaea;
+  --app-shadow-sm: 0 6px 18px rgba(31, 58, 71, 0.07);
+  --app-shadow-md: 0 12px 32px rgba(31, 58, 71, 0.11);
+  --app-radius-sm: 8px;
+  --app-radius-md: 12px;
+  --app-radius-lg: 16px;
+  color-scheme: light;
+}
+
+html.dark {
+  --app-canvas: #0f1620;
+  --app-canvas-deep: #0b1119;
+  --app-surface: #18222f;
+  --app-surface-solid: #1c2735;
+  --app-surface-muted: #1f2b3a;
+  --app-ink: #e6edf3;
+  --app-ink-soft: #9fb0c3;
+  --app-ink-faint: #6b7c8f;
+  --app-line: rgba(255, 255, 255, 0.08);
+  --app-line-strong: rgba(255, 255, 255, 0.14);
+  --app-accent: #2bb5a3;
+  --app-accent-strong: #3bc4b2;
+  --app-accent-soft: rgba(43, 181, 163, 0.16);
+  --app-accent-wash: rgba(43, 181, 163, 0.24);
+  --app-warm: #e6a056;
+  --app-warm-soft: rgba(230, 160, 86, 0.16);
+  --app-danger: #e57373;
+  --app-danger-soft: rgba(229, 115, 115, 0.16);
+  --app-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.32);
+  --app-shadow-md: 0 12px 32px rgba(0, 0, 0, 0.42);
+  color-scheme: dark;
+}
+
+/* ===== 基础 ===== */
+body.medical-ui {
+  background: var(--app-canvas);
+  color: var(--app-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+body.medical-ui #app {
+  background: var(--app-canvas);
+  color: var(--app-ink);
+}
+
+body.medical-ui button,
+body.medical-ui input,
+body.medical-ui textarea,
+body.medical-ui select {
+  font-family: inherit;
+}
+
+body.medical-ui :focus-visible {
+  outline: 3px solid var(--app-accent-wash);
+  outline-offset: 2px;
+}
+
+/* ===== 登录页 ===== */
+body.medical-ui #app .LoginBackground {
+  display: grid;
+  min-height: 100%;
+  box-sizing: border-box;
+  place-items: center;
+  padding: 48px 24px;
+  overflow: auto;
+  background:
+    linear-gradient(110deg, rgba(239, 245, 247, 0.92), rgba(224, 234, 239, 0.82)),
+    url("../assets/LoginBackground.jpg") center / cover no-repeat !important;
+}
+
+html.dark body.medical-ui #app .LoginBackground {
+  background:
+    linear-gradient(110deg, rgba(15, 22, 32, 0.9), rgba(20, 30, 42, 0.82)),
+    url("../assets/LoginBackground.jpg") center / cover no-repeat !important;
+}
+
+body.medical-ui #app .LoginForm {
+  position: relative;
+  width: min(440px, calc(100vw - 48px));
+  height: auto;
+  min-height: 500px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 42px 46px 38px;
+  overflow: visible;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface) !important;
+  box-shadow: var(--app-shadow-md);
+}
+
+body.medical-ui #app .LoginForm .ios-login-brand {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  margin: 0 0 36px;
+  padding: 0 8px;
+  color: var(--app-ink-soft);
+  text-align: center;
+}
+
+body.medical-ui #app .LoginForm .ios-login-brand img {
+  display: block;
+  width: min(286px, 100%);
+  height: auto;
+  object-fit: contain;
+}
+
+body.medical-ui #app .LoginForm .ios-login-brand p {
+  margin: 0;
+  color: var(--app-ink-soft);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+body.medical-ui #app .LoginForm .big-contain,
+body.medical-ui #app .LoginForm .bform {
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+body.medical-ui #app .LoginForm .el-form-item {
+  margin: 0 0 20px;
+}
+
+body.medical-ui #app .LoginForm .NameNotNull,
+body.medical-ui #app .LoginForm .PasswordNotNull {
+  margin-left: 0;
+}
+
+body.medical-ui #app .LoginForm .UserName,
+body.medical-ui #app .LoginForm .PassWord {
+  width: 100%;
+  height: 54px;
+  box-sizing: border-box;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-line-strong);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+body.medical-ui #app .LoginForm .UserName:focus-within,
+body.medical-ui #app .LoginForm .PassWord:focus-within {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 4px var(--app-accent-wash);
+}
+
+body.medical-ui #app .LoginForm .Input {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 18px;
+  color: var(--app-ink);
+  background: transparent;
+  font-size: 16px;
+}
+
+body.medical-ui #app .LoginForm .Input::placeholder {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui #app .LoginForm .LoginBtn {
+  display: grid;
+  width: 100%;
+  height: 52px;
+  margin: 8px 0 0;
+  padding: 0;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--app-radius-md);
+  background: var(--app-accent) !important;
+  box-shadow: 0 8px 18px rgba(22, 125, 114, 0.18);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+body.medical-ui #app .LoginForm .LoginBtn .ios-only {
+  display: inline;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 660;
+  letter-spacing: 0.06em;
+}
+
+body.medical-ui #app .LoginForm .LoginBtn:hover:not(:disabled) {
+  background: var(--app-accent-strong) !important;
+  box-shadow: 0 10px 22px rgba(22, 125, 114, 0.22);
+  transform: translateY(-1px);
+}
+
+body.medical-ui #app .LoginForm .LoginBtn:disabled {
+  opacity: 0.58;
+}
+
+/* ===== 应用框架 ===== */
+body.medical-ui #app .home-container {
+  background: transparent;
+}
+
+body.medical-ui #app .home-container > .el-header {
+  height: 88px !important;
+  box-sizing: border-box;
+  padding: 12px 18px 8px !important;
+  background: transparent;
+}
+
+body.medical-ui #app .header-container {
+  position: relative;
+  height: 68px;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 0 18px 0 20px;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-sm);
+}
+
+body.medical-ui #app .header-container .HomeLogo {
+  width: 286px;
+  height: 58px;
+  background-position: left center;
+  background-size: contain;
+}
+
+body.medical-ui #app .header-container .main-head {
+  height: auto;
+  padding: 0;
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui #app .header-container .main-head-right {
+  flex-direction: row;
+  gap: 18px;
+  margin-top: 0;
+}
+
+body.medical-ui #app .header-container .main-head-right > span {
+  font-size: 14px;
+}
+
+body.medical-ui #app .header-container .main-head-right #username {
+  color: var(--app-ink);
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 660;
+}
+
+body.medical-ui #app .header-container .exit-area {
+  position: static;
+  gap: 5px;
+  min-height: 36px;
+  box-sizing: border-box;
+  padding: 7px 11px;
+  border: 1px solid var(--app-line);
+  border-radius: 999px;
+  background: var(--app-surface-muted);
+  color: var(--app-ink-soft);
+  cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+body.medical-ui #app .header-container .exit-area:hover {
+  border-color: rgba(217, 112, 112, 0.28);
+  background: var(--app-danger-soft);
+}
+
+body.medical-ui #app .header-container .exit-area .icon-tuichu,
+body.medical-ui #app .header-container .exit-area .logout {
+  margin: 0;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+body.medical-ui #app .home-container > .el-container {
+  min-height: 0;
+  overflow: hidden;
+}
+
+body.medical-ui #app .home-container > .el-container > .el-aside {
+  box-sizing: border-box;
+  padding: 0 0 18px 18px;
+  overflow: visible;
+}
+
+body.medical-ui #app .page-sider,
+body.medical-ui #app .page-sider > div {
+  height: 100%;
+}
+
+body.medical-ui #app .page-sider .el-menu {
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface) !important;
+  box-shadow: var(--app-shadow-sm);
+}
+
+body.medical-ui #app .page-sider .el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 216px;
+}
+
+body.medical-ui #app .page-sider .MenuBackground {
+  min-height: calc(100vh - 106px);
+  box-sizing: border-box;
+  padding: 12px 10px;
+  background: transparent !important;
+}
+
+body.medical-ui #app .page-sider .el-menu-item,
+body.medical-ui #app .page-sider .el-submenu__title {
+  height: 46px;
+  margin: 3px 0;
+  border-radius: var(--app-radius-sm);
+  background-color: transparent !important;
+  color: var(--app-ink-soft) !important;
+  line-height: 46px;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+body.medical-ui #app .page-sider .el-menu-item:hover,
+body.medical-ui #app .page-sider .el-submenu__title:hover {
+  background-color: var(--app-surface-muted) !important;
+  color: var(--app-ink) !important;
+}
+
+body.medical-ui #app .page-sider .el-menu-item.is-active {
+  background-color: var(--app-accent-soft) !important;
+  box-shadow: inset 3px 0 0 var(--app-accent);
+  color: var(--app-accent-strong) !important;
+  font-weight: 660;
+}
+
+body.medical-ui #app .page-sider .el-menu-item i,
+body.medical-ui #app .page-sider .el-submenu__title i {
+  color: currentColor;
+}
+
+body.medical-ui #app .main-view {
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0 18px 18px !important;
+  overflow: auto;
+  background: transparent;
+}
+
+/* ===== 仪表盘 ===== */
+body.medical-ui #app .dashboard-page {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 12px 8px 28px;
+  color: var(--app-ink);
+  background: transparent;
+}
+
+body.medical-ui #app .dashboard-heading {
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+body.medical-ui #app .dashboard-heading .eyebrow {
+  color: var(--app-accent);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+
+body.medical-ui #app .dashboard-heading h1 {
+  color: var(--app-ink);
+  font-size: clamp(26px, 2.2vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body.medical-ui #app .dashboard-heading .subtitle {
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui #app .status-chip {
+  border-color: rgba(31, 157, 143, 0.2);
+  border-radius: 999px;
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-sm);
+  color: var(--app-accent-strong);
+}
+
+body.medical-ui #app .status-chip.degraded {
+  border-color: rgba(224, 138, 60, 0.24);
+  background: var(--app-warm-soft);
+  color: var(--app-warm);
+}
+
+body.medical-ui #app .metric-grid {
+  gap: 14px;
+}
+
+body.medical-ui #app .metric-card {
+  padding: 19px;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-sm);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+body.medical-ui #app .metric-card:hover {
+  border-color: rgba(31, 157, 143, 0.24);
+  box-shadow: var(--app-shadow-md);
+  transform: translateY(-2px);
+}
+
+body.medical-ui #app .metric-card .metric-icon {
+  border-radius: var(--app-radius-sm);
+  background: var(--app-accent) !important;
+  box-shadow: 0 6px 14px rgba(22, 125, 114, 0.16);
+}
+
+body.medical-ui #app .metric-card p {
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui #app .metric-card strong {
+  color: var(--app-ink);
+  font-weight: 700;
+}
+
+body.medical-ui #app .metric-card span {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui #app .content-grid {
+  gap: 16px;
+  margin-top: 18px;
+}
+
+body.medical-ui #app .charts-grid,
+body.medical-ui #app .news-section {
+  margin-top: 18px;
+}
+
+body.medical-ui #app .chart-card,
+body.medical-ui #app .carousel-card,
+body.medical-ui #app .quick-card,
+body.medical-ui #app .news-card {
+  overflow: hidden;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-sm);
+}
+
+body.medical-ui #app .chart-card .el-card__header,
+body.medical-ui #app .carousel-card .el-card__header,
+body.medical-ui #app .quick-card .el-card__header,
+body.medical-ui #app .news-card .el-card__header {
+  padding: 16px 20px;
+  border-bottom-color: var(--app-line);
+}
+
+body.medical-ui #app .chart-card .el-card__body,
+body.medical-ui #app .carousel-card .el-card__body,
+body.medical-ui #app .quick-card .el-card__body,
+body.medical-ui #app .news-card .el-card__body {
+  background: var(--app-surface);
+}
+
+body.medical-ui #app .section-title {
+  color: var(--app-ink);
+}
+
+body.medical-ui #app .section-title small {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui #app .carousel-image,
+body.medical-ui #app .quick-item {
+  border-radius: var(--app-radius-sm);
+}
+
+body.medical-ui #app .quick-item {
+  background: var(--app-surface-muted);
+}
+
+body.medical-ui #app .quick-item span {
+  background: linear-gradient(transparent, rgba(20, 48, 46, 0.82));
+}
+
+html.dark body.medical-ui #app .quick-item span {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+}
+
+body.medical-ui #app .news-item {
+  border-bottom-color: var(--app-line);
+}
+
+body.medical-ui #app .news-title {
+  color: var(--app-ink);
+}
+
+body.medical-ui #app .news-summary,
+body.medical-ui #app .news-time {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui #app .news-tag.tag-medical {
+  color: var(--app-accent-strong);
+  background: var(--app-accent-soft);
+}
+
+body.medical-ui #app .news-tag.tag-company {
+  color: #5b4dc4;
+  background: rgba(91, 77, 196, 0.12);
+}
+
+html.dark body.medical-ui #app .news-tag.tag-company {
+  color: #9a8cf5;
+  background: rgba(122, 102, 238, 0.18);
+}
+
+body.medical-ui #app .news-tag.tag-material {
+  color: var(--app-warm);
+  background: var(--app-warm-soft);
+}
+
+body.medical-ui #app .news-tag.tag-default {
+  color: var(--app-ink-soft);
+  background: var(--app-surface-muted);
+}
+
+body.medical-ui #app .news-empty {
+  color: var(--app-ink-faint);
+}
+
+/* ===== 管理页 ===== */
+body.medical-ui #app .main-view > .el-container {
+  min-height: 100%;
+  background: transparent;
+}
+
+body.medical-ui #app .main-view > .el-container > .el-header {
+  height: auto !important;
+  min-height: 76px;
+  box-sizing: border-box;
+  margin: 0 0 14px;
+  padding: 18px 22px 14px !important;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-sm);
+}
+
+body.medical-ui #app .main-view > .el-container > .el-header h2 {
+  margin: 0 0 12px;
+  color: var(--app-ink);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+body.medical-ui #app .main-view > .el-container > .el-main {
+  min-height: 0;
+  box-sizing: border-box;
+  margin: 0 !important;
+  padding: 0 0 16px !important;
+  overflow: auto;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow-sm);
+}
+
+body.medical-ui #app .main-view .main-title {
+  height: 54px;
+  box-sizing: border-box;
+  margin: 0 0 14px;
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--app-line);
+}
+
+body.medical-ui #app .main-view .main-title h3 {
+  margin: 7px 0 0;
+  color: var(--app-ink);
+  font-size: 16px;
+  font-weight: 660;
+}
+
+body.medical-ui #app .main-view .new-add {
+  position: relative;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  margin: -2px 2px 0 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-accent) !important;
+  box-shadow: 0 6px 14px rgba(22, 125, 114, 0.16);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+body.medical-ui #app .main-view .new-add::before {
+  content: "+";
+  margin-top: -2px;
+  font-size: 25px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+body.medical-ui #app .main-view .new-add:hover {
+  background: var(--app-accent-strong) !important;
+  transform: translateY(-1px);
+}
+
+body.medical-ui #app .main-view .search-col {
+  margin-bottom: 10px;
+  margin-left: 18px;
+}
+
+body.medical-ui #app .main-view .el-breadcrumb__inner,
+body.medical-ui #app .main-view .el-breadcrumb__inner a {
+  color: var(--app-ink-faint);
+  font-weight: 500;
+}
+
+body.medical-ui #app .main-view .el-breadcrumb__item:last-child .el-breadcrumb__inner {
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui #app .main-view .el-breadcrumb__separator {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui #app .main-view .search-policy {
+  box-sizing: border-box;
+  margin: 0 16px 14px;
+  padding: 0;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-muted);
+}
+
+body.medical-ui #app .main-view .search-policy .demo-input-suffix {
+  width: auto;
+  height: auto;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+body.medical-ui #app .main-view .search-policy .el-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 12px 14px;
+  margin-bottom: 12px;
+}
+
+body.medical-ui #app .main-view .search-policy .input-item {
+  float: none;
+  min-width: 0;
+  margin: 0;
+}
+
+body.medical-ui #app .main-view .search-policy .input-item h5 {
+  margin: 0 0 7px;
+  color: var(--app-ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+body.medical-ui #app .main-view .search-policy .input-item .el-form-item {
+  margin: 0;
+}
+
+body.medical-ui #app .main-view .search-policy .input-item .el-input,
+body.medical-ui #app .main-view .search-policy .input-item .el-date-editor,
+body.medical-ui #app .main-view .search-policy .input-item .el-select {
+  width: 100%;
+}
+
+body.medical-ui #app .main-view .search-policy .el-button {
+  min-width: 82px;
+}
+
+body.medical-ui #app .main-view .table-policy {
+  border-top: 0;
+}
+
+body.medical-ui #app .coordinate-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--app-accent-soft);
+  color: var(--app-accent-strong);
+}
+
+body.medical-ui #app .coordinate-empty,
+body.medical-ui #app .coordinate-hint {
+  color: var(--app-ink-faint);
+}
+
+/* ===== Element Plus 表单 ===== */
+body.medical-ui .el-form-item__label {
+  color: var(--app-ink-soft);
+  font-weight: 540;
+}
+
+body.medical-ui .el-input__inner,
+body.medical-ui .el-textarea__inner,
+body.medical-ui .el-input-number {
+  border-color: var(--app-line-strong);
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  box-shadow: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+body.medical-ui .el-input__inner {
+  height: 40px;
+  line-height: 40px;
+}
+
+body.medical-ui .el-textarea__inner {
+  padding: 11px 13px;
+  line-height: 1.55;
+}
+
+body.medical-ui .el-input__inner:hover,
+body.medical-ui .el-textarea__inner:hover {
+  border-color: rgba(31, 157, 143, 0.4);
+}
+
+body.medical-ui .el-input.is-active .el-input__inner,
+body.medical-ui .el-input__inner:focus,
+body.medical-ui .el-textarea__inner:focus,
+body.medical-ui .el-select .el-input.is-focus .el-input__inner {
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 4px var(--app-accent-wash);
+}
+
+body.medical-ui .el-input__inner::placeholder,
+body.medical-ui .el-textarea__inner::placeholder {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui .el-input-group__append,
+body.medical-ui .el-input-group__prepend {
+  border-color: var(--app-line-strong);
+  background: var(--app-surface-muted);
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui .el-input-group__append {
+  border-radius: 0 var(--app-radius-sm) var(--app-radius-sm) 0;
+}
+
+body.medical-ui .el-input-group__prepend {
+  border-radius: var(--app-radius-sm) 0 0 var(--app-radius-sm);
+}
+
+body.medical-ui .el-checkbox__input.is-checked .el-checkbox__inner,
+body.medical-ui .el-checkbox__input.is-indeterminate .el-checkbox__inner,
+body.medical-ui .el-radio__input.is-checked .el-radio__inner {
+  border-color: var(--app-accent);
+  background: var(--app-accent);
+}
+
+body.medical-ui .el-checkbox__input.is-checked + .el-checkbox__label,
+body.medical-ui .el-radio__input.is-checked + .el-radio__label {
+  color: var(--app-accent-strong);
+}
+
+/* ===== Element Plus 按钮 ===== */
+body.medical-ui .el-button {
+  min-height: 38px;
+  border-color: var(--app-line-strong);
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface);
+  color: var(--app-ink);
+  font-weight: 600;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease,
+    transform 160ms ease;
+}
+
+body.medical-ui .el-button:hover,
+body.medical-ui .el-button:focus {
+  border-color: rgba(31, 157, 143, 0.36);
+  background: var(--app-accent-soft);
+  color: var(--app-accent-strong);
+}
+
+body.medical-ui .el-button--primary {
+  border-color: var(--app-accent);
+  background: var(--app-accent);
+  color: #fff;
+  box-shadow: 0 5px 12px rgba(22, 125, 114, 0.16);
+}
+
+body.medical-ui .el-button--primary:hover,
+body.medical-ui .el-button--primary:focus {
+  border-color: var(--app-accent-strong);
+  background: var(--app-accent-strong);
+  color: #fff;
+}
+
+body.medical-ui .el-button--danger {
+  border-color: var(--app-danger);
+  background: var(--app-danger);
+  color: #fff;
+}
+
+body.medical-ui #app .table-btn-update,
+body.medical-ui #app .table-btn-delete {
+  width: 36px;
+  height: 36px;
+  margin: 0 3px;
+  border: 1px solid transparent;
+  border-radius: var(--app-radius-sm);
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 18px !important;
+  box-shadow: none;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+body.medical-ui #app .table-btn-update {
+  border-color: rgba(31, 157, 143, 0.16);
+  background-color: var(--app-accent-soft) !important;
+}
+
+body.medical-ui #app .table-btn-delete {
+  border-color: rgba(217, 112, 112, 0.16);
+  background-color: var(--app-danger-soft) !important;
+}
+
+body.medical-ui #app .table-btn-update:hover,
+body.medical-ui #app .table-btn-delete:hover {
+  transform: translateY(-1px);
+}
+
+/* ===== Element Plus 表格 ===== */
+body.medical-ui .el-table,
+body.medical-ui .el-table__expanded-cell {
+  background: transparent;
+  color: var(--app-ink);
+}
+
+body.medical-ui #app .main-view .el-table {
+  width: calc(100% - 32px);
+  box-sizing: border-box;
+  margin: 0 16px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-sm);
+}
+
+body.medical-ui .el-table::before,
+body.medical-ui .el-table--border::after,
+body.medical-ui .el-table--group::after {
+  background-color: var(--app-line);
+}
+
+body.medical-ui .el-table th {
+  background: var(--app-surface-muted);
+  color: var(--app-ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+body.medical-ui .el-table td,
+body.medical-ui .el-table th.is-leaf {
+  border-bottom-color: var(--app-line);
+}
+
+body.medical-ui .el-table tr {
+  background: var(--app-surface-solid);
+}
+
+body.medical-ui .el-table--enable-row-hover .el-table__body tr:hover > td {
+  background: var(--app-surface-muted);
+}
+
+body.medical-ui .el-table .ascending .sort-caret.ascending,
+body.medical-ui .el-table .descending .sort-caret.descending {
+  border-bottom-color: var(--app-accent);
+  border-top-color: var(--app-accent);
+}
+
+body.medical-ui .el-table__empty-text {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui .el-table .demo-table-expand {
+  padding: 6px 16px;
+}
+
+/* ===== 分页 ===== */
+body.medical-ui #app .pagination {
+  min-height: 62px;
+  padding: 10px 16px 0;
+}
+
+body.medical-ui .el-pagination {
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui .el-pagination button,
+body.medical-ui .el-pager li {
+  min-width: 34px;
+  height: 34px;
+  margin: 0 2px;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-muted);
+  color: var(--app-ink-soft);
+  line-height: 34px;
+}
+
+body.medical-ui .el-pager li:hover,
+body.medical-ui .el-pagination button:hover {
+  color: var(--app-accent-strong);
+}
+
+body.medical-ui .el-pager li.active {
+  background: var(--app-accent);
+  color: #fff;
+}
+
+/* ===== 弹窗与浮层 ===== */
+body.medical-ui .v-modal {
+  background: #0a1420;
+  opacity: 0.34;
+}
+
+html.dark body.medical-ui .v-modal {
+  background: #000;
+  opacity: 0.5;
+}
+
+body.medical-ui .el-dialog {
+  overflow: hidden;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-surface-solid);
+  box-shadow: var(--app-shadow-md);
+}
+
+body.medical-ui .el-dialog__header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--app-line);
+}
+
+body.medical-ui .el-dialog__title {
+  color: var(--app-ink);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+body.medical-ui .el-dialog__headerbtn {
+  top: 20px;
+  right: 22px;
+}
+
+body.medical-ui .el-dialog__headerbtn .el-dialog__close {
+  color: var(--app-ink-faint);
+}
+
+body.medical-ui .el-dialog__body {
+  max-height: min(66vh, 680px);
+  padding: 22px 24px;
+  overflow-y: auto;
+  color: var(--app-ink);
+}
+
+body.medical-ui .el-dialog__footer {
+  padding: 14px 24px 20px;
+  border-top: 1px solid var(--app-line);
+}
+
+body.medical-ui .el-select-dropdown,
+body.medical-ui .el-picker-panel,
+body.medical-ui .el-cascader__dropdown,
+body.medical-ui .el-dropdown-menu,
+body.medical-ui .el-popover,
+body.medical-ui .el-message,
+body.medical-ui .el-notification,
+body.medical-ui .el-message-box {
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface-solid);
+  box-shadow: var(--app-shadow-md);
+}
+
+body.medical-ui .el-select-dropdown__item,
+body.medical-ui .el-dropdown-menu__item {
+  margin: 3px 7px;
+  border-radius: var(--app-radius-sm);
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui .el-select-dropdown__item.hover,
+body.medical-ui .el-select-dropdown__item:hover,
+body.medical-ui .el-dropdown-menu__item:focus,
+body.medical-ui .el-dropdown-menu__item:not(.is-disabled):hover {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-strong);
+}
+
+body.medical-ui .el-select-dropdown__item.selected {
+  color: var(--app-accent-strong);
+  font-weight: 660;
+}
+
+body.medical-ui .el-message-box__title,
+body.medical-ui .el-notification__title {
+  color: var(--app-ink);
+}
+
+body.medical-ui .el-message-box__content,
+body.medical-ui .el-notification__content {
+  color: var(--app-ink-soft);
+}
+
+body.medical-ui .el-menu--popup {
+  padding: 7px;
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface-solid) !important;
+  box-shadow: var(--app-shadow-md);
+}
+
+body.medical-ui .el-menu--popup .el-menu-item {
+  margin: 2px 0;
+  border-radius: var(--app-radius-sm);
+  background: transparent !important;
+  color: var(--app-ink-soft) !important;
+}
+
+body.medical-ui .el-menu--popup .el-menu-item:hover {
+  background: var(--app-accent-soft) !important;
+  color: var(--app-accent-strong) !important;
+}
+
+/* ===== 上传与进度 ===== */
+body.medical-ui #app .drugimg-uploader {
+  border-color: var(--app-line-strong);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface-muted);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+body.medical-ui #app .drugimg-uploader:hover {
+  border-color: var(--app-accent);
+  background: var(--app-accent-soft);
+}
+
+body.medical-ui #app .drugimg-uploader-icon {
+  color: var(--app-accent);
+}
+
+body.medical-ui .el-progress-circle__track {
+  stroke: var(--app-line-strong);
+}
+
+body.medical-ui .el-loading-mask {
+  background-color: var(--app-surface-muted);
+}
+
+html.dark body.medical-ui .el-loading-mask {
+  background-color: rgba(15, 22, 32, 0.78);
+}
+
+body.medical-ui .el-loading-spinner .path {
+  stroke: var(--app-accent);
+}
+
+/* ===== 滚动条 ===== */
+body.medical-ui * {
+  scrollbar-color: var(--app-line-strong) transparent;
+  scrollbar-width: thin;
+}
+
+body.medical-ui *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body.medical-ui *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body.medical-ui *::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: var(--app-line-strong);
+  background-clip: padding-box;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 1024px) {
+  body.medical-ui #app .header-container .HomeLogo {
+    width: 235px;
+  }
+
+  body.medical-ui #app .header-container .main-head-right > span {
+    max-width: 310px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  body.medical-ui #app .page-sider .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 190px;
+  }
+
+  body.medical-ui #app .page-sider .el-menu-item,
+  body.medical-ui #app .page-sider .el-submenu__title {
+    padding-left: 15px !important;
+  }
+
+  body.medical-ui #app .main-view .search-policy .el-form {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  body.medical-ui #app .home-container > .el-header {
+    height: 80px !important;
+    padding: 10px 12px 6px !important;
+  }
+
+  body.medical-ui #app .header-container {
+    height: 64px;
+    padding: 0 14px;
+    border-radius: 14px;
+  }
+
+  body.medical-ui #app .header-container .HomeLogo {
+    width: 190px;
+    height: 50px;
+  }
+
+  body.medical-ui #app .header-container .main-head-right > span {
+    display: none;
+  }
+
+  body.medical-ui #app .home-container > .el-container > .el-aside {
+    padding: 0 0 12px 12px;
+  }
+
+  body.medical-ui #app .page-sider .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 176px;
+  }
+
+  body.medical-ui #app .main-view {
+    padding: 0 12px 12px !important;
+  }
+
+  body.medical-ui #app .dashboard-page {
+    padding: 8px 2px 22px;
+  }
+
+  body.medical-ui #app .main-view > .el-container > .el-header {
+    padding: 15px 16px 12px !important;
+  }
+
+  body.medical-ui .el-dialog {
+    width: calc(100% - 32px) !important;
+    margin-top: 6vh !important;
+  }
+
+  body.medical-ui .el-dialog__body {
+    max-height: 70vh;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  body.medical-ui #app .home-container > .el-container {
+    flex-direction: column;
+  }
+
+  body.medical-ui #app .home-container > .el-container > .el-aside {
+    width: 100% !important;
+    height: 62px;
+    flex: 0 0 62px;
+    padding: 0 10px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  body.medical-ui #app .page-sider,
+  body.medical-ui #app .page-sider > div {
+    width: 100%;
+    height: 54px;
+  }
+
+  body.medical-ui #app .page-sider .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 100%;
+    height: 54px;
+    min-height: 54px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 12px;
+  }
+
+  body.medical-ui #app .page-sider .MenuBackground {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    min-height: 52px;
+    padding: 4px 6px;
+  }
+
+  body.medical-ui #app .page-sider .el-menu-item,
+  body.medical-ui #app .page-sider .el-submenu {
+    flex: 0 0 auto;
+  }
+
+  body.medical-ui #app .page-sider .el-menu-item,
+  body.medical-ui #app .page-sider .el-submenu__title {
+    height: 42px;
+    margin: 1px 2px;
+    padding: 0 13px !important;
+    line-height: 42px;
+  }
+
+  body.medical-ui #app .page-sider .el-menu-item i,
+  body.medical-ui #app .page-sider .el-submenu__title i {
+    margin-right: 5px;
+  }
+
+  body.medical-ui #app .main-view {
+    width: 100%;
+    flex: 1 1 auto;
+    padding: 0 10px 10px !important;
+  }
+
+  body.medical-ui #app .LoginBackground {
+    padding: 24px 14px 76px;
+  }
+
+  body.medical-ui #app .LoginForm {
+    width: min(420px, calc(100vw - 28px));
+    min-height: 470px;
+    padding: 34px 26px 30px;
+    border-radius: 14px;
+  }
+
+  body.medical-ui #app .LoginForm .ios-login-brand {
+    margin-bottom: 30px;
+  }
+
+  body.medical-ui #app .dashboard-heading {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  body.medical-ui #app .status-chip {
+    margin-top: 0;
+  }
+
+  body.medical-ui #app .main-view > .el-container > .el-header,
+  body.medical-ui #app .main-view > .el-container > .el-main {
+    border-radius: var(--app-radius-sm);
+  }
+
+  body.medical-ui #app .main-view .search-col {
+    width: calc(100% - 28px);
+    margin-right: 14px;
+    margin-left: 14px;
+  }
+
+  body.medical-ui #app .main-view .search-policy {
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+
+  body.medical-ui #app .main-view .search-policy .el-form {
+    grid-template-columns: 1fr;
+  }
+
+  body.medical-ui #app .main-view .el-table {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+  }
+
+  body.medical-ui .el-form-item__label {
+    float: none;
+    width: 100% !important;
+    padding: 0 0 7px;
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  body.medical-ui .el-form-item__content {
+    margin-left: 0 !important;
+  }
+
+  body.medical-ui .el-dialog {
+    width: calc(100% - 20px) !important;
+    margin-top: 10px !important;
+    border-radius: 12px;
+  }
+
+  body.medical-ui .el-dialog__header {
+    padding: 17px 18px 14px;
+  }
+
+  body.medical-ui .el-dialog__body {
+    max-height: calc(100vh - 160px);
+    padding: 16px 18px;
+  }
+
+  body.medical-ui .el-dialog__footer {
+    padding: 12px 18px 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  body.medical-ui #app .home-container > .el-header {
+    height: 72px !important;
+    padding: 7px 8px 5px !important;
+  }
+
+  body.medical-ui #app .header-container {
+    height: 60px;
+    padding: 0 11px;
+    border-radius: 12px;
+  }
+
+  body.medical-ui #app .header-container .HomeLogo {
+    width: 172px;
+    height: 44px;
+  }
+
+  body.medical-ui #app .header-container .exit-area {
+    min-height: 34px;
+    padding: 6px 9px;
+  }
+
+  body.medical-ui #app .header-container .exit-area .logout {
+    display: none;
+  }
+
+  body.medical-ui #app .dashboard-heading h1 {
+    font-size: 25px;
+  }
+
+  body.medical-ui #app .metric-card {
+    padding: 16px;
+  }
+
+  body.medical-ui #app .chart-card .el-card__body,
+  body.medical-ui #app .carousel-card .el-card__body,
+  body.medical-ui #app .quick-card .el-card__body,
+  body.medical-ui #app .news-card .el-card__body {
+    padding: 14px;
+  }
+
+  body.medical-ui #app .main-view > .el-container > .el-header h2 {
+    font-size: 19px;
+  }
+
+  body.medical-ui #app .pagination {
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.medical-ui *,
+  body.medical-ui *::before,
+  body.medical-ui *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
