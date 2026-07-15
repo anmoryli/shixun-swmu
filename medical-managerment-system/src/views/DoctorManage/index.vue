@@ -470,7 +470,6 @@ export default {
               levelId: this.modifyForm.levelId,
               name: this.modifyForm.name,
               phoneNumber: this.modifyForm.phoneNumber,
-              pwd: this.modifyForm.pwd,
               sex: this.modifyForm.sex,
               typeId: this.modifyForm.typeId,
               id: this.modifyForm.id,
