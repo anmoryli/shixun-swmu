@@ -7,6 +7,14 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [vue()],
+    test: {
+      coverage: {
+        thresholds: {
+          lines: 100,
+          statements: 100,
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
