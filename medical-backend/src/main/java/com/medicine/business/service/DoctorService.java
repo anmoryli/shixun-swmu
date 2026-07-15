@@ -17,8 +17,6 @@ import java.util.Map;
 
 @Service
 public class DoctorService {
-    public static final String RESET_PASSWORD = "123456";
-
     private final DoctorMapper mapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -104,10 +102,23 @@ public class DoctorService {
 
     @Transactional
     public void resetPassword(Long accountId, Long operatorAccountId) {
-        if (mapper.resetPassword(accountId, passwordEncoder.encode(RESET_PASSWORD)) == 0) {
+        if (mapper.resetPassword(accountId, passwordEncoder.encode(generateTempPassword())) == 0) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "医生账号不存在");
         }
         mapper.insertPasswordResetAudit(accountId, operatorAccountId);
+    }
+
+    /**
+     * 生成 8 位随机临时密码（数字+字母，去除易混淆字符），避免使用固定弱口令 "123456"。
+     */
+    private String generateTempPassword() {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+        StringBuilder sb = new StringBuilder(8);
+        for (int i = 0; i < 8; i++) {
+            int index = (int) (Math.random() * chars.length());
+            sb.append(chars.charAt(index));
+        }
+        return sb.toString();
     }
 
     private String uniqueUsername(String name, String phone) {
