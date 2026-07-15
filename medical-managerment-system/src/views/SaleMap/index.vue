@@ -420,9 +420,10 @@ export default {
 .map-container {
   width: 100%;
   height: 700px;
-  border: 1px solid #e5e9ef;
+  border: 1px solid #c8d2cc;
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(41, 91, 87, 0.07);
 }
 .map-placeholder {
   padding: 24px;
