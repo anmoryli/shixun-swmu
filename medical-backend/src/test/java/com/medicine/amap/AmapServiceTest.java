@@ -77,6 +77,14 @@ class AmapServiceTest {
         assertInternalError(() -> new AmapService("key", builder).reverseGeocode(1, 2), "服务调用失败");
     }
 
+    @Test
+    void configuresRequestTimeoutsToBoundAmapLatency() {
+        // 高德调用必须显式设置 5s 连接/读取超时,防止外部服务卡死拖垮后端线程池
+        new AmapService("server-key", builder);
+        verify(builder).setConnectTimeout(java.time.Duration.ofSeconds(5));
+        verify(builder).setReadTimeout(java.time.Duration.ofSeconds(5));
+    }
+
     private void assertInternalError(Runnable operation, String messageFragment) {
         assertThatThrownBy(operation::run)
                 .isInstanceOf(BusinessException.class)
