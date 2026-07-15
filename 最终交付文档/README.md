@@ -13,9 +13,9 @@
 
 ## 一、项目概述
 
-慧医数字医疗应用系统是一套前后端分离的医疗基础数据管理系统，面向**管理员**（ROLE_1，全量维护）与**医生**（ROLE_2，业务只读）两类角色，覆盖登录授权、首页数据面板、医生信息、医药公司、销售地点、城市、药品、医保政策、公司政策、必备材料共八个业务模块，并包含药品图片安全上传与销售地点经纬度坐标扩展。
+慧医数字医疗应用系统是一套前后端分离的医疗基础数据管理系统，面向**管理员**（`ADMIN`，兼容旧值 `ROLE_1`，全量维护）与**医生**（`DOCTOR`，兼容旧值 `ROLE_2`，业务只读）两类启用角色，覆盖登录授权、首页数据面板、医生信息、医药公司、销售地点、城市、药品、医保政策、公司政策、必备材料共八个业务模块，并包含药品图片安全上传与销售地点经纬度坐标扩展。
 
-项目以现有 Vue 2 前端、需求规格说明书与 `sql/medical.sql` 为基线，补齐 Spring Boot 后端，连接远程 MySQL/Redis，完成数据库导入、接口回归、前后端联调与部署验证，并保留可复核的过程文档与证据。
+项目以现有 Vue 3 前端、需求规格说明书与 `sql/medical.sql` 为基线，补齐 Spring Boot 后端，连接远程 MySQL/Redis，完成数据库导入、接口回归、前后端联调与部署验证，并以 V5 迁移将旧角色菜单模型升级为规范化 RBAC，同时保留可复核的过程文档与证据。
 
 ## 二、交付结论
 
@@ -37,9 +37,9 @@
 
 | 路径 | 交付内容 |
 |---|---|
-| `medical-managerment-system/` | Vue 2 前端：登录、动态路由、仪表盘、八类管理页面、销售地点坐标 |
-| `medical-backend/` | Spring Boot 2.7.18 后端：认证、权限、Redis Token、42 个唯一 API、图片上传、健康检查 |
-| `sql/` | `medical.sql` 原始 17 表 + V2/V3 迁移（共 20 张表） |
+| `medical-managerment-system/` | Vue 3 前端：登录、动态路由、权限码交互控制、仪表盘、八类管理页面、销售地点坐标 |
+| `medical-backend/` | Spring Boot 2.7.18 后端：认证、按 `accountId` 实时加载 RBAC、ACTION 方法授权、Redis Token、42 个唯一 API、图片上传、健康检查 |
+| `sql/` | `medical.sql` 原始 17 表 + V2/V3/V4/V5 迁移（共 23 张表） |
 | `api-tests/` | Python 黑盒回归脚本 + Postman Collection（57/57 通过） |
 | `deploy/` | Docker Compose、systemd、Nginx、环境变量模板、部署与验证脚本 |
 | `compose.yaml` | 前后端一键构建与启动（`medicine-backend:1.0.0` + `medicine-web:1.0.0`） |
@@ -58,10 +58,10 @@
 
 | 层 | 技术 |
 |---|---|
-| 前端 | Vue 2、Vue Router（动态路由）、Vuex、Element UI、axios、ECharts、高德地图 |
+| 前端 | Vue 3、Vue Router 4（动态路由）、Vuex 4、Element Plus、axios、ECharts、高德地图 |
 | 后端 | Spring Boot 2.7.18、Spring Security、Spring MVC、MyBatis、JDK 17（不使用 Lombok） |
-| 数据库 | MySQL 8（schema `medicine`，20 张表） |
-| 缓存 | Redis 7（登录会话 + 权限，Token 以 SHA-256 摘要存储，不存明文，TTL 30 分钟） |
+| 数据库 | MySQL 8（schema `medicine`，23 张表；规范化账号—角色—权限关系） |
+| 缓存 | Redis 7（登录会话；Token 以 SHA-256 摘要存储，不存明文，TTL 30 分钟；权限按账号实时从 MySQL 加载） |
 | 部署 | Docker Compose、Nginx 同源发布、Docker Secrets、systemd |
 
 ## 五、快速运行（Docker 一键）
@@ -106,7 +106,7 @@ docker compose up -d --build
 
 | 目录 | 内容 |
 |---|---|
-| `开发工程师/` | 00 全流程跟踪、01 需求基线、02 架构与设计、03 数据库实现、04 接口参考与测试、05 构建与部署、06 验收总结；另含前端/后端/系统开发工程师三份角色文档 |
+| `开发工程师/` | 00 全流程跟踪、01 需求基线、02 架构与设计、03 数据库实现、04 接口参考与测试、05 构建与部署、06 验收总结、07 RBAC 技术方案；另含前端/后端/系统开发工程师三份角色文档 |
 | `CICD工程师/` | README + 07 CodeArts CI/CD 全过程记录（提交→构建→检查→制品→部署→接口验证） |
 | `测试工程师/` | README：回归结果与缺陷三轮闭环记录 |
 | `project-management/` | Epic/Feature/Story/Task/里程碑 CSV + 57 项黑盒场景 + ProjectMan 录入说明 |
@@ -147,6 +147,7 @@ docker compose up -d --build
 
 - 远程 MySQL/Redis 密码仅通过环境变量或 Docker Secrets 注入，不写入仓库与文档。
 - 登录密码 BCrypt 存储；Token 为随机不透明令牌，Redis 中仅存 SHA-256 摘要，不存明文。
+- V5 使用 `account_role`、`rbac_role`、`rbac_role_permission` 和带 `MENU/ACTION` 类型的 `permission` 建立规范化 RBAC；每次请求按可信 `accountId` 重新加载启用角色和权限，后端 `@PreAuthorize` 是最终授权边界，前端隐藏菜单或按钮不构成安全控制。
 - 演示管理员账号来自原始 SQL，正式上线前应修改默认密码并创建最小权限数据库账号。
 
 ---
