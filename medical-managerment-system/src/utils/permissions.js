@@ -108,9 +108,9 @@ export function normalizeAccess({
     roles !== undefined && roles !== null ? roles : userRoles(userInfo),
   );
   const codes = normalizePermissionCodes(permissionCodes);
-  const effectiveCodes = explicitCodes
-    ? codes
-    : (isAdminRole(normalizedRoles) ? WRITE_CODES.slice() : []);
+  // 拆分嵌套三元(G.EXP.03):先算默认权限码,再用单层三元决定最终取值
+  const defaultCodes = isAdminRole(normalizedRoles) ? WRITE_CODES.slice() : [];
+  const effectiveCodes = explicitCodes ? codes : defaultCodes;
   return {
     permissionCodes: effectiveCodes,
     roles: normalizedRoles,
