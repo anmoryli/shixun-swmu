@@ -59,6 +59,7 @@ class DashboardServiceTest {
         cacheInterceptor.setCacheManager(new ConcurrentMapCacheManager(DashboardCacheNames.DASHBOARD));
         cacheInterceptor.setCacheOperationSources(cacheOperationSource);
         cacheInterceptor.afterPropertiesSet();
+        cacheInterceptor.afterSingletonsInstantiated();
         BeanFactoryCacheOperationSourceAdvisor advisor = new BeanFactoryCacheOperationSourceAdvisor();
         advisor.setCacheOperationSource(cacheOperationSource);
         advisor.setAdvice(cacheInterceptor);
