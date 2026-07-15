@@ -72,11 +72,22 @@ public interface DoctorMapper {
             + "'青岛第一人民医院', NOW(), NOW(), #{accountId})")
     int insertDoctor(Map<String, Object> doctor);
 
-    @Update("UPDATE doctor SET name=#{name}, age=#{age}, sex=#{sex}, level_id=#{levelId}, phone=#{phoneNumber}, "
-            + "type_id=#{typeId}, updatetime=NOW() WHERE id=#{id}")
+    @Update("<script>UPDATE doctor <set>"
+            + "<if test='name != null'>name=#{name},</if>"
+            + "<if test='age != null'>age=#{age},</if>"
+            + "<if test='sex != null'>sex=#{sex},</if>"
+            + "<if test='levelId != null'>level_id=#{levelId},</if>"
+            + "<if test='phoneNumber != null'>phone=#{phoneNumber},</if>"
+            + "<if test='typeId != null'>type_id=#{typeId},</if>"
+            + "updatetime=NOW()"
+            + "</set> WHERE id=#{id}</script>")
     int updateDoctor(Map<String, Object> doctor);
 
-    @Update("UPDATE account SET realname=#{name}, phonenumber=#{phoneNumber}, updatetime=NOW() WHERE id=#{accountId}")
+    @Update("<script>UPDATE account <set>"
+            + "<if test='name != null'>realname=#{name},</if>"
+            + "<if test='phoneNumber != null'>phonenumber=#{phoneNumber},</if>"
+            + "updatetime=NOW()"
+            + "</set> WHERE id=#{accountId}</script>")
     int updateAccount(Map<String, Object> doctor);
 
     @Select("SELECT account_id FROM doctor WHERE id=#{id}")
