@@ -195,12 +195,14 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleAddDrug('addForm')"
-          >确 定</el-button
-        >
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="addFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleAddDrug('addForm')"
+            >确 定</el-button
+          >
+        </div>
+      </template>
     </el-dialog>
     <el-dialog
       title="修改药品信息"
@@ -286,12 +288,14 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="modifyFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleModifyDrug('modifyForm')"
-          >确 定</el-button
-        >
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="modifyFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleModifyDrug('modifyForm')"
+            >确 定</el-button
+          >
+        </div>
+      </template>
     </el-dialog>
   </el-container>
 </template>
