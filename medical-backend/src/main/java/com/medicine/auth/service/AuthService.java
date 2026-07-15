@@ -11,6 +11,7 @@ import com.medicine.auth.model.Account;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
 import com.medicine.security.AuthSession;
+import com.medicine.security.LoginAttemptService;
 import com.medicine.security.TokenService;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,24 +27,33 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final PermissionService permissionService;
+    private final LoginAttemptService loginAttemptService;
 
     public AuthService(AccountMapper accountMapper, PasswordEncoder passwordEncoder, TokenService tokenService) {
-        this(accountMapper, passwordEncoder, tokenService, null);
+        this(accountMapper, passwordEncoder, tokenService, null, null);
     }
 
     @Autowired
     public AuthService(AccountMapper accountMapper, PasswordEncoder passwordEncoder, TokenService tokenService,
-                       PermissionService permissionService) {
+                       PermissionService permissionService, LoginAttemptService loginAttemptService) {
         this.accountMapper = accountMapper;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
         this.permissionService = permissionService;
+        this.loginAttemptService = loginAttemptService;
     }
 
     public LoginResult login(String username, String password) {
-        Account account = accountMapper.findByUsername(username.trim());
+        String trimmed = username == null ? "" : username.trim();
+        if (loginAttemptService != null && loginAttemptService.isLocked(trimmed)) {
+            throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号已锁定，请稍后再试");
+        }
+        Account account = accountMapper.findByUsername(trimmed);
         if (account == null || !isActive(account) || account.getPwd() == null
                 || !passwordEncoder.matches(password, account.getPwd())) {
+            if (loginAttemptService != null) {
+                loginAttemptService.recordFailure(trimmed);
+            }
             throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号或密码错误");
         }
         int userType = toNumericUserType(account.getUtype());
@@ -52,6 +62,9 @@ public class AuthService {
             if (roles == null || roles.isEmpty()) {
                 throw new BusinessException(ErrorCode.LOGIN_FAILED, "账号或密码错误");
             }
+        }
+        if (loginAttemptService != null) {
+            loginAttemptService.clear(trimmed);
         }
         AuthSession session = new AuthSession(
                 account.getId(), account.getUname(), account.getRealname(), account.getUtype(), userType,
