@@ -1577,3 +1577,23 @@ body.medical-ui .el-card__body {
   background: var(--app-surface);
   color: var(--app-ink-soft);
 }
+
+/* ===== 标签页夜间适配 ===== */
+body.medical-ui .el-tabs__header {
+  border-bottom-color: var(--app-line);
+}
+body.medical-ui .el-tabs__item {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-tabs__item.is-active {
+  color: var(--app-accent-strong);
+}
+body.medical-ui .el-tabs__item:hover {
+  color: var(--app-accent);
+}
+body.medical-ui .el-tabs__active-bar {
+  background: var(--app-accent);
+}
+body.medical-ui .el-tabs__nav-wrap::after {
+  background-color: var(--app-line);
+}
