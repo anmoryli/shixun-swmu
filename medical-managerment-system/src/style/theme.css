@@ -1562,3 +1562,18 @@ body.medical-ui .el-table .el-table__column-filter-trigger {
 body.medical-ui .el-table__expand-icon:hover {
   color: var(--app-accent-strong);
 }
+
+/* ===== 卡片夜间适配 ===== */
+body.medical-ui .el-card {
+  background: var(--app-surface);
+  border-color: var(--app-line);
+  color: var(--app-ink);
+}
+body.medical-ui .el-card__header {
+  border-bottom-color: var(--app-line);
+  color: var(--app-ink);
+}
+body.medical-ui .el-card__body {
+  background: var(--app-surface);
+  color: var(--app-ink-soft);
+}
