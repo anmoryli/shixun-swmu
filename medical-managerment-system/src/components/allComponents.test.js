@@ -394,4 +394,22 @@ describe('all Vue components', () => {
     }
     expect(AMapLoader.load).toHaveBeenCalled();
   });
+
+  it('清理组件卸载残留:药品上传定时器与销售地图实例', () => {
+    // DrugManage beforeUnmount 应清空上传进度定时器,避免卸载后定时器仍修改 this 状态
+    const drug = methodContext(DrugManage);
+    drug.uploadTimer = 123;
+    drug.uploadResetTimer = 456;
+    DrugManage.beforeUnmount.call(drug);
+    expect(drug.uploadTimer).toBeNull();
+    expect(drug.uploadResetTimer).toBeNull();
+
+    // SaleManage beforeUnmount 应销毁地图实例并清空引用,避免 AMap 事件监听/DOM 残留导致内存泄漏
+    const sale = methodContext(SaleManage);
+    const destroySpy = sale.map.destroy;
+    SaleManage.beforeUnmount.call(sale);
+    expect(destroySpy).toHaveBeenCalled();
+    expect(sale.map).toBeNull();
+    expect(sale.markers).toEqual([]);
+  });
 });
