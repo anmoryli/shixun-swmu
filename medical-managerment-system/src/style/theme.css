@@ -1821,3 +1821,25 @@ body.medical-ui .el-collapse-item__wrap {
   border-bottom-color: var(--app-line);
   background: var(--app-surface);
 }
+
+/* ===== 分割线/链接/全局标题夜间适配 ===== */
+body.medical-ui .el-divider {
+  background-color: var(--app-line);
+}
+body.medical-ui .el-divider__text {
+  background: var(--app-surface);
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-link.el-link--default {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-link.el-link--default:hover {
+  color: var(--app-accent-strong);
+}
+body.medical-ui h1, body.medical-ui h2, body.medical-ui h3,
+body.medical-ui h4, body.medical-ui h5, body.medical-ui h6 {
+  color: var(--app-ink);
+}
+body.medical-ui a {
+  color: var(--app-accent-strong);
+}
