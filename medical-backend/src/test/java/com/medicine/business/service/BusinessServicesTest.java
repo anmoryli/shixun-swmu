@@ -79,7 +79,7 @@ class BusinessServicesTest {
         service.delete(1L);
         assertThrows(BusinessException.class, () -> service.add(Map.of(), 5));
         service.update(2L, Map.of());
-        verify(mapper).delete(1L);
+        verify(mapper).softDelete(eq(1L), any());
     }
 
     @Test
@@ -95,7 +95,7 @@ class BusinessServicesTest {
         service.update(1L, request);
         service.delete(1L);
         verify(mapper).insert("title", "body");
-        verify(mapper).delete(1L);
+        verify(mapper).softDelete(eq(1L), any());
     }
 
     @Test
@@ -138,8 +138,7 @@ class BusinessServicesTest {
         service.update(1L, request);
         service.delete(1L);
         assertThrows(BusinessException.class, () -> service.add(Map.of(), 5));
-        verify(mapper).deleteDrugRelations(1L);
-        verify(mapper).delete(1L);
+        verify(mapper).softDelete(eq(1L), any());
     }
 
     @Test

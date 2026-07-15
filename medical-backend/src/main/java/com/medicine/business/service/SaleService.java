@@ -7,6 +7,7 @@ package com.medicine.business.service;
 import com.medicine.business.mapper.SaleMapper;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
+import com.medicine.security.AuditSupport;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,8 +54,8 @@ public class SaleService {
 
     @Transactional
     public void delete(Long id) {
-        mapper.deleteDrugRelations(id);
-        mapper.delete(id);
+        // 软删除销售点,保留 drug_sale 关联以便恢复;drug 查询侧过滤已删销售点。
+        mapper.softDelete(id, AuditSupport.currentAccountId());
     }
 
     private Map<String, Object> values(Long id, Map<String, Object> request) {

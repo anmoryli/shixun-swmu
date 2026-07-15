@@ -34,7 +34,7 @@ public interface DrugMapper {
                                    @Param("size") int size);
 
     @Select("<script>SELECT ds.drug_id AS drugId, s.sale_id AS saleId, s.sale_name AS saleName "
-            + "FROM drug_sale ds JOIN sale s ON s.sale_id=ds.sale_id WHERE ds.drug_id IN "
+            + "FROM drug_sale ds JOIN sale s ON s.sale_id=ds.sale_id AND s.deleted_at IS NULL WHERE ds.drug_id IN "
             + "<foreach item='id' collection='drugIds' open='(' separator=',' close=')'>#{id}</foreach> "
             + "ORDER BY ds.id</script>")
     List<Map<String, Object>> findSales(@Param("drugIds") List<Long> drugIds);

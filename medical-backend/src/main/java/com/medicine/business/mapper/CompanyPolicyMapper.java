@@ -4,7 +4,6 @@
 
 package com.medicine.business.mapper;
 
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,6 +18,7 @@ public interface CompanyPolicyMapper {
     String FROM_SQL = " FROM company_policy cp LEFT JOIN drugcompany dc ON dc.company_id=cp.company_id ";
 
     @Select("<script>SELECT COUNT(*)" + FROM_SQL + "<where>"
+            + "cp.deleted_at IS NULL "
             + "<if test='keyword != null and keyword != \"\"'>"
             + "(cp.title LIKE CONCAT('%', #{keyword}, '%') OR cp.message LIKE CONCAT('%', #{keyword}, '%') "
             + "OR dc.company_name LIKE CONCAT('%', #{keyword}, '%'))"
@@ -28,6 +28,7 @@ public interface CompanyPolicyMapper {
     @Select("<script>SELECT cp.id, cp.title, cp.message, cp.company_id AS companyId, "
             + "DATE_FORMAT(cp.update_time, '%Y-%m-%d') AS updateTime, dc.company_name AS companyName"
             + FROM_SQL + "<where>"
+            + "cp.deleted_at IS NULL "
             + "<if test='keyword != null and keyword != \"\"'>"
             + "(cp.title LIKE CONCAT('%', #{keyword}, '%') OR cp.message LIKE CONCAT('%', #{keyword}, '%') "
             + "OR dc.company_name LIKE CONCAT('%', #{keyword}, '%'))"
@@ -49,6 +50,7 @@ public interface CompanyPolicyMapper {
                @Param("title") String title,
                @Param("message") String message);
 
-    @Delete("DELETE FROM company_policy WHERE id=#{id}")
-    int delete(@Param("id") Long id);
+    @Update("UPDATE company_policy SET deleted_at=NOW(), deleted_by=#{deletedBy} "
+            + "WHERE id=#{id} AND deleted_at IS NULL")
+    int softDelete(@Param("id") Long id, @Param("deletedBy") Long deletedBy);
 }

@@ -7,6 +7,7 @@ package com.medicine.business.service;
 import com.medicine.business.mapper.CompanyPolicyMapper;
 import com.medicine.common.BusinessException;
 import com.medicine.common.ErrorCode;
+import com.medicine.security.AuditSupport;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +61,6 @@ public class CompanyPolicyService {
 
     @Transactional
     public void delete(Long id) {
-        mapper.delete(id);
+        mapper.softDelete(id, AuditSupport.currentAccountId());
     }
 }
