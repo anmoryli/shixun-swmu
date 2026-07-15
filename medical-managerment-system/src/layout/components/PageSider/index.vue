@@ -16,7 +16,7 @@
           </el-menu-item>
           <!-- 一级菜单（有子级菜单）-->
           <el-submenu :index="item.path" v-else>
-            <template slot="title">
+            <template #title>
               <i :class="item.icon"></i>
               <span>{{ item.title }}</span>
             </template>
@@ -29,7 +29,7 @@
               </el-menu-item>
               <!-- 判断二级菜单（有三级菜单）-->
               <el-submenu :index="i.path" v-else>
-                <template slot="title">
+                <template #title>
                   <i :class="i.icon"></i>
                   <span>{{ i.title }}</span>
                 </template>
