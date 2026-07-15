@@ -5,6 +5,8 @@
 package com.medicine.business.service;
 
 import com.medicine.business.mapper.DrugMapper;
+import com.medicine.common.BusinessException;
+import com.medicine.common.ErrorCode;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,8 +53,12 @@ public class DrugService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
+        String drugName = PageSupport.stringValue(request.get("drugName")).orElse(null);
+        if (drugName == null || drugName.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "药品名称不能为空");
+        }
         Map<String, Object> values = new LinkedHashMap<>(request);
-        values.put("drugName", PageSupport.stringValue(request.get("drugName")).orElse(null));
+        values.put("drugName", drugName);
         values.put("drugInfo", PageSupport.stringValue(request.get("drugInfo")).orElse(null));
         values.put("drugEffect", PageSupport.stringValue(request.get("drugEffect")).orElse(null));
         values.put("drugImg", PageSupport.stringValue(request.get("drugImg")).orElse(null));
