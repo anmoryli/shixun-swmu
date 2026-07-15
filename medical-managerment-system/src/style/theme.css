@@ -1454,3 +1454,20 @@ body.medical-ui {
   --el-text-color-placeholder: var(--app-ink-faint);
   --el-text-color-disabled: var(--app-ink-faint);
 }
+
+/* ===== element-plus 变量调和：边框与填充 ===== */
+body.medical-ui {
+  --el-border-color: var(--app-line-strong);
+  --el-border-color-light: var(--app-line);
+  --el-border-color-lighter: var(--app-line);
+  --el-border-color-extra-light: var(--app-line);
+  --el-border-color-dark: var(--app-line-strong);
+  --el-border-color-darker: var(--app-line-strong);
+  --el-fill-color: var(--app-surface-muted);
+  --el-fill-color-light: var(--app-surface-muted);
+  --el-fill-color-lighter: var(--app-surface-muted);
+  --el-fill-color-extra-light: var(--app-surface-muted);
+  --el-fill-color-blank: var(--app-surface);
+  --el-fill-color-dark: var(--app-surface-muted);
+  --el-mask-color: rgba(31, 58, 71, 0.5);
+}
