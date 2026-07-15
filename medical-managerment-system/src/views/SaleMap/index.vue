@@ -411,6 +411,19 @@ export default {
       this.$nextTick(() => this.loadMap());
     });
   },
+  beforeUnmount() {
+    // 组件卸载时销毁地图实例与标记,避免 AMap 内部事件监听/DOM 残留导致内存泄漏
+    if (this.map) {
+      try {
+        this.map.destroy();
+      } catch (e) {
+        // 销毁异常忽略,不阻塞卸载
+      }
+      this.map = null;
+    }
+    this.markers = [];
+    this.amap = null;
+  },
 };
 </script>
 
