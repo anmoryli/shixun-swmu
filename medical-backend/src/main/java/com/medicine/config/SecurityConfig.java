@@ -55,7 +55,7 @@ public class SecurityConfig {
                     .accessDeniedHandler(accessDeniedHandler).and()
                 .authorizeRequests()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/image/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/image/**").authenticated()
                     .antMatchers("/api/login", "/api/session", "/actuator/health").permitAll()
                     .anyRequest().authenticated().and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
