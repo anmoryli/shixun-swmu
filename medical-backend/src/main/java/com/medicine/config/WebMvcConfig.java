@@ -7,6 +7,7 @@ package com.medicine.config;
 import com.medicine.web.RequestTimingInterceptor;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -16,5 +17,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     public WebMvcConfig(RequestTimingInterceptor requestTimingInterceptor) {
         this.requestTimingInterceptor = requestTimingInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(requestTimingInterceptor)
+                .addPathPatterns("/api/**");
     }
 }
