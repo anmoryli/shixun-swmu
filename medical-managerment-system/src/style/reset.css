@@ -1,7 +1,7 @@
 @charset "utf-8";
 html {
-  background-color: #fff;
-  color: #000;
+  background-color: var(--app-surface);
+  color: var(--app-ink);
   font-size: 12px;
 }
 
@@ -199,7 +199,7 @@ html {
 
 body {
   font-family: Arial, "Microsoft Yahei", "Helvetica Neue", Helvetica, sans-serif;
-  color: #333;
+  color: var(--app-ink);
   font-size: 0.28em;
   line-height: 1;
   -webkit-text-size-adjust: none;
@@ -209,11 +209,11 @@ hr {
   height: 0.02rem;
   margin: 0.1rem 0;
   border: medium none;
-  border-top: 0.02rem solid #cacaca;
+  border-top: 0.02rem solid var(--app-line-strong);
 }
 
 a {
-  color: #25a4bb;
+  color: var(--app-accent);
   text-decoration: none;
 }
 
@@ -222,7 +222,7 @@ html,
 body,
 #app {
   height: 100%;
-  background-color: #f3f3f4;
+  background-color: var(--app-canvas);
 }
 @font-face {
   font-family: "icomoon";
