@@ -203,6 +203,24 @@ WHERE p.enabled=1
 
 标准结果应为：`table_count=23`；`ADMIN`、`DOCTOR` 启用，`PATIENT` 禁用；其余异常查询为 `0` 或空集。还应通过 `information_schema.referential_constraints` 检查 `account_role`、`rbac_role_permission` 外键，并完成管理员写入成功、医生读取成功、医生写入返回 403 的应用级回归。本文档没有当前远程实例已执行 V5 的实时证据，因此 23 表及上述结果是迁移后的验收目标，不能替代目标环境实测记录。
 
+### 4.5 V6–V9：字符集统一、软删除与审计列
+
+V6 起的增量迁移均为加法、幂等迁移，需用 MySQL CLI（`DELIMITER` 辅助存储过程）执行，不能在只支持逐条语句的面板拆开运行。固定执行顺序：
+
+```
+sql/migrations/V6__charset_unify_and_audit_columns.sql
+sql/migrations/V7__region_charset_utf8mb4.sql
+sql/migrations/V8__soft_delete_columns.sql
+sql/migrations/V9__audit_who_columns.sql
+```
+
+- **V6**：统一 `medical_policy`/`company_policy`/`drug`/`drugcompany`/`city`/`doctor`/`sale`/`material` 默认 `COLLATE` 为 `utf8mb4_unicode_ci`；并为 `medical_policy` 新增 `created_at`/`updated_at` 系统审计时间列（保留原 `create_time`/`update_time` varchar 不动，兼容后端 `dateOrToday` 逻辑）。
+- **V7**：将历史区域表 `china`/`sysregion` 从 `utf8mb3` 转为 `utf8mb4_unicode_ci`，与业务表排序规则对齐，消除跨表 JOIN 字符串比较时的 `Illegal mix of collations`。
+- **V8**：为 `doctor`/`drug`/`medical_policy`/`company_policy`/`material`/`sale` 新增 `deleted_at`/`deleted_by` 软删除列。配合 service 层将 `delete` 改为 `UPDATE ... SET deleted_at=NOW()`，并在 `page`/`count` 查询过滤 `deleted_at IS NULL`，误删可恢复。
+- **V9**：为上述 6 张核心业务表新增 `create_by`/`update_by` 审计列（账号 id），记录数据创建与最后修改者，便于追溯。
+
+V6–V9 已在远程 `medicine` 执行并验证：`china`/`sysregion` `table_collation` 为 `utf8mb4_unicode_ci`；6 张核心表均含 `deleted_at`、`create_by` 列。
+
 ## 5. Redis 验证
 
 - 认证连接成功，`PING=true`。
