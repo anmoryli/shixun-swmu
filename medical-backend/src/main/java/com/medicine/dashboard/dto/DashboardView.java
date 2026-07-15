@@ -4,9 +4,12 @@
 
 package com.medicine.dashboard.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class DashboardView {
+public class DashboardView implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private DashboardCounts counts;
     private List<NameValue> doctorLevels;
