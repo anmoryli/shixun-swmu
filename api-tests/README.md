@@ -39,6 +39,12 @@ python .\api-tests\run_api_tests.py
 
 退出码：全部通过或仅有显式跳过时为 `0`，存在失败时为 `1`。即使服务不可用或登录失败，脚本也会生成报告。
 
+回归脚本自身的单元测试不需要启动后端：
+
+```powershell
+python -m unittest discover -s .\api-tests -p 'test_*.py'
+```
+
 ## Postman / Newman
 
 1. 导入 collection 和 `medicine-local.postman_environment.example.json`。
