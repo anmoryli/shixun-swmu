@@ -30,9 +30,10 @@ COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 # Static assets built in stage 1.
 COPY --from=build /workspace/dist/ /usr/share/nginx/html/
 
-EXPOSE 80
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-    CMD wget -q -O /dev/null http://127.0.0.1/actuator/health || exit 1
+    CMD wget -q -O /dev/null http://127.0.0.1:8080/actuator/health || exit 1
 
-# nginx:alpine already starts nginx in the foreground via its own entrypoint.
+# 以非特权 nginx 用户运行，监听非特权端口 8080，避免容器内 root 权限。
+USER nginx
