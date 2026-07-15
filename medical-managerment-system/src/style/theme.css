@@ -1843,3 +1843,18 @@ body.medical-ui h4, body.medical-ui h5, body.medical-ui h6 {
 body.medical-ui a {
   color: var(--app-accent-strong);
 }
+
+/* ===== 气泡与文字提示夜间适配 ===== */
+body.medical-ui .el-popover {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-popover__title {
+  color: var(--app-ink);
+}
+body.medical-ui .el-tooltip__popper {
+  background: var(--app-surface-solid) !important;
+  color: var(--app-ink) !important;
+}
+body.medical-ui .el-tooltip__popper .popper__arrow::after {
+  border-bottom-color: var(--app-surface-solid) !important;
+}
