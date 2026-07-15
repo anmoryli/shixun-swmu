@@ -339,6 +339,8 @@ export default {
       uploading: false, // 是否显示上传进度条
       percentage: 0, // 进度条进度
       status: null, // 进度条状态
+      uploadTimer: null, // 上传进度 setInterval 句柄,卸载时清理
+      uploadResetTimer: null, // 上传成功回填 setTimeout 句柄,卸载时清理
     };
   },
   methods: {
@@ -350,11 +352,12 @@ export default {
       if (!this.canWrite()) return;
       this.uploading = true;
       let num = 0;
-      let t = setInterval(() => {
+      this.uploadTimer = setInterval(() => {
         num = num + 10;
         this.percentage = num;
         if (num == 90) {
-          clearInterval(t);
+          clearInterval(this.uploadTimer);
+          this.uploadTimer = null;
           this.percentage = 100;
           this.status = 'success';
         }
@@ -364,7 +367,8 @@ export default {
     handleUploadSuccess(res) {
       if (!this.canWrite() || !res || !res.data || !res.data.url) return;
       this.$message.success('上传成功');
-      setTimeout(() => {
+      this.uploadResetTimer = setTimeout(() => {
+        this.uploadResetTimer = null;
         this.uploading = false;
         this.percentage = 0;
         this.status = null;
@@ -524,6 +528,17 @@ export default {
   mounted() {
     this.getDrugInfo(); // 首次渲染
     this.$store.dispatch('saleInfoManage/getAllSalePlaceInfo');
+  },
+  beforeUnmount() {
+    // 组件卸载时清理上传进度定时器,避免卸载后定时器仍修改 this 状态
+    if (this.uploadTimer) {
+      clearInterval(this.uploadTimer);
+      this.uploadTimer = null;
+    }
+    if (this.uploadResetTimer) {
+      clearTimeout(this.uploadResetTimer);
+      this.uploadResetTimer = null;
+    }
   },
   computed: {
     ...mapGetters({
