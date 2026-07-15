@@ -1681,3 +1681,19 @@ body.medical-ui .el-date-table td.today .el-date-table-cell__text {
 body.medical-ui .el-picker-panel__icon-btn {
   color: var(--app-ink-soft);
 }
+
+/* ===== 级联选择器夜间适配 ===== */
+body.medical-ui .el-cascader-panel,
+body.medical-ui .el-cascader-menu {
+  background: var(--app-surface-solid);
+  color: var(--app-ink);
+  border-right-color: var(--app-line);
+}
+body.medical-ui .el-cascader-menu__item {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-cascader-menu__item:hover,
+body.medical-ui .el-cascader-menu__item.focus {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-strong);
+}
