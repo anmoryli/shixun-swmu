@@ -94,6 +94,7 @@ function mountComponent(component) {
         $store: store(), $router: { push: vi.fn(), replace: vi.fn() },
         $route: { path: '/', fullPath: '/', meta: {} }, $message: message,
         $confirm: vi.fn(() => Promise.resolve()),
+        $can: vi.fn(() => true),
       },
       stubs: {
         RouterView: true, RouterLink: true, Pagination: true,
