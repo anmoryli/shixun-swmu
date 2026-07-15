@@ -11,6 +11,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Records the result and execution time of requests handled by Spring MVC.
@@ -26,5 +27,27 @@ public class RequestTimingInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         request.setAttribute(START_TIME_ATTRIBUTE, System.nanoTime());
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request,
+                                HttpServletResponse response,
+                                Object handler,
+                                Exception exception) {
+        Object startTime = request.getAttribute(START_TIME_ATTRIBUTE);
+        request.removeAttribute(START_TIME_ATTRIBUTE);
+        if (!(startTime instanceof Long)) {
+            return;
+        }
+
+        long elapsedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - (Long) startTime);
+        if (exception == null) {
+            log.info("MVC request completed: method={}, path={}, status={}, elapsedMs={}",
+                    request.getMethod(), request.getRequestURI(), response.getStatus(), elapsedMillis);
+        } else {
+            log.warn("MVC request failed: method={}, path={}, status={}, elapsedMs={}, exception={}",
+                    request.getMethod(), request.getRequestURI(), response.getStatus(), elapsedMillis,
+                    exception.getClass().getSimpleName());
+        }
     }
 }
