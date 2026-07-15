@@ -264,7 +264,7 @@ export default {
           this.addFormVisible = true;
         })
         .catch((error) => {
-          console.log(error);
+          console.warn(error);
           this.addForm.longitude = lng;
           this.addForm.latitude = lat;
           this.addForm.address = '';
@@ -327,7 +327,7 @@ export default {
           this.refreshMap();
         })
         .catch((e) => {
-          console.log('高德地图加载失败', e);
+          console.warn('高德地图加载失败', e);
         });
     },
     handleAddSalePlace(formName) {
