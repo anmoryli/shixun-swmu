@@ -1,25 +1,25 @@
 <template>
-  <div id="app" :class="{ 'ui-ios26': uiMode === 'ios26' }">
+  <div id="app">
     <router-view></router-view>
-    <ui-theme-toggle :mode="uiMode" @change="handleUiModeChange" />
+    <ui-theme-toggle :theme="theme" @change="handleThemeChange" />
   </div>
 </template>
 
 <script>
 import UiThemeToggle from './components/UiThemeToggle.vue';
 
-const UI_MODE_STORAGE_KEY = 'medical-ui-mode';
-const DEFAULT_UI_MODE = 'ios26';
+const THEME_STORAGE_KEY = 'medical-theme';
+const DEFAULT_THEME = 'light';
 
-function normalizeUiMode(mode) {
-  return mode === 'classic' || mode === 'ios26' ? mode : DEFAULT_UI_MODE;
+function normalizeTheme(theme) {
+  return theme === 'light' || theme === 'dark' ? theme : DEFAULT_THEME;
 }
 
-function readStoredUiMode() {
+function readStoredTheme() {
   try {
-    return normalizeUiMode(window.localStorage.getItem(UI_MODE_STORAGE_KEY));
+    return normalizeTheme(window.localStorage.getItem(THEME_STORAGE_KEY));
   } catch (error) {
-    return DEFAULT_UI_MODE;
+    return DEFAULT_THEME;
   }
 }
 
@@ -30,45 +30,48 @@ export default {
   },
   data() {
     return {
-      uiMode: readStoredUiMode(),
+      theme: readStoredTheme(),
     };
   },
   created() {
-    this.persistUiMode(this.uiMode);
-    this.syncDocumentUiMode(this.uiMode);
+    this.persistTheme(this.theme);
+    this.syncDocumentTheme(this.theme);
   },
   methods: {
-    persistUiMode(mode) {
+    persistTheme(theme) {
       try {
-        window.localStorage.setItem(UI_MODE_STORAGE_KEY, mode);
+        window.localStorage.setItem(THEME_STORAGE_KEY, theme);
       } catch (error) {
         // localStorage 不可用时仍允许本次会话正常切换。
       }
     },
-    syncDocumentUiMode(mode) {
-      const isIos26 = mode === 'ios26';
-      document.documentElement.classList.toggle('ios26-ui', isIos26);
+    syncDocumentTheme(theme) {
+      const isDark = theme === 'dark';
+      // medical-ui 始终启用主题；dark 切换夜间变量（变量定义见 theme.css）。
+      document.documentElement.classList.add('medical-ui');
+      document.documentElement.classList.toggle('dark', isDark);
       if (document.body) {
-        document.body.classList.toggle('ios26-ui', isIos26);
+        document.body.classList.add('medical-ui');
+        document.body.classList.toggle('dark', isDark);
       }
     },
-    handleUiModeChange(mode) {
-      const nextMode = normalizeUiMode(mode);
-      if (nextMode === this.uiMode) {
+    handleThemeChange(theme) {
+      const nextTheme = normalizeTheme(theme);
+      if (nextTheme === this.theme) {
         return;
       }
 
-      const previousMode = this.uiMode;
-      this.uiMode = nextMode;
-      this.persistUiMode(nextMode);
-      this.syncDocumentUiMode(nextMode);
+      const previousTheme = this.theme;
+      this.theme = nextTheme;
+      this.persistTheme(nextTheme);
+      this.syncDocumentTheme(nextTheme);
 
       this.$nextTick(() => {
         window.dispatchEvent(
-          new CustomEvent('medical-ui-mode-change', {
+          new CustomEvent('medical-theme-change', {
             detail: {
-              mode: nextMode,
-              previousMode,
+              theme: nextTheme,
+              previousTheme,
             },
           })
         );

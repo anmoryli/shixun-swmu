@@ -1,17 +1,43 @@
 <template>
   <button
-    class="ui-theme-toggle"
-    :class="{ 'is-ios26': isIos26 }"
+    class="theme-toggle"
     type="button"
-    :aria-label="toggleLabel"
-    :aria-pressed="isIos26 ? 'true' : 'false'"
-    :title="toggleLabel"
-    @click="toggleMode"
+    :aria-label="label"
+    :aria-pressed="isDark ? 'true' : 'false'"
+    :title="label"
+    @click="toggle"
   >
-    <span class="toggle-track" aria-hidden="true">
-      <span class="toggle-thumb"></span>
-    </span>
-    <span class="toggle-label">{{ toggleLabel }}</span>
+    <svg
+      v-if="isDark"
+      class="theme-toggle-icon"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+    </svg>
+    <svg
+      v-else
+      class="theme-toggle-icon"
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
   </button>
 </template>
 
@@ -19,128 +45,83 @@
 export default {
   name: 'UiThemeToggle',
   props: {
-    mode: {
+    theme: {
       type: String,
       required: true,
       validator(value) {
-        return value === 'classic' || value === 'ios26';
+        return value === 'light' || value === 'dark';
       },
     },
   },
   computed: {
-    isIos26() {
-      return this.mode === 'ios26';
+    isDark() {
+      return this.theme === 'dark';
     },
-    toggleLabel() {
-      return this.isIos26 ? '切换到经典界面' : '切换到新界面';
+    label() {
+      return this.isDark ? '切换到日间模式' : '切换到夜间模式';
     },
   },
   methods: {
-    toggleMode() {
-      this.$emit('change', this.isIos26 ? 'classic' : 'ios26');
+    toggle() {
+      this.$emit('change', this.isDark ? 'light' : 'dark');
     },
   },
 };
 </script>
 
 <style scoped>
-.ui-theme-toggle {
+.theme-toggle {
   position: fixed;
-  right: max(18px, env(safe-area-inset-right));
-  bottom: max(18px, env(safe-area-inset-bottom));
+  right: 20px;
+  bottom: 20px;
   z-index: 3000;
-  display: inline-flex;
-  min-height: 42px;
-  align-items: center;
-  gap: 9px;
+  display: grid;
+  width: 44px;
+  height: 44px;
   box-sizing: border-box;
-  padding: 7px 13px 7px 9px;
-  border: 1px solid rgba(90, 103, 115, 0.28);
-  border-radius: 999px;
-  color: #34404b;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 6px 20px rgba(31, 45, 58, 0.14);
-  font: 600 13px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Microsoft YaHei", sans-serif;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--app-line-strong, rgba(44, 82, 99, 0.2));
+  border-radius: 50%;
+  background: var(--app-surface, #ffffff);
+  color: var(--app-ink-soft, #5a6b7b);
+  box-shadow: var(--app-shadow-sm, 0 6px 18px rgba(31, 58, 71, 0.07));
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: border-color 160ms ease, box-shadow 160ms ease,
-    transform 160ms ease;
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease,
+    transform 180ms ease;
 }
 
-.ui-theme-toggle:hover {
-  border-color: rgba(64, 78, 91, 0.45);
-  box-shadow: 0 8px 24px rgba(31, 45, 58, 0.18);
+.theme-toggle:hover {
+  color: var(--app-accent-strong, #167d72);
+  border-color: var(--app-accent, #1f9d8f);
   transform: translateY(-1px);
 }
 
-.ui-theme-toggle:focus {
-  outline: 3px solid rgba(10, 132, 255, 0.34);
-  outline-offset: 3px;
-}
-
-.ui-theme-toggle:focus:not(:focus-visible) {
+.theme-toggle:focus {
   outline: none;
 }
 
-.ui-theme-toggle:focus-visible {
-  outline: 3px solid rgba(10, 132, 255, 0.34);
-  outline-offset: 3px;
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--app-accent-wash, rgba(31, 157, 143, 0.24));
+  outline-offset: 2px;
 }
 
-.ui-theme-toggle.is-ios26 {
-  border-color: rgba(10, 132, 255, 0.22);
-  color: #174b78;
-  background: rgba(247, 251, 255, 0.94);
-}
-
-.toggle-track {
-  position: relative;
-  width: 34px;
-  height: 20px;
-  flex: 0 0 34px;
-  border-radius: 999px;
-  background: #a8b0b8;
-  transition: background-color 160ms ease;
-}
-
-.toggle-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(18, 30, 42, 0.3);
-  transition: transform 160ms ease;
-}
-
-.is-ios26 .toggle-track {
-  background: #0a84ff;
-}
-
-.is-ios26 .toggle-thumb {
-  transform: translateX(14px);
-}
-
-.toggle-label {
-  white-space: nowrap;
+.theme-toggle-icon {
+  display: block;
 }
 
 @media (max-width: 480px) {
-  .ui-theme-toggle {
-    right: max(12px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom));
-    min-height: 40px;
-    padding-right: 11px;
+  .theme-toggle {
+    right: 14px;
+    bottom: 14px;
+    width: 40px;
+    height: 40px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ui-theme-toggle,
-  .toggle-track,
-  .toggle-thumb {
+  .theme-toggle {
     transition: none;
   }
 }

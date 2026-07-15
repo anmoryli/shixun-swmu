@@ -88,7 +88,7 @@ const tableColumnStub = {
 
 function mountComponent(component) {
   return mount(component, {
-    props: { msg: 'hello', total: 1, page: 1, pageSize: 5, mode: 'ios26' },
+    props: { msg: 'hello', total: 1, page: 1, pageSize: 5, theme: 'light' },
     global: {
       mocks: {
         $store: store(), $router: { push: vi.fn(), replace: vi.fn() },
@@ -186,10 +186,10 @@ describe('all Vue components', () => {
 
   it('switches the UI theme', async () => {
     const wrapper = mountComponent(App);
-    wrapper.vm.handleUiModeChange('classic');
-    wrapper.vm.handleUiModeChange('classic');
+    wrapper.vm.handleThemeChange('dark');
+    wrapper.vm.handleThemeChange('dark');
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.uiMode).toBe('classic');
+    expect(wrapper.vm.theme).toBe('dark');
   });
 
   it('executes every page method and computed property', async () => {
@@ -229,10 +229,10 @@ describe('all Vue components', () => {
 
   it('covers storage failures, menu conversion, and login outcomes', async () => {
     const getItem = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('blocked'); });
-    expect(App.data().uiMode).toBe('ios26');
+    expect(App.data().theme).toBe('light');
     getItem.mockRestore();
     const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('blocked'); });
-    expect(() => App.methods.persistUiMode('classic')).not.toThrow();
+    expect(() => App.methods.persistTheme('dark')).not.toThrow();
     setItem.mockRestore();
 
     const sider = bindMethods(PageSider, methodContext(PageSider));
