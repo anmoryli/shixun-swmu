@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.HexFormat;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -90,6 +91,35 @@ public class TokenService {
     public void delete(String token) {
         if (token != null && !token.trim().isEmpty()) {
             redisTemplate.delete(tokenPrefix + digest(token));
+        }
+    }
+
+    /**
+     * 按账号 ID 失效其所有登录会话。
+     * 用于账号被删除、密码被重置或权限被撤销时强制下线，避免旧 token 在 TTL 内继续可用。
+     * 扫描所有 token key，解析会话 JSON 比对 userId 后删除匹配项。
+     */
+    public void invalidateByAccountId(Long accountId) {
+        if (accountId == null) {
+            return;
+        }
+        Set<String> keys = redisTemplate.keys(tokenPrefix + "*");
+        if (keys == null || keys.isEmpty()) {
+            return;
+        }
+        for (String key : keys) {
+            String value = redisTemplate.opsForValue().get(key);
+            if (value == null) {
+                continue;
+            }
+            try {
+                AuthSession session = objectMapper.readValue(value, AuthSession.class);
+                if (accountId.equals(session.getUserId())) {
+                    redisTemplate.delete(key);
+                }
+            } catch (JsonProcessingException ignored) {
+                // 跳过格式异常的会话记录
+            }
         }
     }
 
