@@ -631,7 +631,7 @@
 
 \section{子域名与 HTTPS 配置}
 
-正式子域名尚未在仓库资料中确认，因此本报告不虚构上线地址。部署前应将 DNS 记录指向 ECS 或负载均衡，配置 TLS 证书，并同步修改 Nginx \texttt{server\_name}、后端 CORS 白名单与 Cookie 安全策略。正式地址填写为：\placeholder{正式子域名}。
+本项目正式子域名已确认为 \texttt{sx.weavecan.com}，通过 DNS 指向 ECS 并经 SSH 隧道转发至本地 Docker 部署，TLS 证书已配置。Nginx \texttt{server\_name}、后端 CORS 白名单与 Cookie 安全策略均已按该域名同步。正式访问地址为：\url{https://sx.weavecan.com/}。
 
 \begin{table}[H]
   \centering
@@ -640,9 +640,9 @@
     \toprule
     配置项 & 建议值 & 说明 \\
     \midrule
-    DNS & \placeholder{正式子域名} 指向 ECS/负载均衡 & 根据公网网络填写 A、AAAA 或 CNAME \\
-    Nginx \texttt{server\_name} & \placeholder{正式子域名} & 替换演示配置中的主机名 \\
-    CORS & \texttt{https://}\placeholder{正式子域名} & Cookie 模式不能与通配符同时使用 \\
+    DNS & \texttt{sx.weavecan.com} 指向 ECS/负载均衡 & 根据公网网络填写 A、AAAA 或 CNAME \\
+    Nginx \texttt{server\_name} & \texttt{sx.weavecan.com} & 替换演示配置中的主机名 \\
+    CORS & \texttt{https://sx.weavecan.com} & Cookie 模式不能与通配符同时使用 \\
     Cookie Secure & \texttt{true} & HTTPS 生产环境必须开启 \\
     防火墙/安全组 & 22（受限）、80、443 & 关闭 8082、MySQL 和 Redis 公网暴露 \\
     \bottomrule
