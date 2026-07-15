@@ -1499,3 +1499,11 @@ html.dark body.medical-ui {
   --el-fill-color-blank: var(--app-surface);
   --el-mask-color: rgba(0, 0, 0, 0.5);
 }
+
+/* ===== 表格夜间适配：表头 ===== */
+body.medical-ui .el-table__header-wrapper th.el-table__cell,
+body.medical-ui .el-table th.el-table__cell {
+  background: var(--app-surface-muted) !important;
+  color: var(--app-ink-soft) !important;
+  border-bottom-color: var(--app-line) !important;
+}
