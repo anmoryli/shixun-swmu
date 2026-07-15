@@ -75,7 +75,10 @@ public class DrugService {
         Map<String, Object> values = new LinkedHashMap<>(request);
         values.put("drugId", id);
         mapper.updateDrug(values);
-        replaceSales(id, request.get("saleIds"));
+        // 仅当请求显式携带 saleIds 字段时才重建销售关联,避免仅修改药品信息时误清空关联
+        if (request.containsKey("saleIds")) {
+            replaceSales(id, request.get("saleIds"));
+        }
     }
 
     @Transactional
