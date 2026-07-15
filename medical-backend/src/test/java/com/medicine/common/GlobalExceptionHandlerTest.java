@@ -8,6 +8,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.core.MethodParameter;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -49,5 +54,41 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getCode()).isEqualTo(ErrorCode.INTERNAL_ERROR);
         assertThat(response.getMessage()).isEqualTo("服务器内部错误");
         assertThat(response.getMessage()).doesNotContain("sensitive");
+    }
+
+    @Test
+    void normalizesMethodArgumentValidationWithAndWithoutFieldErrors() {
+        BeanPropertyBindingResult empty = new BeanPropertyBindingResult(new Form(), "form");
+        ApiResponse<Void> emptyResponse = handler.handleMethodArgumentNotValid(
+                new MethodArgumentNotValidException(mockParameter(), empty));
+        assertThat(emptyResponse.getCode()).isEqualTo(ErrorCode.INVALID_ARGUMENT);
+
+        BeanPropertyBindingResult invalid = new BeanPropertyBindingResult(new Form(), "form");
+        invalid.addError(new FieldError("form", "name", "name required"));
+        ApiResponse<Void> invalidResponse = handler.handleMethodArgumentNotValid(
+                new MethodArgumentNotValidException(mockParameter(), invalid));
+        assertThat(invalidResponse.getMessage()).isEqualTo("name required");
+    }
+
+    @Test
+    void normalizesBindingValidationWithAndWithoutFieldErrors() {
+        BindException empty = new BindException(new Form(), "form");
+        assertThat(handler.handleBindException(empty).getCode()).isEqualTo(ErrorCode.INVALID_ARGUMENT);
+
+        BindException invalid = new BindException(new Form(), "form");
+        invalid.addError(new FieldError("form", "name", "bad name"));
+        assertThat(handler.handleBindException(invalid).getMessage()).isEqualTo("bad name");
+    }
+
+    private MethodParameter mockParameter() {
+        return org.mockito.Mockito.mock(MethodParameter.class);
+    }
+
+    private static class Form {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
     }
 }

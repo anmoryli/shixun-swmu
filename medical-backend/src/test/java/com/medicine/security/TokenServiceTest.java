@@ -25,6 +25,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.Duration;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 class TokenServiceTest {
 
@@ -133,6 +135,25 @@ class TokenServiceTest {
                 .isInstanceOf(BusinessException.class)
                 .extracting("code")
                 .isEqualTo(ErrorCode.INTERNAL_ERROR);
+    }
+
+    @Test
+    void returnsEmptyWhenRedisHasNoSession() {
+        when(valueOperations.get(anyString())).thenReturn(null);
+        assertThat(service.find("raw-token")).isEmpty();
+    }
+
+    @Test
+    void mapsUnavailableDigestAlgorithmToBusinessError() {
+        TokenService failing = new TokenService(redisTemplate, objectMapper, "session:", Duration.ofHours(8)) {
+            @Override
+            MessageDigest messageDigest() throws NoSuchAlgorithmException {
+                throw new NoSuchAlgorithmException("disabled");
+            }
+        };
+        assertThatThrownBy(() -> failing.find("raw-token"))
+                .isInstanceOf(BusinessException.class)
+                .extracting("code").isEqualTo(ErrorCode.INTERNAL_ERROR);
     }
 
     private AuthSession session() {

@@ -55,6 +55,15 @@ class AuthServiceTest {
                 .isEqualTo(ErrorCode.LOGIN_FAILED);
     }
 
+    @Test
+    void rejectsMalformedAndMissingRoleNames() {
+        assertThatThrownBy(() -> AuthService.toNumericUserType("ROLE_bad"))
+                .isInstanceOf(BusinessException.class)
+                .extracting("code").isEqualTo(ErrorCode.FORBIDDEN);
+        assertThatThrownBy(() -> AuthService.toNumericUserType(null))
+                .isInstanceOf(BusinessException.class);
+    }
+
     private Account account(String password, String roleName) {
         Account account = new Account();
         account.setId(1L);

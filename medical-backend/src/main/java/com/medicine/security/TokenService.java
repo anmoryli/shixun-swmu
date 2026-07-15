@@ -45,12 +45,16 @@ public class TokenService {
      */
     private String digest(String token) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            MessageDigest md = messageDigest();
             byte[] hash = md.digest(token.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(hash);
         } catch (NoSuchAlgorithmException exception) {
             throw new BusinessException(ErrorCode.INTERNAL_ERROR, "登录会话初始化失败");
         }
+    }
+
+    MessageDigest messageDigest() throws NoSuchAlgorithmException {
+        return MessageDigest.getInstance("SHA-256");
     }
 
     public String create(AuthSession session) {

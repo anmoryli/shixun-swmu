@@ -56,10 +56,7 @@ public class FileStorageService {
         String fileName = UUID.randomUUID() + extension;
         try {
             Files.createDirectories(directory);
-            Path target = directory.resolve(fileName).normalize();
-            if (!target.startsWith(directory)) {
-                throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "非法文件名");
-            }
+            Path target = resolveTarget(fileName);
             Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException exception) {
@@ -69,5 +66,13 @@ public class FileStorageService {
 
     public Path directory() {
         return directory;
+    }
+
+    Path resolveTarget(String fileName) {
+        Path target = directory.resolve(fileName).normalize();
+        if (!target.startsWith(directory)) {
+            throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "非法文件名");
+        }
+        return target;
     }
 }
