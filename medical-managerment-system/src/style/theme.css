@@ -1779,3 +1779,19 @@ body.medical-ui .el-alert--info {
   background: var(--app-surface-muted);
   border-color: var(--app-line);
 }
+
+/* ===== 描述列表夜间适配 ===== */
+body.medical-ui .el-descriptions__body {
+  background: var(--app-surface);
+}
+body.medical-ui .el-descriptions__label {
+  color: var(--app-ink-soft);
+  background: var(--app-surface-muted);
+}
+body.medical-ui .el-descriptions__content {
+  color: var(--app-ink);
+  background: var(--app-surface);
+}
+body.medical-ui .el-descriptions__cell {
+  border-color: var(--app-line);
+}
