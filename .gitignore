@@ -15,6 +15,7 @@ logs/
 # Frontend dependencies and build output
 **/node_modules/
 **/dist/
+**/coverage/
 
 # Runtime uploads and generated evidence staging
 uploads/
