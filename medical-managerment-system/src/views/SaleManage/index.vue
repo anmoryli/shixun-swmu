@@ -517,7 +517,7 @@ export default {
         })
         .catch((error) => {
           // 逆地理编码失败时仍允许新增，只是地址留空
-          console.log(error);
+          console.warn(error);
           this.addForm.longitude = lng;
           this.addForm.latitude = lat;
           this.addForm.address = '';
@@ -584,7 +584,7 @@ export default {
           this.refreshMap();
         })
         .catch((e) => {
-          console.log('高德地图加载失败', e);
+          console.warn('高德地图加载失败', e);
         });
     },
   },
