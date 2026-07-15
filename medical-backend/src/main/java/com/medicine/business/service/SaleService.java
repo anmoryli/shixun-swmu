@@ -5,6 +5,8 @@
 package com.medicine.business.service;
 
 import com.medicine.business.mapper.SaleMapper;
+import com.medicine.common.BusinessException;
+import com.medicine.common.ErrorCode;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,10 @@ public class SaleService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
+        String saleName = PageSupport.stringValue(request.get("saleName")).orElse(null);
+        if (saleName == null || saleName.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "销售地点名称不能为空");
+        }
         mapper.insert(values(null, request));
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
