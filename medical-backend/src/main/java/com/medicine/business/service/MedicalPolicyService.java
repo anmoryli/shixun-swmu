@@ -5,6 +5,8 @@
 package com.medicine.business.service;
 
 import com.medicine.business.mapper.MedicalPolicyMapper;
+import com.medicine.common.BusinessException;
+import com.medicine.common.ErrorCode;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,10 +46,14 @@ public class MedicalPolicyService {
 
     @Transactional
     public int add(Map<String, Object> request, int pageSize) {
+        String title = PageSupport.stringValue(request.get("title")).orElse(null);
+        if (title == null || title.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "政策标题不能为空");
+        }
         String updateTime = dateOrToday(request.get("updateTime"));
         OptionalLong cityId = PageSupport.longValue(request.get("cityId"));
         mapper.insert(cityId.isPresent() ? cityId.getAsLong() : null,
-                PageSupport.stringValue(request.get("title")).orElse(null), updateTime,
+                title, updateTime,
                 PageSupport.stringValue(request.get("message")).orElse(null));
         return PageSupport.pages(mapper.count(null, null, null, null), PageSupport.pageSize(pageSize));
     }
