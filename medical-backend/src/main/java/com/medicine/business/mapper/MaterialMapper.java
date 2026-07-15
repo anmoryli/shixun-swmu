@@ -32,11 +32,13 @@ public interface MaterialMapper {
                                    @Param("offset") int offset,
                                    @Param("size") int size);
 
-    @Insert("INSERT INTO material(title, message, create_time, update_time) VALUES(#{title}, #{message}, NOW(), NOW())")
-    int insert(@Param("title") String title, @Param("message") String message);
+    @Insert("INSERT INTO material(title, message, create_time, update_time, create_by) "
+            + "VALUES(#{title}, #{message}, NOW(), NOW(), #{createBy})")
+    int insert(@Param("title") String title, @Param("message") String message, @Param("createBy") Long createBy);
 
-    @Update("UPDATE material SET title=#{title}, message=#{message}, update_time=NOW() WHERE id=#{id}")
-    int update(@Param("id") Long id, @Param("title") String title, @Param("message") String message);
+    @Update("UPDATE material SET title=#{title}, message=#{message}, update_time=NOW(), update_by=#{updateBy} WHERE id=#{id}")
+    int update(@Param("id") Long id, @Param("title") String title, @Param("message") String message,
+               @Param("updateBy") Long updateBy);
 
     @Update("UPDATE material SET deleted_at=NOW(), deleted_by=#{deletedBy} "
             + "WHERE id=#{id} AND deleted_at IS NULL")

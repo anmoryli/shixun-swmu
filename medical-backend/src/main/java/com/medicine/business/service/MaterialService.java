@@ -37,14 +37,16 @@ public class MaterialService {
         if (title == null || title.isBlank()) {
             throw new BusinessException(ErrorCode.INVALID_ARGUMENT, "材料标题不能为空");
         }
-        mapper.insert(title, PageSupport.stringValue(request.get("message")).orElse(null));
+        mapper.insert(title, PageSupport.stringValue(request.get("message")).orElse(null),
+                AuditSupport.currentAccountId());
         return PageSupport.pages(mapper.count(null), PageSupport.pageSize(pageSize));
     }
 
     @Transactional
     public void update(Long id, Map<String, Object> request) {
         mapper.update(id, PageSupport.stringValue(request.get("title")).orElse(null),
-                PageSupport.stringValue(request.get("message")).orElse(null));
+                PageSupport.stringValue(request.get("message")).orElse(null),
+                AuditSupport.currentAccountId());
     }
 
     @Transactional

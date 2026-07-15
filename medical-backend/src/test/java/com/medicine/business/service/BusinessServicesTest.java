@@ -94,7 +94,7 @@ class BusinessServicesTest {
         assertEquals(1, service.add(request, 5));
         service.update(1L, request);
         service.delete(1L);
-        verify(mapper).insert("title", "body");
+        verify(mapper).insert(eq("title"), eq("body"), any());
         verify(mapper).softDelete(eq(1L), any());
     }
 
