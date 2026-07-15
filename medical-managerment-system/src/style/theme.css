@@ -1883,3 +1883,16 @@ body.medical-ui .el-backtop {
 body.medical-ui .el-backtop:hover {
   background: var(--app-accent-strong);
 }
+
+/* ===== 统计与徽标夜间适配 ===== */
+body.medical-ui .el-statistic__head {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-statistic__content {
+  color: var(--app-ink);
+}
+body.medical-ui .el-badge__content {
+  background: var(--app-danger);
+  border-color: var(--app-surface-solid);
+  color: #fff;
+}
