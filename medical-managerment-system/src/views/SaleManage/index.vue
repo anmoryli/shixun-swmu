@@ -629,18 +629,18 @@ export default {
   gap: 4px;
   padding: 4px 8px;
   border-radius: 12px;
-  color: #167f77;
-  background: #e9f8f5;
+  color: var(--app-accent-strong);
+  background: var(--app-accent-soft);
   font-family: Consolas, monospace;
   font-size: 12px;
   white-space: nowrap;
 }
 .coordinate-empty {
-  color: #a5afae;
+  color: var(--app-ink-faint);
 }
 .coordinate-hint {
   margin-left: 10px;
-  color: #8c939d;
+  color: var(--app-ink-faint);
   font-size: 12px;
 }
 .map-switch {
@@ -656,22 +656,22 @@ export default {
   margin-bottom: 12px;
 }
 .map-hint {
-  color: #e6a23c;
+  color: var(--app-warm);
   font-size: 13px;
 }
 .map-container {
   width: 100%;
   height: 700px;
-  border: 1px solid #c8d2cc;
+  border: 1px solid var(--app-line);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(41, 91, 87, 0.07);
 }
 .map-placeholder {
   padding: 24px;
-  color: #909399;
+  color: var(--app-ink-faint);
   text-align: center;
-  border: 1px dashed #dcdfe6;
+  border: 1px dashed var(--app-line);
   border-radius: 8px;
 }
 </style>
