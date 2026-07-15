@@ -1661,3 +1661,23 @@ body.medical-ui .el-select .el-tag {
   border-color: var(--app-line);
   color: var(--app-accent-strong);
 }
+
+/* ===== 日期选择器夜间适配 ===== */
+body.medical-ui .el-date-picker,
+body.medical-ui .el-picker-panel {
+  background: var(--app-surface-solid);
+  color: var(--app-ink);
+}
+body.medical-ui .el-date-table th {
+  color: var(--app-ink-faint);
+  border-bottom-color: var(--app-line);
+}
+body.medical-ui .el-date-table td.available .el-date-table-cell__text {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-date-table td.today .el-date-table-cell__text {
+  color: var(--app-accent-strong);
+}
+body.medical-ui .el-picker-panel__icon-btn {
+  color: var(--app-ink-soft);
+}
