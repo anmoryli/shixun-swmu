@@ -13,6 +13,7 @@ import './style/reset.css'; // 引入样式
 import 'animate.css'; // 引入样式
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
+import 'element-plus/theme-chalk/dark/css-vars.css';
 import './style/theme.css';
 import { can, hasRole } from './utils/permissions';
 
