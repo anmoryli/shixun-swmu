@@ -64,6 +64,9 @@ app:
       secure: ${COOKIE_SECURE:false}
       same-site: ${COOKIE_SAME_SITE:lax}
       max-age: ${COOKIE_MAX_AGE:7d}
+    # 登录限流：连续失败 5 次锁定 15 分钟，防暴力破解。可通过环境变量覆盖。
+    login-max-attempts: ${APP_LOGIN_MAX_ATTEMPTS:5}
+    login-lock-duration: ${APP_LOGIN_LOCK_DURATION:15m}
   amap:
     # 高德 Web 服务 Key：仅后端持有，用于 /api/regeo 逆地理编码代理，前端不再可见。
     web-key: ${AMAP_WEB_KEY:}
