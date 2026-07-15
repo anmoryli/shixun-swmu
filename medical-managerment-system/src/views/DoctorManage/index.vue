@@ -25,7 +25,7 @@
             clearable
             size="small"
             v-model="keyword"
-            @input="handelQuery"
+            @input="debouncedQuery"
           >
           </el-input>
         </el-col>
@@ -287,6 +287,7 @@
 import Pagination from '../../components/Pagination.vue';
 import { mapGetters } from 'vuex';
 import { doctorRules, validatePass } from '../../utils/validator';
+import debounce from '../../utils/debounce';
 import { resetPassword } from '../../api/admin/doctorInfoManage';
 
 export default {
@@ -365,17 +366,18 @@ export default {
         size: this.pageSize,
       });
     },
-    // 当前页改变时触发,跳转其他页
+    // 当前页改变时触发,跳转其他页(保留当前页码,若处于搜索则带 keyword 翻页)
     handleCurrentChange(event) {
       this.currentPage = event.page;
-      if (this.keyword.length) {
-        this.handelQuery(this.keyword);
-      } else {
-        this.getDoctorInfo();
+      const params = { pn: this.currentPage, size: this.pageSize };
+      if (this.keyword && this.keyword.length) {
+        params.keyword = this.keyword;
       }
+      this.$store.dispatch('doctorInfoManage/getDoctorInfo', params);
     },
-    // 通过关键字查询数据
+    // 通过关键字查询数据:新关键字从第一页查起,避免停在旧页码导致空表
     handelQuery(keyword) {
+      this.currentPage = 1;
       this.$store.dispatch('doctorInfoManage/getDoctorInfo', {
         pn: this.currentPage,
         size: this.pageSize,
@@ -520,6 +522,10 @@ export default {
   mounted() {
     this.getDoctorInfo(); // 首次渲染
     this.$store.dispatch('doctorInfoManage/getDoctorLevelAndType');
+  },
+  created() {
+    // 搜索输入防抖:停止输入 300ms 后再查询,避免每次按键都发请求
+    this.debouncedQuery = debounce((keyword) => this.handelQuery(keyword), 300);
   },
   computed: {
     ...mapGetters({
