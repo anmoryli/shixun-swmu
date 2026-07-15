@@ -45,8 +45,13 @@ public interface DrugMapper {
     @Insert("INSERT INTO drug_sale(drug_id, sale_id) VALUES(#{drugId}, #{saleId})")
     int insertSaleRelation(@Param("drugId") Long drugId, @Param("saleId") Long saleId);
 
-    @Update("UPDATE drug SET drug_name=#{drugName}, drug_info=#{drugInfo}, drug_effect=#{drugEffect}, "
-            + "drug_img=#{drugImg}, updatetime=NOW() WHERE drug_id=#{drugId}")
+    @Update("<script>UPDATE drug <set>"
+            + "<if test='drugName != null'>drug_name=#{drugName},</if>"
+            + "<if test='drugInfo != null'>drug_info=#{drugInfo},</if>"
+            + "<if test='drugEffect != null'>drug_effect=#{drugEffect},</if>"
+            + "<if test='drugImg != null'>drug_img=#{drugImg},</if>"
+            + "updatetime=NOW()"
+            + "</set> WHERE drug_id=#{drugId}</script>")
     int updateDrug(Map<String, Object> drug);
 
     @Delete("DELETE FROM drug_sale WHERE drug_id=#{drugId}")
