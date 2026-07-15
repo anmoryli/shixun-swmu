@@ -48,9 +48,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String token = extractToken(request);
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             tokenService.find(token).ifPresent(session -> {
-                List<String> authorities = permissionService == null
-                        ? Collections.singletonList(session.getRoleName())
-                        : permissionService.findAuthorities(session.getUserId());
+                // 优先读会话预计算的 authorities,免去每请求多表 JOIN 查权限;
+                // 为 null(旧会话或兼容构造)时回退到按请求查询。
+                List<String> authorities = session.getAuthorities();
+                if (authorities == null) {
+                    authorities = permissionService == null
+                            ? Collections.singletonList(session.getRoleName())
+                            : permissionService.findAuthorities(session.getUserId());
+                }
                 if (authorities == null || authorities.isEmpty()) {
                     return;
                 }
