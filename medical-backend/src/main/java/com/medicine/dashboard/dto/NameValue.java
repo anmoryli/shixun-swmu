@@ -4,7 +4,11 @@
 
 package com.medicine.dashboard.dto;
 
-public class NameValue {
+import java.io.Serializable;
+
+public class NameValue implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private long value;

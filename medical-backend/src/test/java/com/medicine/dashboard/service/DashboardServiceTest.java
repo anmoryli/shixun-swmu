@@ -6,8 +6,11 @@ package com.medicine.dashboard.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.medicine.dashboard.DashboardCacheNames;
 import com.medicine.dashboard.dto.DashboardCounts;
 import com.medicine.dashboard.dto.DashboardNews;
 import com.medicine.dashboard.dto.DashboardView;
@@ -15,6 +18,11 @@ import com.medicine.dashboard.dto.NameValue;
 import com.medicine.dashboard.mapper.DashboardMapper;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.cache.annotation.AnnotationCacheOperationSource;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.interceptor.BeanFactoryCacheOperationSourceAdvisor;
+import org.springframework.cache.interceptor.CacheInterceptor;
 
 import java.util.Collections;
 
@@ -36,5 +44,35 @@ class DashboardServiceTest {
         assertThat(result.getDoctorLevels()).hasSize(1);
         assertThat(result.getTreatTypes()).hasSize(1);
         assertThat(result.getNews()).hasSize(1);
+    }
+
+    @Test
+    void reusesCachedDashboardResult() {
+        DashboardMapper mapper = mock(DashboardMapper.class);
+        when(mapper.findCounts()).thenReturn(new DashboardCounts());
+        when(mapper.findDoctorLevels()).thenReturn(Collections.emptyList());
+        when(mapper.findTreatTypes()).thenReturn(Collections.emptyList());
+        when(mapper.findNews()).thenReturn(Collections.emptyList());
+
+        AnnotationCacheOperationSource cacheOperationSource = new AnnotationCacheOperationSource();
+        CacheInterceptor cacheInterceptor = new CacheInterceptor();
+        cacheInterceptor.setCacheManager(new ConcurrentMapCacheManager(DashboardCacheNames.DASHBOARD));
+        cacheInterceptor.setCacheOperationSources(cacheOperationSource);
+        cacheInterceptor.afterPropertiesSet();
+        cacheInterceptor.afterSingletonsInstantiated();
+        BeanFactoryCacheOperationSourceAdvisor advisor = new BeanFactoryCacheOperationSourceAdvisor();
+        advisor.setCacheOperationSource(cacheOperationSource);
+        advisor.setAdvice(cacheInterceptor);
+        ProxyFactory proxyFactory = new ProxyFactory(new DashboardService(mapper));
+        proxyFactory.addAdvisor(advisor);
+        DashboardService cachedService = (DashboardService) proxyFactory.getProxy();
+
+        cachedService.getDashboard();
+        cachedService.getDashboard();
+
+        verify(mapper, times(1)).findCounts();
+        verify(mapper, times(1)).findDoctorLevels();
+        verify(mapper, times(1)).findTreatTypes();
+        verify(mapper, times(1)).findNews();
     }
 }

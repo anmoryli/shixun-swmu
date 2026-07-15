@@ -25,6 +25,11 @@ spring:
     password: ${REDIS_PASSWORD:}
     database: ${REDIS_DATABASE:0}
     timeout: ${REDIS_TIMEOUT:5s}
+  cache:
+    type: redis
+    redis:
+      time-to-live: ${DASHBOARD_CACHE_TTL:5m}
+      cache-null-values: false
   jackson:
     default-property-inclusion: non_null
     time-zone: Asia/Shanghai
@@ -44,6 +49,8 @@ management:
       show-details: always
 
 app:
+  cache:
+    dashboard-eviction-delay-ms: ${DASHBOARD_CACHE_EVICTION_DELAY_MS:300000}
   auth:
     token-prefix: 'medicine:auth:token:'
     # 持久登录：会话 TTL 与 cookie Max-Age 对齐为 7 天，滑动续期由 TokenService 触发。

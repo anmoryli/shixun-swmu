@@ -4,7 +4,11 @@
 
 package com.medicine.dashboard.dto;
 
-public class DashboardCounts {
+import java.io.Serializable;
+
+public class DashboardCounts implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private long doctorCount;
     private long companyCount;
