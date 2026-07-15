@@ -1445,3 +1445,12 @@ body.medical-ui {
   --el-color-danger: var(--app-danger);
   --el-color-error: var(--app-danger);
 }
+
+/* ===== element-plus 变量调和：文字/字体 ===== */
+body.medical-ui {
+  --el-text-color-primary: var(--app-ink);
+  --el-text-color-regular: var(--app-ink-soft);
+  --el-text-color-secondary: var(--app-ink-faint);
+  --el-text-color-placeholder: var(--app-ink-faint);
+  --el-text-color-disabled: var(--app-ink-faint);
+}
