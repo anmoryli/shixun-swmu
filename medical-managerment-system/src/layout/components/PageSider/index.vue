@@ -6,7 +6,7 @@
       :default-active="$route.path"
     >
       <div class="MenuBackground">
-        <fragment v-for="item in submenuList" :key="item.name || item.path">
+        <template v-for="item in submenuList" :key="item.name || item.path">
           <!-- 一级菜单（没有任何子级菜单）-->
           <el-menu-item :index="item.path" v-if="!item.children || !item.children.length">
             <i :class="item.icon"></i>
@@ -21,7 +21,7 @@
               <span>{{ item.title }}</span>
             </template>
             <!-- 遍历二级菜单容器 -->
-            <fragment v-for="i in item.children" :key="i.name || i.path">
+            <template v-for="i in item.children" :key="i.name || i.path">
               <!-- 判断二级菜单（没有三级菜单）-->
               <el-menu-item :index="i.path" v-if="!i.children || !i.children.length">
                 <i :class="i.icon"></i>
@@ -42,9 +42,9 @@
                   <span>{{ j.title }}</span>
                 </el-menu-item>
               </el-submenu>
-            </fragment>
+            </template>
           </el-submenu>
-        </fragment>
+        </template>
       </div>
     </el-menu>
   </div>
