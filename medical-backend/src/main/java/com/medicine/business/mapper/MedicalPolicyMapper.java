@@ -42,21 +42,23 @@ public interface MedicalPolicyMapper {
                                    @Param("offset") int offset,
                                    @Param("size") int size);
 
-    @Insert("INSERT INTO medical_policy(title, message, city_id, create_time, update_time) "
-            + "VALUES(#{title}, #{message}, #{cityId}, #{updateTime}, #{updateTime})")
+    @Insert("INSERT INTO medical_policy(title, message, city_id, create_time, update_time, create_by) "
+            + "VALUES(#{title}, #{message}, #{cityId}, #{updateTime}, #{updateTime}, #{createBy})")
     int insert(@Param("cityId") Long cityId,
                @Param("title") String title,
                @Param("updateTime") String updateTime,
-               @Param("message") String message);
+               @Param("message") String message,
+               @Param("createBy") Long createBy);
 
     @Update("UPDATE medical_policy SET city_id=#{cityId}, title=#{title}, "
-            + "message=#{message}, update_time=#{updateTime} "
+            + "message=#{message}, update_time=#{updateTime}, update_by=#{updateBy} "
             + "WHERE id=#{id}")
     int update(@Param("id") Long id,
                @Param("cityId") Long cityId,
                @Param("title") String title,
                @Param("updateTime") String updateTime,
-               @Param("message") String message);
+               @Param("message") String message,
+               @Param("updateBy") Long updateBy);
 
     @Update("UPDATE medical_policy SET deleted_at=NOW(), deleted_by=#{deletedBy} "
             + "WHERE id=#{id} AND deleted_at IS NULL")

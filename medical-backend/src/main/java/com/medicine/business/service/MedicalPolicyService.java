@@ -55,7 +55,8 @@ public class MedicalPolicyService {
         OptionalLong cityId = PageSupport.longValue(request.get("cityId"));
         mapper.insert(cityId.isPresent() ? cityId.getAsLong() : null,
                 title, updateTime,
-                PageSupport.stringValue(request.get("message")).orElse(null));
+                PageSupport.stringValue(request.get("message")).orElse(null),
+                AuditSupport.currentAccountId());
         return PageSupport.pages(mapper.count(null, null, null, null), PageSupport.pageSize(pageSize));
     }
 
@@ -64,7 +65,8 @@ public class MedicalPolicyService {
         OptionalLong cityId = PageSupport.longValue(request.get("cityId"));
         mapper.update(id, cityId.isPresent() ? cityId.getAsLong() : null,
                 PageSupport.stringValue(request.get("title")).orElse(null), dateOrToday(request.get("updateTime")),
-                PageSupport.stringValue(request.get("message")).orElse(null));
+                PageSupport.stringValue(request.get("message")).orElse(null),
+                AuditSupport.currentAccountId());
     }
 
     @Transactional
