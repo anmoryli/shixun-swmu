@@ -1525,3 +1525,14 @@ body.medical-ui .el-table__body tr.hover-row > .el-table__cell {
 body.medical-ui .el-table__body tr.current-row > .el-table__cell {
   background: var(--app-accent-wash) !important;
 }
+
+/* ===== 表格夜间适配：固定列与固定表头 ===== */
+body.medical-ui .el-table__fixed,
+body.medical-ui .el-table__fixed-right,
+body.medical-ui .el-table-fixed__column--left,
+body.medical-ui .el-table-fixed__column--right {
+  background: var(--app-surface-solid) !important;
+}
+body.medical-ui .el-table__fixed-header-wrapper .el-table__cell {
+  background: var(--app-surface-muted) !important;
+}
