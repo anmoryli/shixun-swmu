@@ -1507,3 +1507,12 @@ body.medical-ui .el-table th.el-table__cell {
   color: var(--app-ink-soft) !important;
   border-bottom-color: var(--app-line) !important;
 }
+
+/* ===== 表格夜间适配：数据行与斑马纹 ===== */
+body.medical-ui .el-table__body tr .el-table__cell,
+body.medical-ui .el-table__row .el-table__cell {
+  background: var(--app-surface-solid) !important;
+}
+body.medical-ui .el-table--striped .el-table__body tr.el-table__row--striped .el-table__cell {
+  background: var(--app-surface-muted) !important;
+}
