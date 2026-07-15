@@ -1619,3 +1619,18 @@ body.medical-ui .el-switch__core {
   background-color: var(--app-surface-muted);
   border-color: var(--app-line-strong);
 }
+
+/* ===== 单选/多选标签夜间适配 ===== */
+body.medical-ui .el-checkbox__label,
+body.medical-ui .el-radio__label {
+  color: var(--app-ink-soft);
+}
+body.medical-ui .el-checkbox.is-disabled .el-checkbox__label,
+body.medical-ui .el-radio.is-disabled .el-radio__label {
+  color: var(--app-ink-faint);
+}
+body.medical-ui .el-checkbox__inner,
+body.medical-ui .el-radio__inner {
+  border-color: var(--app-line-strong);
+  background: var(--app-surface);
+}
