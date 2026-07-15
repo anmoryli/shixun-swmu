@@ -36,4 +36,16 @@ class RequestTimingInterceptorTest {
 
         assertNull(request.getAttribute(RequestTimingInterceptor.START_TIME_ATTRIBUTE));
     }
+
+    @Test
+    void shouldRecordFailedRequestCompletion() {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/api/doctor/add");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setStatus(500);
+
+        interceptor.preHandle(request, response, new Object());
+        interceptor.afterCompletion(request, response, new Object(), new IllegalStateException("failed"));
+
+        assertNull(request.getAttribute(RequestTimingInterceptor.START_TIME_ATTRIBUTE));
+    }
 }
