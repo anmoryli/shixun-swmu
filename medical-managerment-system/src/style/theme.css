@@ -1866,3 +1866,10 @@ body.medical-ui .el-progress-bar__outer {
 body.medical-ui .el-progress__text {
   color: var(--app-ink-soft);
 }
+
+/* ===== 骨架屏夜间适配 ===== */
+body.medical-ui .el-skeleton__item,
+body.medical-ui .el-skeleton__paragraph > div,
+body.medical-ui .el-skeleton__paragraph > span {
+  background: var(--app-surface-muted);
+}
