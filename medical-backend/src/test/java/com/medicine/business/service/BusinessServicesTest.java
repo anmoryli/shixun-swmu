@@ -9,6 +9,7 @@ import com.medicine.business.mapper.MedicalPolicyMapper;
 import com.medicine.business.mapper.SaleMapper;
 import com.medicine.common.BusinessException;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -177,5 +178,25 @@ class BusinessServicesTest {
         service.delete(7L);
         verify(mapper, atLeastOnce()).insertSaleRelation(7L, 9L);
         verify(mapper).deleteDrug(7L);
+    }
+
+    @Test
+    void drugUpdateKeepsOnlyProvidedFieldsSoMissingOnesAreNotNulled() {
+        DrugMapper mapper = mock(DrugMapper.class);
+        DrugService service = new DrugService(mapper);
+
+        // 仅修改药品名,未携带其它字段:动态 <set> 应跳过缺省字段,不清空原值
+        service.update(7L, Map.of("drugName", "新名"));
+
+        ArgumentCaptor<Map<String, Object>> captor = ArgumentCaptor.forClass(Map.class);
+        verify(mapper).updateDrug(captor.capture());
+        Map<String, Object> values = captor.getValue();
+        assertEquals(7L, values.get("drugId"));
+        assertEquals("新名", values.get("drugName"));
+        assertFalse(values.containsKey("drugInfo"), "未提供 drugInfo 时不应写入,避免被置 NULL");
+        assertFalse(values.containsKey("drugEffect"), "未提供 drugEffect 时不应写入");
+        assertFalse(values.containsKey("drugImg"), "未提供 drugImg 时不应写入");
+        // saleIds 未携带,关联不应被重建
+        verify(mapper, never()).deleteSaleRelations(anyLong());
     }
 }
