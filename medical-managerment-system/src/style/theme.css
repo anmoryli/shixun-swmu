@@ -1536,3 +1536,14 @@ body.medical-ui .el-table-fixed__column--right {
 body.medical-ui .el-table__fixed-header-wrapper .el-table__cell {
   background: var(--app-surface-muted) !important;
 }
+
+/* ===== 表格夜间适配：边框与单元格字体 ===== */
+body.medical-ui .el-table .el-table__cell {
+  border-bottom-color: var(--app-line);
+}
+body.medical-ui .el-table--border .el-table__cell {
+  border-right-color: var(--app-line);
+}
+body.medical-ui .el-table__body .el-table__cell {
+  color: var(--app-ink);
+}
