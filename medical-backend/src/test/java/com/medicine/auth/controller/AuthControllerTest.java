@@ -78,6 +78,31 @@ class AuthControllerTest {
     }
 
     @Test
+    void formLoginAndDomainCookiesAreCovered() {
+        CookieProperties cookie = new CookieProperties();
+        cookie.setName("medicine_token");
+        cookie.setPath("/");
+        cookie.setSameSite("Lax");
+        cookie.setDomain("example.test");
+        cookie.setMaxAge(Duration.ofHours(1));
+        AuthController domainController = new AuthController(authService, permissionService, tokenService, cookie);
+        LoginRequest request = new LoginRequest();
+        request.setUsername("admin_1");
+        request.setPassword("secret");
+        UserInfo user = new UserInfo(1L, "Admin", "admin_1", "15900000000", 1);
+        when(authService.login("admin_1", "secret")).thenReturn(new LoginResult("raw-token", user));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        assertThat(domainController.loginForm(request, response).getData()).isSameAs(user);
+        assertThat(response.getHeader(HttpHeaders.SET_COOKIE)).contains("Domain=example.test");
+
+        MockHttpServletResponse logoutResponse = new MockHttpServletResponse();
+        domainController.logout(null, logoutResponse);
+        verify(tokenService).delete(null);
+        assertThat(logoutResponse.getHeader(HttpHeaders.SET_COOKIE)).contains("Domain=example.test");
+    }
+
+    @Test
     void permissionsAlwaysUseTheAuthenticatedRole() {
         AuthSession session = session();
         UsernamePasswordAuthenticationToken authentication =

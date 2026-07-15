@@ -17,4 +17,17 @@ class ApiResponseTest {
         assertThat(response.getCode()).isEqualTo(20000);
         assertThat(response.getData()).isEqualTo("ok");
     }
+
+    @Test
+    void javaBeanAccessorsAndEmptySuccessAreCovered() {
+        ApiResponse<String> response = new ApiResponse<>();
+        response.setCode(123);
+        response.setMessage("message");
+        response.setData("data");
+        assertThat(response.getCode()).isEqualTo(123);
+        assertThat(response.getMessage()).isEqualTo("message");
+        assertThat(response.getData()).isEqualTo("data");
+        assertThat(ApiResponse.success().getData()).isNull();
+        assertThat(ApiResponse.error(500, "error").getMessage()).isEqualTo("error");
+    }
 }
