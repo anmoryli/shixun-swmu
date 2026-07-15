@@ -127,4 +127,10 @@ describe('app store module', () => {
     expect(state).toMatchObject({ token: '', routesLoaded: false });
     expect(state.menuList.map((route) => route.path)).toEqual(['/user/login', '/']);
   });
+
+  it('sets the legacy in-memory token mutation', () => {
+    const state = freshState();
+    appModule.mutations.SET_TOKEN(state, 'legacy');
+    expect(state.token).toBe('legacy');
+  });
 });
