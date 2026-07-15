@@ -4,6 +4,7 @@
 
 package com.medicine.dashboard;
 
+import com.medicine.business.event.BusinessDataChangedEvent;
 import com.medicine.dashboard.event.DashboardCacheInvalidationListener;
 import com.medicine.dashboard.service.DashboardService;
 import com.medicine.dashboard.task.DashboardCacheMaintenanceTask;
@@ -20,6 +21,13 @@ import java.lang.reflect.Method;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DashboardCacheContractTest {
+
+    @Test
+    void cacheInvalidationHandlersCanRun() {
+        new DashboardCacheInvalidationListener()
+                .invalidateDashboard(new BusinessDataChangedEvent("DoctorService.add(..)"));
+        new DashboardCacheMaintenanceTask().evictDashboardCache();
+    }
 
     @Test
     void declaresCacheReadAndInvalidationPolicies() throws NoSuchMethodException {

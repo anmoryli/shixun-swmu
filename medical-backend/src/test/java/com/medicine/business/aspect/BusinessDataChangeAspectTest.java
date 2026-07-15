@@ -19,6 +19,11 @@ import static org.mockito.Mockito.when;
 class BusinessDataChangeAspectTest {
 
     @Test
+    void pointcutMarkerCanBeInvoked() {
+        new BusinessDataChangeAspect(mock(ApplicationEventPublisher.class)).businessMutation();
+    }
+
+    @Test
     void publishesOperationAfterSuccessfulMutation() {
         ApplicationEventPublisher publisher = mock(ApplicationEventPublisher.class);
         JoinPoint joinPoint = mock(JoinPoint.class);

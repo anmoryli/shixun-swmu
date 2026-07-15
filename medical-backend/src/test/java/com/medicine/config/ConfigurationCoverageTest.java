@@ -5,6 +5,7 @@ import com.medicine.business.service.FileStorageService;
 import com.medicine.security.RestAccessDeniedHandler;
 import com.medicine.security.RestAuthenticationEntryPoint;
 import com.medicine.security.TokenAuthenticationFilter;
+import com.medicine.web.RequestTimingInterceptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.context.ApplicationContext;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.net.URI;
@@ -28,6 +30,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ConfigurationCoverageTest {
+    @Test
+    void webMvcRegistersRequestTimingInterceptorForApiPaths() {
+        RequestTimingInterceptor interceptor = mock(RequestTimingInterceptor.class);
+        InterceptorRegistry registry = mock(InterceptorRegistry.class, RETURNS_DEEP_STUBS);
+
+        new WebMvcConfig(interceptor).addInterceptors(registry);
+
+        verify(registry).addInterceptor(interceptor);
+    }
+
     @Test
     void securityBeansConfigurePasswordsCorsAndFilterChain() throws Exception {
         SecurityConfig config = new SecurityConfig(mock(TokenAuthenticationFilter.class),
