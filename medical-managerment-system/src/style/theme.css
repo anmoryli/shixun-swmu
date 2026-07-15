@@ -1428,3 +1428,20 @@ body.medical-ui *::-webkit-scrollbar-thumb {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ===== element-plus 变量调和：背景与主色 ===== */
+body.medical-ui {
+  --el-bg-color: var(--app-surface);
+  --el-bg-color-page: var(--app-canvas);
+  --el-bg-color-overlay: var(--app-surface-solid);
+  --el-color-primary: var(--app-accent);
+  --el-color-primary-light-9: var(--app-accent-soft);
+  --el-color-primary-light-7: var(--app-accent-soft);
+  --el-color-primary-light-5: var(--app-accent-wash);
+  --el-color-primary-light-3: var(--app-accent-wash);
+  --el-color-primary-dark-2: var(--app-accent-strong);
+  --el-color-success: var(--app-accent);
+  --el-color-warning: var(--app-warm);
+  --el-color-danger: var(--app-danger);
+  --el-color-error: var(--app-danger);
+}
