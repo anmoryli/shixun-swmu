@@ -2,8 +2,8 @@
   <title>慧医</title>
   <desc>药丸医疗图标</desc>
   <g transform="rotate(-45 32 32)">
-    <rect x="6" y="26" width="52" height="12" rx="6" fill="#ffffff" stroke="#1f5f57" stroke-width="2"/>
-    <path d="M12 26 H32 V38 H12 A6 6 0 0 1 12 26 Z" fill="#2c8a7f"/>
-    <line x1="32" y1="26" x2="32" y2="38" stroke="#1f5f57" stroke-width="1.5"/>
+    <rect x="6" y="26" width="52" height="12" rx="6" fill="#ffffff" stroke="#0f766e" stroke-width="2"/>
+    <path d="M12 26 H32 V38 H12 A6 6 0 0 1 12 26 Z" fill="#14b8a6"/>
+    <line x1="32" y1="26" x2="32" y2="38" stroke="#0f766e" stroke-width="1.5"/>
   </g>
 </svg>
