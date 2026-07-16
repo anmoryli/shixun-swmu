@@ -225,6 +225,7 @@ export default {
       markers: [],
       addStatus: 0,
       markerCount: 0,
+      mapLoadError: '',
     };
   },
   computed: {
