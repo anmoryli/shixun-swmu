@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>慧医</title>
+  <desc>药丸医疗图标</desc>
   <g transform="rotate(-45 32 32)">
     <rect x="6" y="26" width="52" height="12" rx="6" fill="#ffffff" stroke="#1f5f57" stroke-width="2"/>
     <path d="M12 26 H32 V38 H12 A6 6 0 0 1 12 26 Z" fill="#2c8a7f"/>
