@@ -328,6 +328,7 @@ export default {
           this.refreshMap();
         })
         .catch((e) => {
+          this.mapLoadError = '地图底图加载失败，请检查网络或刷新重试';
           console.warn('高德地图加载失败', e);
         });
     },
