@@ -330,6 +330,7 @@ export default {
       amap: null, // AMap 命名空间（用于 new AMap.Marker 等）
       markers: [], // 当前地图上的标记点
       addStatus: 0, // 1=等待用户在地图上点击新增位置
+      mapLoadError: '', // 地图加载失败提示
     };
   },
   methods: {
