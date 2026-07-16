@@ -43,3 +43,23 @@ deploy/docker/secrets/*
 
 # Claude Code local working directory
 .claude/
+
+# 演示视频、个人报告、交付文档模板、测试表格、过程文档、扫描报告等非代码产物
+# （仅本地保留，不进仓库；代码仓库只追踪源码与部署配置）
+需求/
+个人实习报告_李梦杰/
+最终交付文档/
+测试/
+process-docs/
+代码检查/
+
+# 根级文档与归档包
+CodeArts使用文档（组长）.pdf
+慧医数字医疗应用系统_需求规格说明书.docx
+慧医数字医疗应用系统_源代码.zip
+慧医数字医疗应用系统-最终汇报.pptx
+慧医数字医疗应用系统_汇报PPT大纲.md
+
+# UML 渲染产物与 PlantUML 工具二进制（保留 .puml 源，png 可重新生成）
+*.jar
+uml-diagrams/**/*.png
