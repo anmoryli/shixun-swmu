@@ -19,6 +19,7 @@
         <span class="map-stat">共 {{ markerCount }} 个销售地点</span>
       </div>
       <div id="mapContainer" class="map-container"></div>
+      <div v-if="mapLoadError" class="map-placeholder" style="color:#f56c6c;border-color:#fbc4c4;">{{ mapLoadError }}</div>
       <div v-if="!amapJsKey" class="map-placeholder">
         未配置高德地图 Key，请在 .env 设置 VITE_AMAP_JS_KEY 后重新构建
       </div>
