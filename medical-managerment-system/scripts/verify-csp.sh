@@ -16,4 +16,10 @@ for token in "unsafe-eval" "unsafe-inline" "*.alicdn.com" "*.amap.com" "*.autona
     echo "  [MISS] $token"; rc=1
   fi
 done
+echo "==> 检查 favicon 与 PWA 资源"
+for asset in /favicon.svg /apple-touch-icon.svg /site.webmanifest /favicon.ico; do
+  code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE$asset" || echo 000)
+  echo "  [$code] $asset"
+  [ "$code" = "200" ] || rc=1
+done
 exit $rc
