@@ -557,7 +557,7 @@ export default {
         this.map.add(marker);
       });
     },
-    // 加载高德地图
+    // 加载高德 JSAPI 2.0:CSP 需放行 unsafe-eval/unsafe-inline/alicdn,否则底图白屏
     loadMap() {
       const jsKey = this.amapJsKey;
       if (!jsKey) {
