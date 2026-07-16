@@ -131,7 +131,7 @@ class ControllerCoverageTest {
     }
 
     @Test
-    void uploadControllerBuildsAbsoluteImageUrl() {
+    void uploadControllerBuildsRelativeImageUrl() {
         FileStorageService storage = mock(FileStorageService.class);
         MultipartFile file = mock(MultipartFile.class);
         when(storage.saveImage(file)).thenReturn("image.png");
@@ -141,7 +141,10 @@ class ControllerCoverageTest {
         request.setServerPort(443);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         try {
-            assertTrue(new UploadController(storage).upload(file).getData().get("url").toString().endsWith("/image/image.png"));
+            // 上传接口返回同源相对路径 /image/<file>，不依赖请求上下文，避免
+            // https 前端加载 http 绝对 URL 触发混合内容拦截。
+            assertEquals("/image/image.png",
+                    new UploadController(storage).upload(file).getData().get("url").toString());
         } finally {
             RequestContextHolder.resetRequestAttributes();
         }
