@@ -1,0 +1,7 @@
+{
+  "name": "慧医数字医疗应用系统",
+  "short_name": "慧医",
+  "theme_color": "#14b8a6",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
