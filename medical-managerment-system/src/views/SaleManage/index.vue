@@ -293,6 +293,7 @@ const emptySaleForm = () => ({
 
 export default {
   name: 'SaleManage',
+  // 销售地点管理:含地图视图,基于高德 JSAPI 2.0。
   components: {
     Pagination,
   },
