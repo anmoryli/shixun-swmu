@@ -195,6 +195,7 @@ const emptySaleForm = () => ({
 
 export default {
   name: 'SaleMap',
+  // 销售地点地图视图:基于高德 JSAPI 2.0,加载失败显示 mapLoadError 提示。
   data() {
     return {
       addFormVisible: false,
