@@ -252,3 +252,8 @@ Copyright © 2026 慧医数字医疗应用系统贡献者。
 ---
 
 <p align="center">⭐ 如果这个项目对你有帮助，欢迎 Star 支持！</p>
+
+## 高德地图配置
+
+销售地点地图使用高德 JSAPI 2.0,其 CSP 要求与排查步骤详见 [docs/amap-csp.md](medical-managerment-system/docs/amap-csp.md)。
+关键: nginx CSP 的 script-src 必须含 'unsafe-eval' 与 'unsafe-inline',并放行 *.amap.com/*.autonavi.com/*.alicdn.com,否则底图白屏(marker 仍显示)。
