@@ -257,3 +257,9 @@ Copyright © 2026 慧医数字医疗应用系统贡献者。
 
 销售地点地图使用高德 JSAPI 2.0,其 CSP 要求与排查步骤详见 [docs/amap-csp.md](medical-managerment-system/docs/amap-csp.md)。
 关键: nginx CSP 的 script-src 必须含 'unsafe-eval' 与 'unsafe-inline',并放行 *.amap.com/*.autonavi.com/*.alicdn.com,否则底图白屏(marker 仍显示)。
+
+## 部署与重建
+
+前端为固定镜像 tag(1.0.0),改 nginx 配置或前端代码后必须重建:
+docker compose up -d --build web
+本地 web 容器端口映射 9092->8080。sx 子域名经 SSH 隧道指向本地 docker,本地重建即生效远程。
